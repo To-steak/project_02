@@ -1,3 +1,6 @@
+# 썸네일
+![thumbnail](./Image/thumbnail.png)
+
 # 사용한 에셋 및 라이선스(License)
 아래 에셋들은 [Unity Asset Store](https://assetstore.unity.com/)에서 배포되며, [Unity Asset Store Terms of Service and EULA](https://unity.com/legal/as-terms)에 따라 라이선스가 적용됩니다.
 - [Stylized Nature & Environment MEGA PACK](https://assetstore.unity.com/packages/3d/environments/stylized-nature-environment-mega-pack-326646) - by [So Stylized](https://assetstore.unity.com/publishers/113914)
