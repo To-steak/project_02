@@ -1,8 +1,9 @@
 # 사용한 에셋
-- https://assetstore.unity.com/packages/3d/environments/stylized-nature-environment-mega-pack-326646
-- https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-couple-pbr-polyart-355988
-- https://assetstore.unity.com/packages/3d/characters/creatures/party-monster-duo-polyart-pbr-195698
-- https://assetstore.unity.com/packages/3d/characters/creatures/monster-minion-survivor-pbr-polyart-269515
-- https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-buddy-pbr-polyart-253961
-- https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-partners-pbr-polyart-168251
-- https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-duo-pbr-polyart-157762
+아래 에셋들은 [Unity Asset Store](https://assetstore.unity.com/)에서 배포되며, [Unity Asset Store Terms of Service and EULA](https://unity.com/legal/as-terms)에 따라 라이선스가 적용됩니다.
+- [Stylized Nature & Environment MEGA PACK](https://assetstore.unity.com/packages/3d/environments/stylized-nature-environment-mega-pack-326646) - by [So Stylized](https://assetstore.unity.com/publishers/113914)
+- [RPG Monster Couple PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-couple-pbr-polyart-355988) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
+- [RPG Monster Buddy PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-buddy-pbr-polyart-253961) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
+- [RPG Monster Partners PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-partners-pbr-polyart-168251) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
+- [RPG Monster Duo PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-duo-pbr-polyart-157762) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
+- [Party Monster Duo Polyart PBR](https://assetstore.unity.com/packages/3d/characters/creatures/party-monster-duo-polyart-pbr-195698) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
+- [Monster Minion Survivor PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/monster-minion-survivor-pbr-polyart-269515) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
