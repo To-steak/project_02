@@ -13,3 +13,6 @@
 
 아래 에셋은 [Unity-chan License](https://unity3d.jp/unity-chan_contents/license.php?lang=en)가 적용됩니다.
 - [SD Unity-chan 3D model data](https://unity3d.jp/unity-chan_contents/releaseNote.php?id=SDUnityChan&lang=en) - by [Unity Technologies Japan](https://github.com/unity3d-jp)
+
+아래 에셋은 [Creative Commons CC0](/License/License.txt)라이선스가 적용됩니다.
+- [Input Prompts](https://kenney.nl/assets/input-prompts) - by [Kenny](https://www.patreon.com/cw/kenney)
