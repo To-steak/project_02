@@ -10,9 +10,14 @@
 - [RPG Monster Duo PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-duo-pbr-polyart-157762) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
 - [Party Monster Duo Polyart PBR](https://assetstore.unity.com/packages/3d/characters/creatures/party-monster-duo-polyart-pbr-195698) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
 - [Monster Minion Survivor PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/monster-minion-survivor-pbr-polyart-269515) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
+- [Human Soldier Animations FREE](https://assetstore.unity.com/packages/3d/animations/human-soldier-animations-free-340690) by [Kevin Iglesias](https://assetstore.unity.com/publishers/36307)
+- [Low Poly Pistol Weapon Pack 3](https://assetstore.unity.com/packages/3d/props/guns/low-poly-pistol-weapon-pack-3-322992) - by [
+CASTLE BRAVO](https://1657076765.wixsite.com/castle-bravo)
+- [Low Poly AR Weapon Pack 3](https://assetstore.unity.com/packages/3d/props/guns/low-poly-ar-weapon-pack-3-313750) - by [
+CASTLE BRAVO](https://1657076765.wixsite.com/castle-bravo)
 
 아래 에셋은 [Unity-chan License](https://unity3d.jp/unity-chan_contents/license.php?lang=en)가 적용됩니다.
 - [SD Unity-chan 3D model data](https://unity3d.jp/unity-chan_contents/releaseNote.php?id=SDUnityChan&lang=en) - by [Unity Technologies Japan](https://github.com/unity3d-jp)
 
-아래 에셋은 [Creative Commons CC0](/License/License.txt)라이선스가 적용됩니다.
+아래 에셋은 [Creative Commons Zero, CC0](/License/License.txt) License가 적용됩니다.
 - [Input Prompts](https://kenney.nl/assets/input-prompts) - by [Kenny](https://www.patreon.com/cw/kenney)
