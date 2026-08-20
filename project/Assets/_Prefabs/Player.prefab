@@ -4140,11 +4140,13 @@ GameObject:
   - component: {fileID: 8291753519289237605}
   - component: {fileID: 3809764797153384852}
   - component: {fileID: 3374529927956363615}
+  - component: {fileID: 3526416630275468151}
   - component: {fileID: 1865043657810196458}
+  - component: {fileID: 7128776490650910518}
+  - component: {fileID: 2370382758087582263}
   - component: {fileID: 4749054276701886288}
   - component: {fileID: 286216492628243226}
   - component: {fileID: 3350376219881136370}
-  - component: {fileID: 3526416630275468151}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -4393,6 +4395,32 @@ MonoBehaviour:
   m_DefaultActionMap: Battle
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &3526416630275468151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6551375714668253769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1148347133
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &1865043657810196458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4405,10 +4433,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1332d09fe9a23d54795e216f580b4fca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  settings: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
+  ShowTopMostFoldoutHeaderGroup: 1
+  SettingSO: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
   Inputs: {fileID: 4749054276701886288}
   Animations: {fileID: 286216492628243226}
   Locomotions: {fileID: 3350376219881136370}
+  NetworkState:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &7128776490650910518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6551375714668253769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b20add9aabb63a041b2b1ac280282c59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerServer
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &2370382758087582263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6551375714668253769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e1892e3e6ee73646b2669e578bf2e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerClient
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &4749054276701886288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4445,32 +4505,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78156b991a837454885c64d205cff019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovements
---- !u!114 &3526416630275468151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6551375714668253769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1148347133
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 0
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!1 &6704557423094697229
 GameObject:
   m_ObjectHideFlags: 0

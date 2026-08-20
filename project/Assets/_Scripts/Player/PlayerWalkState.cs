@@ -15,7 +15,7 @@ public class PlayerWalkState : PlayerState
     {
         if (Inputs.Move == Vector3.zero)
         {
-            controller.ChangeState(Idle);
+            server.ChangeState(Idle);
             return;
         }
         

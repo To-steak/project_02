@@ -15,7 +15,7 @@ public class PlayerIdleState : PlayerState
     {
         if (Inputs.Move != Vector3.zero)
         {
-            controller.ChangeState(Walk);
+            server.ChangeState(Walk);
             return;
         }
 

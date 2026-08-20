@@ -1,6 +1,7 @@
 public abstract class PlayerState
 {
     protected PlayerController controller;
+    protected PlayerServer server;
 
     protected PlayerInputs Inputs => controller.Inputs;
     protected PlayerAnimations Animations => controller.Animations;
@@ -14,6 +15,7 @@ public abstract class PlayerState
     public PlayerState(PlayerController controller)
     {
         this.controller = controller;
+        server = controller.GetComponent<PlayerServer>();
     }
 
     public abstract void Enter();
