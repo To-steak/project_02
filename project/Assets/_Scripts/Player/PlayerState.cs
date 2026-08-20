@@ -1,12 +1,15 @@
 public abstract class PlayerState
 {
     protected PlayerController controller;
+
     protected PlayerInputs Inputs => controller.Inputs;
     protected PlayerAnimations Animations => controller.Animations;
-    protected PlayerLocomotions Movements => controller.Locomotions;
-
+    protected PlayerLocomotions Locomotions => controller.Locomotions;
+    
     protected PlayerIdleState Idle => controller.Idle;
     protected PlayerWalkState Walk => controller.Walk;
+
+    public abstract PlayerStateType Type { get; }
 
     public PlayerState(PlayerController controller)
     {

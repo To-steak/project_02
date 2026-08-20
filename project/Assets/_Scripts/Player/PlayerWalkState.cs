@@ -4,10 +4,11 @@ public class PlayerWalkState : PlayerState
 {
     public PlayerWalkState(PlayerController controller) : base(controller) { }
 
+    public override PlayerStateType Type => PlayerStateType.Walk;
+
     public override void Enter()
     {
         Debug.Log("Enter: Walk");
-        Animations.PlayWalk();
     }
 
     public override void Tick()
@@ -17,7 +18,7 @@ public class PlayerWalkState : PlayerState
             controller.ChangeState(Idle);
             return;
         }
-
+        
         Debug.Log("Current: Walk");
     }
 

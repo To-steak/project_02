@@ -4144,6 +4144,7 @@ GameObject:
   - component: {fileID: 4749054276701886288}
   - component: {fileID: 286216492628243226}
   - component: {fileID: 3350376219881136370}
+  - component: {fileID: 3526416630275468151}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -4404,9 +4405,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1332d09fe9a23d54795e216f580b4fca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  inputs: {fileID: 4749054276701886288}
-  animations: {fileID: 286216492628243226}
-  movements: {fileID: 3350376219881136370}
+  settings: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
+  Inputs: {fileID: 4749054276701886288}
+  Animations: {fileID: 286216492628243226}
+  Locomotions: {fileID: 3350376219881136370}
 --- !u!114 &4749054276701886288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4443,6 +4445,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78156b991a837454885c64d205cff019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovements
+--- !u!114 &3526416630275468151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6551375714668253769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1148347133
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &6704557423094697229
 GameObject:
   m_ObjectHideFlags: 0

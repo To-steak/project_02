@@ -4,10 +4,11 @@ public class PlayerIdleState : PlayerState
 {
     public PlayerIdleState(PlayerController controller) : base(controller) { }
 
+    public override PlayerStateType Type => PlayerStateType.Idle;
+
     public override void Enter()
     {
         Debug.Log("Enter: Idle");
-        Animations.PlayIdle();
     }
 
     public override void Tick()

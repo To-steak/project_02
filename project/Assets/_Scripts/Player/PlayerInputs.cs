@@ -20,12 +20,17 @@ public class PlayerInputs : MonoBehaviour
         actions.Battle.Jump.performed += OnJump;
     }
 
-    public void DeactiveInputs()
+    public void InactiveInputs()
     {
         actions.Disable();
         actions.Battle.Move.performed -= OnMove;
         actions.Battle.Move.canceled -= OnMove;
         actions.Battle.Jump.performed -= OnJump;
+    }
+
+    public void SetMove(Vector3 move)
+    {
+        Move = move;
     }
 
     private void OnMove(InputAction.CallbackContext context)
