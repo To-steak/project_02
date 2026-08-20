@@ -2,37 +2,61 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // State
-    IPlayerState state;
-    PlayerIdleState idleState;
-    // API
-    PlayerInputs inputs;
-    PlayerAnimations animations;
-    PlayerMovements movements;
+    [SerializeField] PlayerSettings settings;
+
+    PlayerState _state;
+    public PlayerIdleState Idle;
+    public PlayerWalkState Walk;
+
+    public PlayerInputs Inputs;
+    public PlayerAnimations Animations;
+    public PlayerLocomotions Locomotions;
 
     void Awake()
     {
-        // GetComponent
-        inputs = GetComponent<PlayerInputs>();
-        animations = GetComponent<PlayerAnimations>();
-        movements = GetComponent<PlayerMovements>();
+        if (settings == null)
+        {
+#if UNITY_EDITOR
+            Debug.LogError("PlayerSettings is null in PlayerController.cs");
+#endif
+        }
 
-        // Player States
-        idleState = new PlayerIdleState();
+        Inputs = GetComponent<PlayerInputs>();
+        Animations = GetComponent<PlayerAnimations>();
+        Locomotions = GetComponent<PlayerLocomotions>();
+
+        Idle = new PlayerIdleState(this);
+        Walk = new PlayerWalkState(this);
     }
 
     void OnEnable()
     {
+        Inputs.Initialize();
+        Animations.Initialize();
+        Locomotions.Initialize(this, settings);
 
+        Inputs.ActiveInputs();
+    }
+
+    void OnDisable()
+    {
+        Inputs.DeactiveInputs();
     }
 
     void Start()
     {
-        state = idleState;
+        _state = Idle;
     }
 
     void Update()
     {
-        state.Tick();
+        _state.Tick();
+    }
+
+    public void ChangeState(PlayerState state)
+    {
+        _state.Exit();
+        _state = state;
+        _state.Enter();
     }
 }

@@ -7,27 +7,24 @@ public class PlayerInputs : MonoBehaviour
 
     PlayerActions actions;
 
-    void Awake()
+    public void Initialize()
     {
         actions = new PlayerActions();
     }
 
-    void OnEnable()
+    public void ActiveInputs()
     {
         actions.Enable();
         actions.Battle.Move.performed += OnMove;
+        actions.Battle.Move.canceled += OnMove;
         actions.Battle.Jump.performed += OnJump;
     }
 
-    void Start()
-    {
-
-    }
-
-    void OnDisable()
+    public void DeactiveInputs()
     {
         actions.Disable();
         actions.Battle.Move.performed -= OnMove;
+        actions.Battle.Move.canceled -= OnMove;
         actions.Battle.Jump.performed -= OnJump;
     }
 
@@ -40,10 +37,5 @@ public class PlayerInputs : MonoBehaviour
     private void OnJump(InputAction.CallbackContext context)
     {
         Debug.Log(context.performed);
-    }
-
-    public void Init()
-    {
-
     }
 }
