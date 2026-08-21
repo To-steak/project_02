@@ -5,10 +5,12 @@ public class PlayerWalkState : PlayerState
     public PlayerWalkState(PlayerController controller) : base(controller) { }
 
     public override PlayerStateType Type => PlayerStateType.Walk;
-
+    public override bool CanMove => true;
+    public override float MoveSpeed => controller.SettingSO.WalkSpeed;
+    
     public override void Enter()
     {
-        Debug.Log("Enter: Walk");
+        
     }
 
     public override void Tick()
@@ -18,12 +20,10 @@ public class PlayerWalkState : PlayerState
             server.ChangeState(Idle);
             return;
         }
-        
-        Debug.Log("Current: Walk");
     }
 
     public override void Exit()
     {
-        Debug.Log("Exit: Walk");
+        
     }
 }

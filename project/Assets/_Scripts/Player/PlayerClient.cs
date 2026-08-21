@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -33,8 +35,13 @@ public class PlayerClient : NetworkBehaviour
             _controller.Inputs.InactiveInputs();
         }
     }
-    
+
     void Update()
+    {
+
+    }
+
+    void FixedUpdate()
     {
         if (IsOwner)
         {

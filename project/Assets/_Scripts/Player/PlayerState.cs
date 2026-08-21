@@ -11,7 +11,9 @@ public abstract class PlayerState
     protected PlayerWalkState Walk => controller.Walk;
 
     public abstract PlayerStateType Type { get; }
-
+    public virtual bool CanMove => true;
+    public virtual float MoveSpeed => 0f;
+    
     public PlayerState(PlayerController controller)
     {
         this.controller = controller;

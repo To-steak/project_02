@@ -13,7 +13,6 @@ public class PlayerServer : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        // base.OnNetworkSpawn();
         if (!IsServer)
         {
             enabled = false;
@@ -25,7 +24,13 @@ public class PlayerServer : NetworkBehaviour
 
     void Update()
     {
+
+    }
+
+    void FixedUpdate()
+    {
         _state?.Tick();
+        _controller.Locomotions.Move(_state.MoveSpeed);
     }
 
     public void ChangeState(PlayerState state)
