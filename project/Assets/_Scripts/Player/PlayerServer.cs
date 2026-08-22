@@ -6,38 +6,32 @@ public class PlayerServer : NetworkBehaviour
     PlayerController _controller;
     PlayerState _state;
 
-    void Awake()
+    public void Initialize(PlayerController controller)
     {
-        _controller = GetComponent<PlayerController>();
+        _controller = controller;
     }
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer)
+        if (IsServer)
         {
-            enabled = false;
-            return;
+            _state = _controller.Idle;
         }
-
-        _state = _controller.Idle;
-    }
-
-    void Update()
-    {
-
     }
 
     void FixedUpdate()
     {
         _state?.Tick();
-        _controller.Locomotions.Move(_state.MoveSpeed);
+        _controller.Locomotions.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
+        _controller.Locomotions.ApplyGravity(_controller.SettingSO.GravityValue);
+        _controller.Locomotions.Move(_controller.Inputs.Move, _state.MoveSpeed);
     }
 
     public void ChangeState(PlayerState state)
     {
         _state.Exit();
         _state = state;
-        _state.PlayAnimation();
         _state.Enter();
+        _state.PlayAnimation();
     }
 }

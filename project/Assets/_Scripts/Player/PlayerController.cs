@@ -12,6 +12,9 @@ public class PlayerController : NetworkBehaviour
     public PlayerAnimations Animations;
     public PlayerLocomotions Locomotions;
 
+    public PlayerServer Server;
+    public PlayerClient Client;
+
     void Awake()
     {
         if (SettingSO == null)
@@ -28,5 +31,21 @@ public class PlayerController : NetworkBehaviour
 
         Idle = new PlayerIdleState(this);
         Walk = new PlayerWalkState(this);
+
+        Server = GetComponent<PlayerServer>();
+        Client = GetComponent<PlayerClient>();
+        
+        Server.Initialize(this);
+        Client.Initialize(this);
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        Server.enabled = IsServer;
+        Client.enabled = IsClient;
+
+        Inputs.Initialize();
+        Animations.Initialize();
+        Locomotions.Initialize();
     }
 }

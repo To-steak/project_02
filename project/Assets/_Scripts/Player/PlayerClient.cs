@@ -5,17 +5,13 @@ public class PlayerClient : NetworkBehaviour
 {
     PlayerController _controller;
 
-    void Awake()
+    public void Initialize(PlayerController controller)
     {
-        _controller = GetComponent<PlayerController>();
+        _controller = controller;
     }
 
     public override void OnNetworkSpawn()
     {
-        _controller.Inputs.Initialize();
-        _controller.Animations.Initialize();
-        _controller.Locomotions.Initialize(_controller, _controller.SettingSO);
-
         if (IsOwner)
         {
             _controller.Inputs.ActiveInputs();
@@ -28,11 +24,6 @@ public class PlayerClient : NetworkBehaviour
         {
             _controller.Inputs.InactiveInputs();
         }
-    }
-
-    void Update()
-    {
-
     }
 
     void FixedUpdate()

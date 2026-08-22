@@ -2,31 +2,24 @@ using UnityEngine;
 
 public class PlayerLocomotions : MonoBehaviour
 {
-    PlayerController _controller;
-    PlayerSettingSO _settings;
     CharacterController _character;
     [SerializeField] Transform groundChecker;
     Vector3 _velocity;
     public bool IsGrounded { get; private set; }
 
-    public void Initialize(PlayerController controller, PlayerSettingSO settings)
+    public void Initialize()
     {
-        _controller = controller;
-        _settings = settings;
         _character = GetComponent<CharacterController>();
     }
 
-    public void Move(float speed)
+    public void Move(Vector3 move, float speed)
     {
-        CheckGrounded();
-        ApplyGravity();
-
-        _character.Move(((_controller.Inputs.Move * speed) + _velocity) * Time.deltaTime);
+        _character.Move(((move * speed) + _velocity) * Time.fixedDeltaTime);
     }
 
-    private void CheckGrounded()
+    public void CheckGrounded(float radius, LayerMask layer)
     {
-        IsGrounded = Physics.CheckSphere(groundChecker.position, _settings.GroundCheckRadius, _settings.GroundLayer);
+        IsGrounded = Physics.CheckSphere(groundChecker.position, radius, layer);
 
         if (IsGrounded && _velocity.y < 0f)
         {
@@ -34,8 +27,8 @@ public class PlayerLocomotions : MonoBehaviour
         }
     }
 
-    private void ApplyGravity()
+    public void ApplyGravity(float gravity)
     {
-        _velocity.y += _settings.GravityValue * Time.deltaTime;
+        _velocity.y += gravity * Time.fixedDeltaTime;
     }
 }
