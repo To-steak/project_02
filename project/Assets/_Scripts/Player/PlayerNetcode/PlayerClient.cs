@@ -5,9 +5,9 @@ public class PlayerClient : NetworkBehaviour
 {
     PlayerController _controller;
 
-    public void Initialize(PlayerController controller)
+    void Awake()
     {
-        _controller = controller;
+        _controller = GetComponent<PlayerController>();
     }
 
     public override void OnNetworkSpawn()
