@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -50,7 +48,7 @@ public class PlayerClient : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    void MoveRpc(UnityEngine.Vector3 move)
+    void MoveRpc(Vector3 move)
     {
         _controller.Inputs.SetMove(move);
     }

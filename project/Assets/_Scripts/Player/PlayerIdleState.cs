@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class PlayerIdleState : PlayerState
 {
-    public PlayerIdleState(PlayerController controller) : base(controller) { }
-
-    public override PlayerStateType Type => PlayerStateType.Idle;
-    public override bool CanMove => true;
-    public override float MoveSpeed => 0f;
+    public PlayerIdleState(PlayerController controller) : base(controller)
+    {
+        Type = PlayerStateType.Idle;
+        CanMove = true;
+        MoveSpeed = 0f;
+    }
 
     public override void Enter()
     {

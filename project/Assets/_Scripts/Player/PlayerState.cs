@@ -6,14 +6,14 @@ public abstract class PlayerState
     protected PlayerInputs Inputs => controller.Inputs;
     protected PlayerAnimations Animations => controller.Animations;
     protected PlayerLocomotions Locomotions => controller.Locomotions;
-    
+
     protected PlayerIdleState Idle => controller.Idle;
     protected PlayerWalkState Walk => controller.Walk;
 
-    public abstract PlayerStateType Type { get; }
-    public virtual bool CanMove => true;
-    public virtual float MoveSpeed => 0f;
-    
+    public PlayerStateType Type { get; protected set; }
+    public bool CanMove { get; protected set; }
+    public float MoveSpeed { get; protected set; }
+
     public PlayerState(PlayerController controller)
     {
         this.controller = controller;

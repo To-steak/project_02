@@ -2,15 +2,16 @@ using UnityEngine;
 
 public class PlayerWalkState : PlayerState
 {
-    public PlayerWalkState(PlayerController controller) : base(controller) { }
+    public PlayerWalkState(PlayerController controller) : base(controller)
+    {
+        Type = PlayerStateType.Walk;
+        CanMove = true;
+        MoveSpeed = controller.SettingSO.WalkSpeed;
+    }
 
-    public override PlayerStateType Type => PlayerStateType.Walk;
-    public override bool CanMove => true;
-    public override float MoveSpeed => controller.SettingSO.WalkSpeed;
-    
     public override void Enter()
     {
-        
+
     }
 
     public override void Tick()
@@ -24,6 +25,6 @@ public class PlayerWalkState : PlayerState
 
     public override void Exit()
     {
-        
+
     }
 }
