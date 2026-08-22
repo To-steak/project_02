@@ -4,7 +4,6 @@ public class PlayerWalkState : PlayerState
 {
     public PlayerWalkState(PlayerController controller) : base(controller)
     {
-        Type = PlayerStateType.Walk;
         CanMove = true;
         MoveSpeed = controller.SettingSO.WalkSpeed;
     }

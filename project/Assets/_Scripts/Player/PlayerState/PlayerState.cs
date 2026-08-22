@@ -1,9 +1,3 @@
-public enum PlayerStateType : byte
-{
-    Idle,
-    Walk
-}
-
 public abstract class PlayerState
 {
     protected PlayerController controller;
@@ -16,7 +10,6 @@ public abstract class PlayerState
     protected PlayerIdleState Idle => controller.Idle;
     protected PlayerWalkState Walk => controller.Walk;
 
-    public PlayerStateType Type { get; protected set; }
     public bool CanMove { get; protected set; }
     public float MoveSpeed { get; protected set; }
 
