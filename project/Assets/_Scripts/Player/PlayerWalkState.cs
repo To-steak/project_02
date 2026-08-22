@@ -27,4 +27,9 @@ public class PlayerWalkState : PlayerState
     {
 
     }
+
+    public override void PlayAnimation()
+    {
+        controller.Animations.PlayWalk();
+    }
 }

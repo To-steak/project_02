@@ -1,28 +1,29 @@
+using Unity.Netcode.Components;
 using UnityEngine;
 
 public class PlayerAnimations : MonoBehaviour
 {
-    Animator animator;
+    NetworkAnimator _animator;
 
     readonly int speed = Animator.StringToHash("speed");
 
     public void Initialize()
     {
-        animator = GetComponent<Animator>();
+        _animator = GetComponent<NetworkAnimator>();
     }
 
     public void PlayIdle()
     {
-        animator.SetFloat(speed, 0f);
+        _animator.Animator.SetFloat(speed, 0f);
     }
 
     public void PlayWalk()
     {
-        animator.SetFloat(speed, 1f);
+        _animator.Animator.SetFloat(speed, 1f);
     }
 
     public void PlayRun()
     {
-        animator.SetFloat(speed, 2f);
+        _animator.Animator.SetFloat(speed, 2f);
     }
 }

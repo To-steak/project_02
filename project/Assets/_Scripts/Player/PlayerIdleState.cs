@@ -27,4 +27,9 @@ public class PlayerIdleState : PlayerState
     {
         
     }
+
+    public override void PlayAnimation()
+    {
+        controller.Animations.PlayIdle();
+    }
 }

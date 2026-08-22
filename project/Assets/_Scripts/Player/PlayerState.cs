@@ -1,3 +1,9 @@
+public enum PlayerStateType : byte
+{
+    Idle,
+    Walk
+}
+
 public abstract class PlayerState
 {
     protected PlayerController controller;
@@ -23,4 +29,5 @@ public abstract class PlayerState
     public abstract void Enter();
     public abstract void Tick();
     public abstract void Exit();
+    public virtual void PlayAnimation() { }
 }

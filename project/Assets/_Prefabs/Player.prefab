@@ -4173,6 +4173,7 @@ GameObject:
   - component: {fileID: 5767170793110512634}
   - component: {fileID: 3526416630275468151}
   - component: {fileID: -7348961401989904439}
+  - component: {fileID: 6195077959657975028}
   - component: {fileID: 3374529927956363615}
   - component: {fileID: 1865043657810196458}
   - component: {fileID: 7128776490650910518}
@@ -4497,6 +4498,30 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &6195077959657975028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6551375714668253769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkAnimatorExpanded: 0
+  AuthorityMode: 0
+  m_Animator: {fileID: 8518306696024498203}
+  TransitionStateInfoList: []
+  AnimatorParameterEntries:
+    ParameterEntries:
+    - name: speed
+      NameHash: 254213878
+      Synchronize: 1
+      ParameterType: 1
+  AnimatorParametersExpanded: 0
 --- !u!114 &3374529927956363615
 MonoBehaviour:
   m_ObjectHideFlags: 0

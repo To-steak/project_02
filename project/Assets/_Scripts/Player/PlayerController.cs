@@ -1,12 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public enum PlayerStateType : byte
-{
-    Idle,
-    Walk
-}
-
 public class PlayerController : NetworkBehaviour
 {
     public PlayerSettingSO SettingSO;
@@ -17,8 +11,6 @@ public class PlayerController : NetworkBehaviour
     public PlayerInputs Inputs;
     public PlayerAnimations Animations;
     public PlayerLocomotions Locomotions;
-
-    public NetworkVariable<PlayerStateType> NetworkState;
 
     void Awake()
     {
@@ -36,7 +28,5 @@ public class PlayerController : NetworkBehaviour
 
         Idle = new PlayerIdleState(this);
         Walk = new PlayerWalkState(this);
-
-        NetworkState = new NetworkVariable<PlayerStateType>(PlayerStateType.Idle, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     }
 }

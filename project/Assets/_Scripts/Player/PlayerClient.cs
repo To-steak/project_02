@@ -20,14 +20,10 @@ public class PlayerClient : NetworkBehaviour
         {
             _controller.Inputs.ActiveInputs();
         }
-
-        _controller.NetworkState.OnValueChanged += OnNetworkStateChanged;
     }
 
     public override void OnNetworkDespawn()
     {
-        _controller.NetworkState.OnValueChanged -= OnNetworkStateChanged;
-
         if (IsOwner)
         {
             _controller.Inputs.InactiveInputs();
@@ -51,18 +47,5 @@ public class PlayerClient : NetworkBehaviour
     void MoveRpc(Vector3 move)
     {
         _controller.Inputs.SetMove(move);
-    }
-
-    void OnNetworkStateChanged(PlayerStateType previous, PlayerStateType current)
-    {
-        switch (current)
-        {
-            case PlayerStateType.Idle:
-                _controller.Animations.PlayIdle();
-                break;
-            case PlayerStateType.Walk:
-                _controller.Animations.PlayWalk();
-                break;
-        }
     }
 }
