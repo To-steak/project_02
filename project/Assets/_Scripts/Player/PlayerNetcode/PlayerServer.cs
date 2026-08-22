@@ -32,6 +32,5 @@ public class PlayerServer : NetworkBehaviour
         _state.Exit();
         _state = state;
         _state.Enter();
-        _state.PlayAnimation();
     }
 }

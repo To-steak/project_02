@@ -10,7 +10,7 @@ public class PlayerIdleState : PlayerState
 
     public override void Enter()
     {
-        
+        controller.Animations.PlayIdle();
     }
 
     public override void Tick()
@@ -25,10 +25,5 @@ public class PlayerIdleState : PlayerState
     public override void Exit()
     {
         
-    }
-
-    public override void PlayAnimation()
-    {
-        controller.Animations.PlayIdle();
     }
 }

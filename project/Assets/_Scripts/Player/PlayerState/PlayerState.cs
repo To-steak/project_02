@@ -22,5 +22,4 @@ public abstract class PlayerState
     public abstract void Enter();
     public abstract void Tick();
     public abstract void Exit();
-    public virtual void PlayAnimation() { }
 }
