@@ -7,6 +7,7 @@ namespace PlayerAPI
     {
         public Vector3 Move { get; private set; }
         public Vector2 Look { get; private set; }
+        public bool Run { get; private set; }
 
         PlayerAction actions;
 
@@ -26,6 +27,9 @@ namespace PlayerAPI
             actions.Battle.Look.canceled += OnLook;
 
             actions.Battle.Jump.performed += OnJump;
+
+            actions.Battle.Run.performed += OnRun;
+            actions.Battle.Run.canceled += OnRun;
         }
 
         public void InactiveInputs()
@@ -37,8 +41,11 @@ namespace PlayerAPI
 
             actions.Battle.Look.performed -= OnLook;
             actions.Battle.Look.canceled -= OnLook;
-            
+
             actions.Battle.Jump.performed -= OnJump;
+
+            actions.Battle.Run.performed -= OnRun;
+            actions.Battle.Run.canceled -= OnRun;
         }
 
         public void SetMove(Vector3 move)
@@ -49,6 +56,11 @@ namespace PlayerAPI
         public void SetLook(Vector2 look)
         {
             Look = look;
+        }
+
+        public void SetRun(bool run)
+        {
+            Run = run;
         }
 
         private void OnMove(InputAction.CallbackContext context)
@@ -65,6 +77,11 @@ namespace PlayerAPI
         private void OnLook(InputAction.CallbackContext context)
         {
             Look = context.ReadValue<Vector2>();
+        }
+
+        private void OnRun(InputAction.CallbackContext context)
+        {
+            Run = context.performed;
         }
     }
 }

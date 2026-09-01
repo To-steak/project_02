@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public CinemachineCamera cinemachine;
-
     void Start()
     {
         Application.targetFrameRate = 144;
@@ -28,10 +26,5 @@ public class GameManager : MonoBehaviour
     public void StartHost()
     {
         NetworkManager.Singleton.StartHost();
-    }
-
-    public void CinemachineTarget()
-    {
-
     }
 }

@@ -8,13 +8,6 @@ namespace PlayerState
         protected PlayerController controller;
         protected PlayerServer server;
 
-        protected PlayerInput Inputs => controller.Input;
-        protected PlayerAnimation Animations => controller.Animation;
-        protected PlayerLocomotion Locomotions => controller.Locomotion;
-
-        protected PlayerIdleState Idle => controller.Idle;
-        protected PlayerWalkState Walk => controller.Walk;
-
         public bool CanMove { get; protected set; }
         public float MoveSpeed { get; protected set; }
 

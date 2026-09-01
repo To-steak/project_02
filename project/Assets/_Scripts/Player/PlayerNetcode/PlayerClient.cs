@@ -55,6 +55,7 @@ namespace PlayerNetcode
             {
                 MoveRPC(_controller.Input.Move);
                 LookRPC(_controller.Input.Look);
+                RunRPC(_controller.Input.Run);
             }
         }
 
@@ -68,6 +69,12 @@ namespace PlayerNetcode
         private void LookRPC(Vector2 look)
         {
             _controller.Input.SetLook(look);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void RunRPC(bool run)
+        {
+            _controller.Input.SetRun(run);
         }
     }
 }

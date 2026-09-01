@@ -16,9 +16,9 @@ public class PlayerIdleState : BaseState
 
     public override void Tick()
     {
-        if (Inputs.Move != Vector3.zero)
+        if (controller.Input.Move != Vector3.zero)
         {
-            server.ChangeState(Walk);
+            server.ChangeState(controller.Walk);
             return;
         }
     }

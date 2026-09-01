@@ -455,7 +455,7 @@ GameObject:
   - component: {fileID: 350335676}
   - component: {fileID: 350335675}
   m_Layer: 0
-  m_Name: CameraManager
+  m_Name: Camera Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -954,7 +954,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2631a870a55f71543a3832d520d28285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  cinemachine: {fileID: 0}
 --- !u!4 &949171284
 Transform:
   m_ObjectHideFlags: 0
@@ -2058,13 +2057,13 @@ RectTransform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1364553552}
   - {fileID: 772023078}
   - {fileID: 553850098}
+  - {fileID: 1723475449}
   - {fileID: 99281786}
   - {fileID: 949171284}
   - {fileID: 1693280334}
+  - {fileID: 350335676}
   - {fileID: 1916118703}
   - {fileID: 20128601}
-  - {fileID: 1364553552}
-  - {fileID: 350335676}
-  - {fileID: 1723475449}

@@ -1,17 +1,17 @@
 using UnityEngine;
 using PlayerState;
 
-public class PlayerWalkState : BaseState
+public class PlayerRunState : BaseState
 {
-    public PlayerWalkState(PlayerController controller) : base(controller)
+    public PlayerRunState(PlayerController controller) : base(controller)
     {
         CanMove = true;
-        MoveSpeed = controller.SettingSO.WalkSpeed;
+        MoveSpeed = controller.SettingSO.RunSpeed;
     }
 
     public override void Enter()
     {
-        controller.Animation.PlayWalk();
+        controller.Animation.PlayRun();
     }
 
     public override void Tick()
@@ -22,9 +22,9 @@ public class PlayerWalkState : BaseState
             return;
         }
 
-        if (controller.Input.Run)
+        if (!controller.Input.Run)
         {
-            server.ChangeState(controller.Run);
+            server.ChangeState(controller.Walk);
             return;
         }
     }

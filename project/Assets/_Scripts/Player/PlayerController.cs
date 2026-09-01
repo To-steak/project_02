@@ -9,6 +9,7 @@ public class PlayerController : NetworkBehaviour
 
     public PlayerIdleState Idle;
     public PlayerWalkState Walk;
+    public PlayerRunState Run;
 
     public PlayerInput Input;
     public PlayerAnimation Animation;
@@ -35,6 +36,7 @@ public class PlayerController : NetworkBehaviour
 
         Idle = new PlayerIdleState(this);
         Walk = new PlayerWalkState(this);
+        Run = new PlayerRunState(this);
 
         Server = GetComponent<PlayerServer>();
         Client = GetComponent<PlayerClient>();
