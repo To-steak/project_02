@@ -16,6 +16,12 @@ public class PlayerWalkState : BaseState
 
     public override void Tick()
     {
+        if (controller.Input.Jump && controller.Locomotion.IsGrounded)
+        {
+            server.ChangeState(controller.Jump);
+            return;
+        }
+
         if (controller.Input.Move == Vector3.zero)
         {
             server.ChangeState(controller.Idle);

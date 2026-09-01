@@ -4,10 +4,12 @@ namespace PlayerAPI
 {
     public class PlayerLocomotion : MonoBehaviour
     {
-        CharacterController _character;
-        [SerializeField] Transform groundChecker;
-        Vector3 _velocity;
         public bool IsGrounded { get; private set; }
+
+        [SerializeField] Transform groundChecker;
+
+        CharacterController _character;
+        Vector3 _velocity;
 
         public void Initialize()
         {
@@ -40,6 +42,16 @@ namespace PlayerAPI
         public void Rotate(float lookX, float speed)
         {
             transform.Rotate(Vector3.up * lookX * speed * Time.fixedDeltaTime);
+        }
+
+        public void Jump(float power)
+        {
+            if (!IsGrounded)
+            {
+                return;
+            }
+
+            _velocity.y = power;
         }
     }
 }

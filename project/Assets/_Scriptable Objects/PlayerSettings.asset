@@ -15,7 +15,7 @@ MonoBehaviour:
   WalkSpeed: 3
   RunSpeed: 6
   GravityValue: -9.81
-  JumpHeight: 10
+  JumpPower: 10
   GroundCheckRadius: 0.3
   GroundLayer:
     serializedVersion: 2

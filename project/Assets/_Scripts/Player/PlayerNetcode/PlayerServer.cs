@@ -18,14 +18,18 @@ namespace PlayerNetcode
             if (IsServer)
             {
                 _state = _controller.Idle;
+                _controller.Event.OnAnimationCallback += () => _state?.OnAnimationCallback();
+                _controller.Event.OnAnimationCommit += () => _state?.OnAnimationCommit();
             }
         }
 
         void FixedUpdate()
         {
-            _state?.Tick();
             _controller.Locomotion.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
             _controller.Locomotion.ApplyGravity(_controller.SettingSO.GravityValue);
+
+            _state?.Tick();
+            
             _controller.Locomotion.Move(_controller.Input.Move, _state.MoveSpeed);
             _controller.Locomotion.Rotate(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
         }

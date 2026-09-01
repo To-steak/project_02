@@ -8,6 +8,7 @@ namespace PlayerAPI
         public Vector3 Move { get; private set; }
         public Vector2 Look { get; private set; }
         public bool Run { get; private set; }
+        public bool Jump { get; private set; }
 
         PlayerAction actions;
 
@@ -63,6 +64,11 @@ namespace PlayerAPI
             Run = run;
         }
 
+        public void SetJump(bool jump)
+        {
+            Jump = jump;
+        }
+
         private void OnMove(InputAction.CallbackContext context)
         {
             var input = context.ReadValue<Vector2>();
@@ -71,7 +77,7 @@ namespace PlayerAPI
 
         private void OnJump(InputAction.CallbackContext context)
         {
-            Debug.Log(context.performed);
+            Jump = context.performed;
         }
 
         private void OnLook(InputAction.CallbackContext context)

@@ -1,4 +1,3 @@
-using Manager;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -56,6 +55,12 @@ namespace PlayerNetcode
                 MoveRPC(_controller.Input.Move);
                 LookRPC(_controller.Input.Look);
                 RunRPC(_controller.Input.Run);
+
+                if (_controller.Input.Jump)
+                {
+                    JumpRPC(true);
+                    _controller.Input.SetJump(false);
+                }
             }
         }
 
@@ -75,6 +80,12 @@ namespace PlayerNetcode
         private void RunRPC(bool run)
         {
             _controller.Input.SetRun(run);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void JumpRPC(bool jump)
+        {
+            _controller.Input.SetJump(jump);
         }
     }
 }

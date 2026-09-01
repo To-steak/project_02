@@ -1,4 +1,3 @@
-using PlayerAPI;
 using PlayerNetcode;
 
 namespace PlayerState
@@ -20,5 +19,8 @@ namespace PlayerState
         public abstract void Enter();
         public abstract void Tick();
         public abstract void Exit();
+        
+        public virtual void OnAnimationCallback() { }
+        public virtual void OnAnimationCommit() { }
     }
 }

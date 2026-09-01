@@ -10,11 +10,13 @@ public class PlayerController : NetworkBehaviour
     public PlayerIdleState Idle;
     public PlayerWalkState Walk;
     public PlayerRunState Run;
+    public PlayerJumpState Jump;
 
     public PlayerInput Input;
     public PlayerAnimation Animation;
     public PlayerLocomotion Locomotion;
     public PlayerCamera Camera;
+    public PlayerEvent Event;
 
     public PlayerServer Server;
     public PlayerClient Client;
@@ -33,10 +35,12 @@ public class PlayerController : NetworkBehaviour
         Animation = GetComponent<PlayerAnimation>();
         Locomotion = GetComponent<PlayerLocomotion>();
         Camera = GetComponent<PlayerCamera>();
+        Event = new PlayerEvent();
 
         Idle = new PlayerIdleState(this);
         Walk = new PlayerWalkState(this);
         Run = new PlayerRunState(this);
+        Jump = new PlayerJumpState(this);
 
         Server = GetComponent<PlayerServer>();
         Client = GetComponent<PlayerClient>();
@@ -45,7 +49,7 @@ public class PlayerController : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         Input.Initialize();
-        Animation.Initialize();
+        Animation.Initialize(Event);
         Locomotion.Initialize();
     }
 

@@ -4515,13 +4515,24 @@ MonoBehaviour:
   NetworkAnimatorExpanded: 0
   AuthorityMode: 0
   m_Animator: {fileID: 8518306696024498203}
-  TransitionStateInfoList: []
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 448209748
+    DestinationState: -549114815
+    TransitionDuration: 0.25
+    TriggerNameHash: 125937960
+    TransitionIndex: 1
   AnimatorParameterEntries:
     ParameterEntries:
-    - name: speed
-      NameHash: 254213878
+    - name: Speed
+      NameHash: -823668238
       Synchronize: 1
       ParameterType: 1
+    - name: Jump
+      NameHash: 125937960
+      Synchronize: 1
+      ParameterType: 9
   AnimatorParametersExpanded: 0
 --- !u!114 &3374529927956363615
 MonoBehaviour:
@@ -4564,6 +4575,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 6c9bc004-658f-4c8c-842f-4d5e22837dcc
     m_ActionName: 'Battle/Look[/Mouse/delta]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 59157b56-5036-4107-a6ea-a96985e426af
+    m_ActionName: 'Battle/Run[/Keyboard/leftShift]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Player Control Scheme
   m_DefaultActionMap: Battle
