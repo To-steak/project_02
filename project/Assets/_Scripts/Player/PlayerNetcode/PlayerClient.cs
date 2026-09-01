@@ -18,7 +18,10 @@ namespace PlayerNetcode
             if (IsOwner)
             {
                 _controller.Input.ActiveInputs();
-                CameraManager.Instance.SetFollowTarget(transform);
+                _controller.Camera.GetCamera();
+
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
         }
 
@@ -27,7 +30,22 @@ namespace PlayerNetcode
             if (IsOwner)
             {
                 _controller.Input.InactiveInputs();
-                CameraManager.Instance.ClearFollowTarget();
+                _controller.Camera.ReleaseCamera();
+
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+
+        void Update()
+        {
+            if (IsOwner)
+            {
+                _controller.Camera.RotateCamera(
+                    _controller.Input.Look.y,
+                    _controller.SettingSO.PitchSpeed,
+                    _controller.SettingSO.MinPitch,
+                    _controller.SettingSO.MaxPitch);
             }
         }
 

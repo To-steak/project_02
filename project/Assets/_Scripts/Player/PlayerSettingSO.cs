@@ -15,6 +15,9 @@ public class PlayerSettingSO : ScriptableObject
     public float GroundCheckRadius;
     public LayerMask GroundLayer;
 
-    [Header("Input")]
+    [Header("Mouse Input")]
     public float RotationSpeed;
+    public float PitchSpeed;
+    public float MinPitch;
+    public float MaxPitch;
 }

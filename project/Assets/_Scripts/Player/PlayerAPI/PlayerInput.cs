@@ -18,18 +18,26 @@ namespace PlayerAPI
         public void ActiveInputs()
         {
             actions.Enable();
+
             actions.Battle.Move.performed += OnMove;
             actions.Battle.Move.canceled += OnMove;
+
             actions.Battle.Look.performed += OnLook;
+            actions.Battle.Look.canceled += OnLook;
+
             actions.Battle.Jump.performed += OnJump;
         }
 
         public void InactiveInputs()
         {
             actions.Disable();
+
             actions.Battle.Move.performed -= OnMove;
             actions.Battle.Move.canceled -= OnMove;
+
             actions.Battle.Look.performed -= OnLook;
+            actions.Battle.Look.canceled -= OnLook;
+            
             actions.Battle.Jump.performed -= OnJump;
         }
 

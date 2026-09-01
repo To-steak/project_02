@@ -2,7 +2,6 @@ using Unity.Netcode;
 using UnityEngine;
 using PlayerAPI;
 using PlayerNetcode;
-using PlayerState;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -14,6 +13,7 @@ public class PlayerController : NetworkBehaviour
     public PlayerInput Input;
     public PlayerAnimation Animation;
     public PlayerLocomotion Locomotion;
+    public PlayerCamera Camera;
 
     public PlayerServer Server;
     public PlayerClient Client;
@@ -31,6 +31,7 @@ public class PlayerController : NetworkBehaviour
         Input = GetComponent<PlayerInput>();
         Animation = GetComponent<PlayerAnimation>();
         Locomotion = GetComponent<PlayerLocomotion>();
+        Camera = GetComponent<PlayerCamera>();
 
         Idle = new PlayerIdleState(this);
         Walk = new PlayerWalkState(this);

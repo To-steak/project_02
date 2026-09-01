@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 144;
-        
+
 #if UNITY_SERVER
         NetworkManager.Singleton.StartServer();
 #endif
@@ -32,6 +32,6 @@ public class GameManager : MonoBehaviour
 
     public void CinemachineTarget()
     {
-        
+
     }
 }

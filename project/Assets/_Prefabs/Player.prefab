@@ -4181,6 +4181,7 @@ GameObject:
   - component: {fileID: 4749054276701886288}
   - component: {fileID: 286216492628243226}
   - component: {fileID: 3350376219881136370}
+  - component: {fileID: 8388653826939110034}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -4559,6 +4560,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 92093221-704d-4d28-8d4f-a37185f622d8
     m_ActionName: 'Battle/Jump[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6c9bc004-658f-4c8c-842f-4d5e22837dcc
+    m_ActionName: 'Battle/Look[/Mouse/delta]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Player Control Scheme
   m_DefaultActionMap: Battle
@@ -4578,14 +4583,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
   SettingSO: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
-  Inputs: {fileID: 4749054276701886288}
-  Animations: {fileID: 286216492628243226}
-  Locomotions: {fileID: 3350376219881136370}
-  NetworkState:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
+  Input: {fileID: 0}
+  Animation: {fileID: 0}
+  Locomotion: {fileID: 0}
+  Camera: {fileID: 0}
+  Server: {fileID: 0}
+  Client: {fileID: 0}
 --- !u!114 &7128776490650910518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4649,6 +4652,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovements
   groundChecker: {fileID: 8924325111697058149}
+--- !u!114 &8388653826939110034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6551375714668253769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5152ddd4e771bf40ae35855db2e3022, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAPI.PlayerCamera
+  _lookPos: {fileID: 5439016520562954033}
 --- !u!1 &6704557423094697229
 GameObject:
   m_ObjectHideFlags: 0
