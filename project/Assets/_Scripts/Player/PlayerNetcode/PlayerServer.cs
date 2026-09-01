@@ -1,36 +1,39 @@
 using Unity.Netcode;
-using UnityEngine;
+using PlayerState;
 
-public class PlayerServer : NetworkBehaviour
+namespace PlayerNetcode
 {
-    PlayerController _controller;
-    PlayerState _state;
-
-    void Awake()
+    public class PlayerServer : NetworkBehaviour
     {
-        _controller = GetComponent<PlayerController>();
-    }
+        PlayerController _controller;
+        BaseState _state;
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsServer)
+        void Awake()
         {
-            _state = _controller.Idle;
+            _controller = GetComponent<PlayerController>();
         }
-    }
 
-    void FixedUpdate()
-    {
-        _state?.Tick();
-        _controller.Locomotions.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
-        _controller.Locomotions.ApplyGravity(_controller.SettingSO.GravityValue);
-        _controller.Locomotions.Move(_controller.Inputs.Move, _state.MoveSpeed);
-    }
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer)
+            {
+                _state = _controller.Idle;
+            }
+        }
 
-    public void ChangeState(PlayerState state)
-    {
-        _state.Exit();
-        _state = state;
-        _state.Enter();
+        void FixedUpdate()
+        {
+            _state?.Tick();
+            _controller.Locomotions.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
+            _controller.Locomotions.ApplyGravity(_controller.SettingSO.GravityValue);
+            _controller.Locomotions.Move(_controller.Inputs.Move, _state.MoveSpeed);
+        }
+
+        public void ChangeState(BaseState state)
+        {
+            _state.Exit();
+            _state = state;
+            _state.Enter();
+        }
     }
 }

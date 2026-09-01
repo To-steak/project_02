@@ -1,27 +1,31 @@
 using PlayerAPI;
+using PlayerNetcode;
 
-public abstract class PlayerState
+namespace PlayerState
 {
-    protected PlayerController controller;
-    protected PlayerServer server;
-
-    protected PlayerInput Inputs => controller.Inputs;
-    protected PlayerAnimation Animations => controller.Animations;
-    protected PlayerLocomotion Locomotions => controller.Locomotions;
-
-    protected PlayerIdleState Idle => controller.Idle;
-    protected PlayerWalkState Walk => controller.Walk;
-
-    public bool CanMove { get; protected set; }
-    public float MoveSpeed { get; protected set; }
-
-    public PlayerState(PlayerController controller)
+    public abstract class BaseState
     {
-        this.controller = controller;
-        server = controller.GetComponent<PlayerServer>();
-    }
+        protected PlayerController controller;
+        protected PlayerServer server;
 
-    public abstract void Enter();
-    public abstract void Tick();
-    public abstract void Exit();
+        protected PlayerInput Inputs => controller.Inputs;
+        protected PlayerAnimation Animations => controller.Animations;
+        protected PlayerLocomotion Locomotions => controller.Locomotions;
+
+        protected PlayerIdleState Idle => controller.Idle;
+        protected PlayerWalkState Walk => controller.Walk;
+
+        public bool CanMove { get; protected set; }
+        public float MoveSpeed { get; protected set; }
+
+        public BaseState(PlayerController controller)
+        {
+            this.controller = controller;
+            server = controller.GetComponent<PlayerServer>();
+        }
+
+        public abstract void Enter();
+        public abstract void Tick();
+        public abstract void Exit();
+    }
 }

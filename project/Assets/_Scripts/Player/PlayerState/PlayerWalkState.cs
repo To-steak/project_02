@@ -1,6 +1,7 @@
 using UnityEngine;
+using PlayerState;
 
-public class PlayerWalkState : PlayerState
+public class PlayerWalkState : BaseState
 {
     public PlayerWalkState(PlayerController controller) : base(controller)
     {

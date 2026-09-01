@@ -1,42 +1,48 @@
+using Manager;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerClient : NetworkBehaviour
+namespace PlayerNetcode
 {
-    PlayerController _controller;
-
-    void Awake()
+    public class PlayerClient : NetworkBehaviour
     {
-        _controller = GetComponent<PlayerController>();
-    }
+        PlayerController _controller;
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsOwner)
+        void Awake()
         {
-            _controller.Inputs.ActiveInputs();
+            _controller = GetComponent<PlayerController>();
         }
-    }
 
-    public override void OnNetworkDespawn()
-    {
-        if (IsOwner)
+        public override void OnNetworkSpawn()
         {
-            _controller.Inputs.InactiveInputs();
+            if (IsOwner)
+            {
+                _controller.Inputs.ActiveInputs();
+                CameraManager.Instance.SetFollowTarget(transform);
+            }
         }
-    }
 
-    void FixedUpdate()
-    {
-        if (IsOwner)
+        public override void OnNetworkDespawn()
         {
-            MoveRpc(_controller.Inputs.Move);
+            if (IsOwner)
+            {
+                _controller.Inputs.InactiveInputs();
+                CameraManager.Instance.ClearFollowTarget();
+            }
         }
-    }
 
-    [Rpc(SendTo.Server)]
-    void MoveRpc(Vector3 move)
-    {
-        _controller.Inputs.SetMove(move);
+        void FixedUpdate()
+        {
+            if (IsOwner)
+            {
+                MoveRpc(_controller.Inputs.Move);
+            }
+        }
+
+        [Rpc(SendTo.Server)]
+        void MoveRpc(Vector3 move)
+        {
+            _controller.Inputs.SetMove(move);
+        }
     }
 }
