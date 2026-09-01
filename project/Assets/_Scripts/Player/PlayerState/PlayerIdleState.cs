@@ -11,7 +11,7 @@ public class PlayerIdleState : BaseState
 
     public override void Enter()
     {
-        controller.Animations.PlayIdle();
+        controller.Animation.PlayIdle();
     }
 
     public override void Tick()

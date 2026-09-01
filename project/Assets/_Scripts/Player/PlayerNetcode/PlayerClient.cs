@@ -17,7 +17,7 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.Inputs.ActiveInputs();
+                _controller.Input.ActiveInputs();
                 CameraManager.Instance.SetFollowTarget(transform);
             }
         }
@@ -26,7 +26,7 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.Inputs.InactiveInputs();
+                _controller.Input.InactiveInputs();
                 CameraManager.Instance.ClearFollowTarget();
             }
         }
@@ -35,14 +35,21 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                MoveRpc(_controller.Inputs.Move);
+                MoveRPC(_controller.Input.Move);
+                LookRPC(_controller.Input.Look);
             }
         }
 
         [Rpc(SendTo.Server)]
-        void MoveRpc(Vector3 move)
+        private void MoveRPC(Vector3 move)
         {
-            _controller.Inputs.SetMove(move);
+            _controller.Input.SetMove(move);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void LookRPC(Vector2 look)
+        {
+            _controller.Input.SetLook(look);
         }
     }
 }

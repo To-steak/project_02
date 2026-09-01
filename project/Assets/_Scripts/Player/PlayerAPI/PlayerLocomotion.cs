@@ -16,7 +16,10 @@ namespace PlayerAPI
 
         public void Move(Vector3 move, float speed)
         {
-            _character.Move(((move * speed) + _velocity) * Time.fixedDeltaTime);
+            Vector3 localMove = transform.TransformDirection(move);
+            Vector3 horizontal = localMove * speed;
+
+            _character.Move((horizontal + Vector3.up * _velocity.y) * Time.fixedDeltaTime);
         }
 
         public void CheckGrounded(float radius, LayerMask layer)
@@ -32,6 +35,11 @@ namespace PlayerAPI
         public void ApplyGravity(float gravity)
         {
             _velocity.y += gravity * Time.fixedDeltaTime;
+        }
+
+        public void Rotate(float lookX, float speed)
+        {
+            transform.Rotate(Vector3.up * lookX * speed * Time.fixedDeltaTime);
         }
     }
 }

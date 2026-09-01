@@ -11,9 +11,9 @@ public class PlayerController : NetworkBehaviour
     public PlayerIdleState Idle;
     public PlayerWalkState Walk;
 
-    public PlayerInput Inputs;
-    public PlayerAnimation Animations;
-    public PlayerLocomotion Locomotions;
+    public PlayerInput Input;
+    public PlayerAnimation Animation;
+    public PlayerLocomotion Locomotion;
 
     public PlayerServer Server;
     public PlayerClient Client;
@@ -28,9 +28,9 @@ public class PlayerController : NetworkBehaviour
 #endif
         }
 
-        Inputs = GetComponent<PlayerInput>();
-        Animations = GetComponent<PlayerAnimation>();
-        Locomotions = GetComponent<PlayerLocomotion>();
+        Input = GetComponent<PlayerInput>();
+        Animation = GetComponent<PlayerAnimation>();
+        Locomotion = GetComponent<PlayerLocomotion>();
 
         Idle = new PlayerIdleState(this);
         Walk = new PlayerWalkState(this);
@@ -41,9 +41,9 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Inputs.Initialize();
-        Animations.Initialize();
-        Locomotions.Initialize();
+        Input.Initialize();
+        Animation.Initialize();
+        Locomotion.Initialize();
     }
 
     protected override void OnNetworkPostSpawn()

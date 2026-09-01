@@ -11,7 +11,7 @@ public class PlayerWalkState : BaseState
 
     public override void Enter()
     {
-        controller.Animations.PlayWalk();
+        controller.Animation.PlayWalk();
     }
 
     public override void Tick()

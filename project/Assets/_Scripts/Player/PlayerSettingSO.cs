@@ -14,4 +14,7 @@ public class PlayerSettingSO : ScriptableObject
     [Header("Ground Check")]
     public float GroundCheckRadius;
     public LayerMask GroundLayer;
+
+    [Header("Input")]
+    public float RotationSpeed;
 }

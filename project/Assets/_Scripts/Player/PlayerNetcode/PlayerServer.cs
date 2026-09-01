@@ -24,9 +24,10 @@ namespace PlayerNetcode
         void FixedUpdate()
         {
             _state?.Tick();
-            _controller.Locomotions.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
-            _controller.Locomotions.ApplyGravity(_controller.SettingSO.GravityValue);
-            _controller.Locomotions.Move(_controller.Inputs.Move, _state.MoveSpeed);
+            _controller.Locomotion.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
+            _controller.Locomotion.ApplyGravity(_controller.SettingSO.GravityValue);
+            _controller.Locomotion.Move(_controller.Input.Move, _state.MoveSpeed);
+            _controller.Locomotion.Rotate(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
         }
 
         public void ChangeState(BaseState state)
