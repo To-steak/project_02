@@ -1,42 +1,46 @@
 using UnityEngine;
 using PlayerState;
 
-public class PlayerWalkState : BaseState
+namespace PlayerState
 {
-    public PlayerWalkState(PlayerController controller) : base(controller)
+    public class PlayerWalkState : BaseState
     {
-        CanMove = true;
-        MoveSpeed = controller.SettingSO.WalkSpeed;
-    }
-
-    public override void Enter()
-    {
-        controller.Animation.PlayWalk();
-    }
-
-    public override void Tick()
-    {
-        if (controller.Input.Jump && controller.Locomotion.IsGrounded)
+        public PlayerWalkState(PlayerController controller) : base(controller)
         {
-            server.ChangeState(controller.Jump);
-            return;
+            CanMove = true;
+            MoveSpeed = controller.SettingSO.WalkSpeed;
         }
 
-        if (controller.Input.Move == Vector3.zero)
+        public override void Enter()
         {
-            server.ChangeState(controller.Idle);
-            return;
+            controller.Animation.PlayWalk();
         }
 
-        if (controller.Input.Run)
+        public override void Tick()
         {
-            server.ChangeState(controller.Run);
-            return;
+            if (controller.Input.Jump && controller.Locomotion.IsGrounded)
+            {
+                server.ChangeState(controller.Jump);
+                return;
+            }
+
+            if (controller.Input.Move == Vector3.zero)
+            {
+                server.ChangeState(controller.Idle);
+                return;
+            }
+
+            if (controller.Input.Run)
+            {
+                server.ChangeState(controller.Run);
+                return;
+            }
+        }
+
+        public override void Exit()
+        {
+
         }
     }
 
-    public override void Exit()
-    {
-
-    }
 }

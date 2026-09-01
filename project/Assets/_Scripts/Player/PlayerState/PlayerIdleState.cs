@@ -1,36 +1,39 @@
 using UnityEngine;
 using PlayerState;
 
-public class PlayerIdleState : BaseState
+namespace PlayerState
 {
-    public PlayerIdleState(PlayerController controller) : base(controller)
+    public class PlayerIdleState : BaseState
     {
-        CanMove = true;
-        MoveSpeed = 0f;
-    }
-
-    public override void Enter()
-    {
-        controller.Animation.PlayIdle();
-    }
-
-    public override void Tick()
-    {
-        if (controller.Input.Jump && controller.Locomotion.IsGrounded)
+        public PlayerIdleState(PlayerController controller) : base(controller)
         {
-            server.ChangeState(controller.Jump);
-            return;
+            CanMove = true;
+            MoveSpeed = 0f;
         }
-        
-        if (controller.Input.Move != Vector3.zero)
-        {
-            server.ChangeState(controller.Walk);
-            return;
-        }
-    }
 
-    public override void Exit()
-    {
-        
+        public override void Enter()
+        {
+            controller.Animation.PlayIdle();
+        }
+
+        public override void Tick()
+        {
+            if (controller.Input.Jump && controller.Locomotion.IsGrounded)
+            {
+                server.ChangeState(controller.Jump);
+                return;
+            }
+
+            if (controller.Input.Move != Vector3.zero)
+            {
+                server.ChangeState(controller.Walk);
+                return;
+            }
+        }
+
+        public override void Exit()
+        {
+
+        }
     }
 }
