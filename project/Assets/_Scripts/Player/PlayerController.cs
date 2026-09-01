@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using PlayerAPI;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -8,9 +9,9 @@ public class PlayerController : NetworkBehaviour
     public PlayerIdleState Idle;
     public PlayerWalkState Walk;
 
-    public PlayerInputs Inputs;
-    public PlayerAnimations Animations;
-    public PlayerLocomotions Locomotions;
+    public PlayerInput Inputs;
+    public PlayerAnimation Animations;
+    public PlayerLocomotion Locomotions;
 
     public PlayerServer Server;
     public PlayerClient Client;
@@ -25,9 +26,9 @@ public class PlayerController : NetworkBehaviour
 #endif
         }
 
-        Inputs = GetComponent<PlayerInputs>();
-        Animations = GetComponent<PlayerAnimations>();
-        Locomotions = GetComponent<PlayerLocomotions>();
+        Inputs = GetComponent<PlayerInput>();
+        Animations = GetComponent<PlayerAnimation>();
+        Locomotions = GetComponent<PlayerLocomotion>();
 
         Idle = new PlayerIdleState(this);
         Walk = new PlayerWalkState(this);

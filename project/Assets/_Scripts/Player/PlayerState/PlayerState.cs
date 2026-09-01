@@ -1,11 +1,13 @@
+using PlayerAPI;
+
 public abstract class PlayerState
 {
     protected PlayerController controller;
     protected PlayerServer server;
 
-    protected PlayerInputs Inputs => controller.Inputs;
-    protected PlayerAnimations Animations => controller.Animations;
-    protected PlayerLocomotions Locomotions => controller.Locomotions;
+    protected PlayerInput Inputs => controller.Inputs;
+    protected PlayerAnimation Animations => controller.Animations;
+    protected PlayerLocomotion Locomotions => controller.Locomotions;
 
     protected PlayerIdleState Idle => controller.Idle;
     protected PlayerWalkState Walk => controller.Walk;
