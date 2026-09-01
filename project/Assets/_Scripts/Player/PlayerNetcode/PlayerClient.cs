@@ -44,8 +44,12 @@ namespace PlayerNetcode
                     _controller.Input.Look.y,
                     _controller.SettingSO.PitchSpeed,
                     _controller.SettingSO.MinPitch,
-                    _controller.SettingSO.MaxPitch);
+                    _controller.SettingSO.MaxPitch
+                    );
             }
+
+            float pitch = IsOwner ? _controller.Camera.LocalPitch : _controller.AimPitch.Value;
+            _controller.Camera.CalculateAimTarget(pitch);
         }
 
         void FixedUpdate()

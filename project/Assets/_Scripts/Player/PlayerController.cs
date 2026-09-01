@@ -22,6 +22,8 @@ public class PlayerController : NetworkBehaviour
     public PlayerServer Server;
     public PlayerClient Client;
 
+    public readonly NetworkVariable<float> AimPitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
     void Awake()
     {
         if (SettingSO == null)

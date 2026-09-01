@@ -29,9 +29,17 @@ namespace PlayerNetcode
             _controller.Locomotion.ApplyGravity(_controller.SettingSO.GravityValue);
 
             _state?.Tick();
-            
+
             _controller.Locomotion.Move(_controller.Input.Move, _state.MoveSpeed);
             _controller.Locomotion.Rotate(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
+
+            _controller.AimPitch.Value = _controller.Camera.CalculateServerPitch(
+                _controller.AimPitch.Value,
+                _controller.Input.Look.y,
+                _controller.SettingSO.PitchSpeed,
+                _controller.SettingSO.MinPitch,
+                _controller.SettingSO.MaxPitch
+            );
         }
 
         public void ChangeState(BaseState state)
