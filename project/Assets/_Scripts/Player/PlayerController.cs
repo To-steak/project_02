@@ -53,4 +53,20 @@ public class PlayerController : NetworkBehaviour
         Server.enabled = IsServer;
         Client.enabled = IsClient;
     }
+
+    public void Simulate(InputPayload payload)
+    {
+        Input.Apply(payload);
+
+        Locomotion.CheckGrounded(SettingSO.GroundCheckRadius, SettingSO.GroundLayer);
+        Locomotion.ApplyGravity(SettingSO.GravityValue);
+        Locomotion.Move(payload.Move, GetMoveSpeed(payload));
+        Locomotion.Rotate(payload.Look.x, SettingSO.RotationSpeed);
+    }
+
+    private float GetMoveSpeed(InputPayload input)
+    {
+        if (input.Move == Vector3.zero) return 0f;
+        return input.Run ? SettingSO.RunSpeed : SettingSO.WalkSpeed;
+    }
 }

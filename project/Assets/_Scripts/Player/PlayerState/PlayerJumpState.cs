@@ -5,14 +5,12 @@ namespace PlayerState
 {
     public class PlayerJumpState : BaseState
     {
-        public PlayerJumpState(PlayerController controller) : base(controller)
-        {
-            MoveSpeed = controller.SettingSO.WalkSpeed;
-        }
+        public PlayerJumpState(PlayerController controller) : base(controller) { }
+
 
         public override void Enter()
         {
-            
+
         }
 
         public override void Tick()

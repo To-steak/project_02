@@ -5,10 +5,7 @@ namespace PlayerState
 {
     public class PlayerIdleState : BaseState
     {
-        public PlayerIdleState(PlayerController controller) : base(controller)
-        {
-            MoveSpeed = 0f;
-        }
+        public PlayerIdleState(PlayerController controller) : base(controller) { }
 
         public override void Enter()
         {

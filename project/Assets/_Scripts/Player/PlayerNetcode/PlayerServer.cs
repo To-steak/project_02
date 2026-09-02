@@ -38,18 +38,11 @@ namespace PlayerNetcode
 
             for (int i = 0; i < consume; i++)
             {
-                if (!TryDequeueInput(out var input)) break;
+                if (!TryDequeueInput(out var payload)) break;
 
-                _controller.AimPitch.Value = Mathf.Clamp(input.Pitch, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
-                _controller.Input.Apply(input);
-
-                _controller.Locomotion.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
-                _controller.Locomotion.ApplyGravity(_controller.SettingSO.GravityValue);
-
+                _controller.AimPitch.Value = Mathf.Clamp(payload.Pitch, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
+                _controller.Simulate(payload);
                 _state?.Tick();
-
-                _controller.Locomotion.Move(_controller.Input.Move, _state.MoveSpeed);
-                _controller.Locomotion.Rotate(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
                 consumed = true;
             }
 

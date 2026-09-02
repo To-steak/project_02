@@ -7,8 +7,6 @@ namespace PlayerState
         protected PlayerController controller;
         protected PlayerServer server;
 
-        public float MoveSpeed { get; protected set; }
-
         public BaseState(PlayerController controller)
         {
             this.controller = controller;
