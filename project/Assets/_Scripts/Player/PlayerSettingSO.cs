@@ -8,6 +8,7 @@ public class PlayerSettingSO : ScriptableObject
     public float RunSpeed;
     
     [Header("Physics")]
+    public LayerMask HitLayer;
     public float GravityValue;
     public float JumpPower;
 

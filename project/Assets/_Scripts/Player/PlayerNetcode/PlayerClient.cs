@@ -46,10 +46,13 @@ namespace PlayerNetcode
                     _controller.SettingSO.MinPitch,
                     _controller.SettingSO.MaxPitch
                     );
-            }
 
-            float pitch = IsOwner ? _controller.Camera.LocalPitch : _controller.AimPitch.Value;
-            _controller.Camera.CalculateAimTarget(pitch);
+                _controller.Camera.SetAimTargetFromCamera(Camera.main, _controller.SettingSO.HitLayer);
+            }
+            else
+            {
+                _controller.Camera.SetAimTargetFromPitch(_controller.AimPitch.Value);
+            }
         }
 
         void FixedUpdate()

@@ -13,14 +13,14 @@ public class PlayerController : NetworkBehaviour
     public PlayerRunState Run;
     public PlayerJumpState Jump;
 
-    public PlayerInput Input;
-    public PlayerAnimation Animation;
-    public PlayerLocomotion Locomotion;
-    public PlayerCamera Camera;
+    [HideInInspector] public PlayerInput Input;
+    [HideInInspector] public PlayerAnimation Animation;
+    [HideInInspector] public PlayerLocomotion Locomotion;
+    [HideInInspector] public PlayerCamera Camera;
     public PlayerEvent Event;
 
-    public PlayerServer Server;
-    public PlayerClient Client;
+    [HideInInspector] public PlayerServer Server;
+    [HideInInspector] public PlayerClient Client;
 
     public readonly NetworkVariable<float> AimPitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
