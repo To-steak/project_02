@@ -20,7 +20,7 @@ namespace PlayerNetcode
                 _state = _controller.Idle;
                 _controller.Event.OnAnimationCallback += () => _state?.OnAnimationCallback();
                 _controller.Event.OnAnimationCommit += () => _state?.OnAnimationCommit();
-                _controller.Event.OnJump += () => _state?.OnJump();
+                _controller.Event.OnJumpExecute += () => _state?.OnJump();
             }
         }
 
@@ -33,14 +33,6 @@ namespace PlayerNetcode
 
             _controller.Locomotion.Move(_controller.Input.Move, _state.MoveSpeed);
             _controller.Locomotion.Rotate(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
-
-            _controller.AimPitch.Value = _controller.Camera.ClampPitch(
-                _controller.AimPitch.Value,
-                _controller.Input.Look.y,
-                _controller.SettingSO.PitchSpeed,
-                _controller.SettingSO.MinPitch,
-                _controller.SettingSO.MaxPitch
-            );
         }
 
         public void ChangeState(BaseState state)

@@ -4,8 +4,7 @@ public class WeaponHandSync : MonoBehaviour
 {
     [SerializeField] private Transform _leftHandIkTarget;
     [SerializeField] private Transform _rightHandIkTarget;
-
-    [SerializeField] private WeaponSocket _currentWeapon; // public setter 없이 그냥 인스펙터에서 할당
+    [SerializeField] private WeaponSocket _currentWeapon;
 
     void LateUpdate()
     {

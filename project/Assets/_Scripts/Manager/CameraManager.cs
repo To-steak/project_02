@@ -6,6 +6,7 @@ namespace Manager
     public class CameraManager : MonoBehaviour
     {
         public static CameraManager Instance { get; private set; }
+        
         [SerializeField] private CinemachineCamera _cinemachineCamera;
 
         void Awake()
@@ -18,10 +19,6 @@ namespace Manager
             _cinemachineCamera.Follow = transform;
         }
 
-        public void SetLookAt(Transform transform)
-        {
-            _cinemachineCamera.LookAt = transform;
-        }
         public void ClearFollowTarget()
         {
             _cinemachineCamera.Follow = null;

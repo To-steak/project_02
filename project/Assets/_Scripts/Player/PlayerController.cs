@@ -26,14 +26,6 @@ public class PlayerController : NetworkBehaviour
 
     void Awake()
     {
-        if (SettingSO == null)
-        {
-#if UNITY_EDITOR
-            Debug.LogError("PlayerSettings is null in PlayerController.cs");
-            UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        }
-
         Input = GetComponent<PlayerInput>();
         Animation = GetComponent<PlayerAnimation>();
         Locomotion = GetComponent<PlayerLocomotion>();

@@ -1,3 +1,4 @@
+using Manager;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace PlayerNetcode
             {
                 _controller.Event.OnJump += HandleJump;
                 _controller.Input.ActiveInputs();
-                _controller.Camera.GetCamera();
+                _controller.Camera.ActiveCamera();
 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
@@ -31,7 +32,7 @@ namespace PlayerNetcode
             {
                 _controller.Event.OnJump -= HandleJump;
                 _controller.Input.InactiveInputs();
-                _controller.Camera.ReleaseCamera();
+                CameraManager.Instance.ClearFollowTarget();
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
@@ -42,14 +43,9 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.Camera.RotateCamera(
-                    _controller.Input.Look.y,
-                    _controller.SettingSO.PitchSpeed,
-                    _controller.SettingSO.MinPitch,
-                    _controller.SettingSO.MaxPitch
-                    );
-
-                _controller.Camera.SetAimTargetFromCamera(Camera.main, _controller.SettingSO.HitLayer);
+                _controller.Camera.RotateCamera(_controller.Input.Look.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
+                // _controller.Camera.SetAimTargetFromCamera(Camera.main, _controller.SettingSO.HitLayer);
+                _controller.Camera.SetAimTargetFromPitch(_controller.Camera.LookPitch);
             }
             else
             {
@@ -62,7 +58,7 @@ namespace PlayerNetcode
             if (IsOwner)
             {
                 MoveRPC(_controller.Input.Move);
-                LookRPC(_controller.Input.Look);
+                LookRPC(_controller.Input.Look, _controller.Camera.LookPitch);
                 RunRPC(_controller.Input.Run);
             }
         }
@@ -74,9 +70,10 @@ namespace PlayerNetcode
         }
 
         [Rpc(SendTo.Server)]
-        private void LookRPC(Vector2 look)
+        private void LookRPC(Vector2 look, float pitch)
         {
             _controller.Input.SetLook(look);
+            _controller.AimPitch.Value = Mathf.Clamp(pitch, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
         }
 
         [Rpc(SendTo.Server)]
@@ -88,7 +85,7 @@ namespace PlayerNetcode
         [Rpc(SendTo.Server)]
         private void JumpRPC()
         {
-            _controller.Event.RaiseJump();
+            _controller.Event.RaiseJumpExecute();
         }
 
         private void HandleJump() => JumpRPC();

@@ -13,5 +13,8 @@ namespace PlayerAPI
 
         public event Action OnJump;
         public void RaiseJump() => OnJump?.Invoke();
+
+        public event Action OnJumpExecute;
+        public void RaiseJumpExecute() => OnJumpExecute?.Invoke();
     }
 }
