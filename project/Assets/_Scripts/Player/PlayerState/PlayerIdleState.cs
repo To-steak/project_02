@@ -7,7 +7,6 @@ namespace PlayerState
     {
         public PlayerIdleState(PlayerController controller) : base(controller)
         {
-            CanMove = true;
             MoveSpeed = 0f;
         }
 
@@ -28,14 +27,6 @@ namespace PlayerState
         public override void Exit()
         {
 
-        }
-
-        public override void OnJump()
-        {
-            if (controller.Locomotion.IsGrounded)
-            {
-                server.ChangeState(controller.Jump);
-            }
         }
     }
 }

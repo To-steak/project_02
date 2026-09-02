@@ -1,4 +1,5 @@
 using PlayerState;
+using UnityEngine;
 
 namespace PlayerState
 {
@@ -6,13 +7,12 @@ namespace PlayerState
     {
         public PlayerJumpState(PlayerController controller) : base(controller)
         {
-            CanMove = true;
             MoveSpeed = controller.SettingSO.WalkSpeed;
         }
 
         public override void Enter()
         {
-            controller.Animation.PlayJump();
+            
         }
 
         public override void Tick()

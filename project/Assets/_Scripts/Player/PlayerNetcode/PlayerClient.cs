@@ -44,7 +44,6 @@ namespace PlayerNetcode
             if (IsOwner)
             {
                 _controller.Camera.RotateCamera(_controller.Input.Look.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
-                // _controller.Camera.SetAimTargetFromCamera(Camera.main, _controller.SettingSO.HitLayer);
                 _controller.Camera.SetAimTargetFromPitch(_controller.Camera.LookPitch);
             }
             else
@@ -88,6 +87,10 @@ namespace PlayerNetcode
             _controller.Event.RaiseJumpExecute();
         }
 
-        private void HandleJump() => JumpRPC();
+        private void HandleJump()
+        {
+            _controller.Animation.PlayJump();
+            JumpRPC();
+        }
     }
 }

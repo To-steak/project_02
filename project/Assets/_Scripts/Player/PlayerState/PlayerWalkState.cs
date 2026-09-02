@@ -7,7 +7,6 @@ namespace PlayerState
     {
         public PlayerWalkState(PlayerController controller) : base(controller)
         {
-            CanMove = true;
             MoveSpeed = controller.SettingSO.WalkSpeed;
         }
 
@@ -35,14 +34,5 @@ namespace PlayerState
         {
 
         }
-
-        public override void OnJump()
-        {
-            if (controller.Locomotion.IsGrounded)
-            {
-                server.ChangeState(controller.Jump);
-            }
-        }
     }
-
 }

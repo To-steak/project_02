@@ -7,7 +7,6 @@ namespace PlayerState
         protected PlayerController controller;
         protected PlayerServer server;
 
-        public bool CanMove { get; protected set; }
         public float MoveSpeed { get; protected set; }
 
         public BaseState(PlayerController controller)
@@ -22,6 +21,12 @@ namespace PlayerState
 
         public virtual void OnAnimationCallback() { }
         public virtual void OnAnimationCommit() { }
-        public virtual void OnJump() { }
+        public virtual void OnJump()
+        {
+            if (controller.Locomotion.IsGrounded)
+            {
+                server.ChangeState(controller.Jump);
+            }
+        }
     }
 }
