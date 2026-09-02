@@ -50,21 +50,6 @@ namespace PlayerAPI
             _action.Battle.Run.canceled -= OnRun;
         }
 
-        public void SetMove(Vector3 move)
-        {
-            Move = move;
-        }
-
-        public void SetLook(Vector2 look)
-        {
-            Look = look;
-        }
-
-        public void SetRun(bool run)
-        {
-            Run = run;
-        }
-
         private void OnMove(InputAction.CallbackContext context)
         {
             var input = context.ReadValue<Vector2>();
@@ -84,6 +69,22 @@ namespace PlayerAPI
         private void OnRun(InputAction.CallbackContext context)
         {
             Run = context.performed;
+        }
+
+        public InputPayload Capture(int tick, float pitch) => new InputPayload
+        {
+            Tick = tick,
+            Move = Move,
+            Look = Look,
+            Run = Run,
+            Pitch = pitch
+        };
+
+        public void Apply(InputPayload payload)
+        {
+            Move = payload.Move;
+            Look = payload.Look;
+            Run = payload.Run;
         }
     }
 }

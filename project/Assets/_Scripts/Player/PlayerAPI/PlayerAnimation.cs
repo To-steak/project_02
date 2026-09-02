@@ -38,7 +38,6 @@ namespace PlayerAPI
 
         public void PlayJump()
         {
-            // _animator.Animator.SetTrigger(Jump);
             _animator.SetTrigger("Jump");
         }
 

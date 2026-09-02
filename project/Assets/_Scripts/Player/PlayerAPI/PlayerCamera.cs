@@ -19,7 +19,7 @@ namespace PlayerAPI
 
         public void RotateCamera(float lookY, float speed, float min, float max)
         {
-            LookPitch = Mathf.Clamp(LookPitch - lookY * speed * Time.deltaTime, min, max);
+            LookPitch = Mathf.Clamp(LookPitch - lookY * speed, min, max);
             _lookPos.localRotation = Quaternion.Euler(LookPitch, 0f, 0f);
         }
 

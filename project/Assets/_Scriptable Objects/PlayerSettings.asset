@@ -24,6 +24,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   RotationSpeed: 15
-  PitchSpeed: 15
+  PitchSpeed: 1
   MinPitch: -40
   MaxPitch: 40

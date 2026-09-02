@@ -1,5 +1,9 @@
 using Unity.Netcode;
 using PlayerState;
+using System.Collections.Generic;
+using PlayerAPI;
+using System.Linq;
+using UnityEngine;
 
 namespace PlayerNetcode
 {
@@ -7,6 +11,8 @@ namespace PlayerNetcode
     {
         PlayerController _controller;
         BaseState _state;
+        readonly SortedDictionary<int, InputPayload> _queue = new();
+        int _lastTick = -1;
 
         void Awake()
         {
@@ -24,15 +30,38 @@ namespace PlayerNetcode
             }
         }
 
+        int _starvedTicks;
         void FixedUpdate()
         {
-            _controller.Locomotion.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
-            _controller.Locomotion.ApplyGravity(_controller.SettingSO.GravityValue);
+            int consume = _queue.Count > 1 ? 2 : 1;
+            bool consumed = false;
 
-            _state?.Tick();
+            for (int i = 0; i < consume; i++)
+            {
+                if (!TryDequeueInput(out var input)) break;
 
-            _controller.Locomotion.Move(_controller.Input.Move, _state.MoveSpeed);
-            _controller.Locomotion.Rotate(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
+                _controller.AimPitch.Value = Mathf.Clamp(input.Pitch, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
+                _controller.Input.Apply(input);
+
+                _controller.Locomotion.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
+                _controller.Locomotion.ApplyGravity(_controller.SettingSO.GravityValue);
+
+                _state?.Tick();
+
+                _controller.Locomotion.Move(_controller.Input.Move, _state.MoveSpeed);
+                _controller.Locomotion.Rotate(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
+                consumed = true;
+            }
+
+            if (consumed)
+            {
+                _starvedTicks = 0;
+            }
+            else
+            {
+                _starvedTicks++;
+                if (_starvedTicks > 5) _controller.Input.Apply(default);
+            }
         }
 
         public void ChangeState(BaseState state)
@@ -40,6 +69,31 @@ namespace PlayerNetcode
             _state.Exit();
             _state = state;
             _state.Enter();
+        }
+
+        [Rpc(SendTo.Server)]
+        public void SubmitInputRPC(InputPayload p)
+        {
+            if (p.Tick <= _lastTick) return;
+            _queue[p.Tick] = p;
+        }
+
+        public bool TryDequeueInput(out InputPayload p)
+        {
+            if (_queue.Count == 0) { p = default; return false; }
+
+            var first = _queue.Keys.First();
+
+            Debug.Log($"queue: {_queue.Count}, starved: {_starvedTicks}");
+            if (first != _lastTick + 1 && _lastTick >= 0)
+            {
+                Debug.LogWarning($"consumed gap: {_lastTick} → {first}");
+            }
+
+            p = _queue[first];
+            _queue.Remove(first);
+            _lastTick = first;
+            return true;
         }
     }
 }
