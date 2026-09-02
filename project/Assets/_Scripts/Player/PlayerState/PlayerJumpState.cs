@@ -32,7 +32,6 @@ namespace PlayerState
 
         public override void OnAnimationCallback()
         {
-            controller.Input.SetJump(false);
             server.ChangeState(controller.Idle);
         }
     }

@@ -16,6 +16,7 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
+                _controller.Event.OnJump += HandleJump;
                 _controller.Input.ActiveInputs();
                 _controller.Camera.GetCamera();
 
@@ -28,6 +29,7 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
+                _controller.Event.OnJump -= HandleJump;
                 _controller.Input.InactiveInputs();
                 _controller.Camera.ReleaseCamera();
 
@@ -62,12 +64,6 @@ namespace PlayerNetcode
                 MoveRPC(_controller.Input.Move);
                 LookRPC(_controller.Input.Look);
                 RunRPC(_controller.Input.Run);
-
-                if (_controller.Input.Jump)
-                {
-                    JumpRPC(true);
-                    _controller.Input.SetJump(false);
-                }
             }
         }
 
@@ -90,9 +86,11 @@ namespace PlayerNetcode
         }
 
         [Rpc(SendTo.Server)]
-        private void JumpRPC(bool jump)
+        private void JumpRPC()
         {
-            _controller.Input.SetJump(jump);
+            _controller.Event.RaiseJump();
         }
+
+        private void HandleJump() => JumpRPC();
     }
 }

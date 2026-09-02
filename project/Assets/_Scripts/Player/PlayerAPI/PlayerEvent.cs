@@ -10,5 +10,8 @@ namespace PlayerAPI
 
         public void RaiseAnimationCallback() => OnAnimationCallback?.Invoke();
         public void RaiseAnimationCommit() => OnAnimationCommit?.Invoke();
+
+        public event Action OnJump;
+        public void RaiseJump() => OnJump?.Invoke();
     }
 }

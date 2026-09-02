@@ -18,12 +18,6 @@ namespace PlayerState
 
         public override void Tick()
         {
-            if (controller.Input.Jump && controller.Locomotion.IsGrounded)
-            {
-                server.ChangeState(controller.Jump);
-                return;
-            }
-
             if (controller.Input.Move == Vector3.zero)
             {
                 server.ChangeState(controller.Idle);
@@ -40,6 +34,14 @@ namespace PlayerState
         public override void Exit()
         {
 
+        }
+
+        public override void OnJump()
+        {
+            if (controller.Locomotion.IsGrounded)
+            {
+                server.ChangeState(controller.Jump);
+            }
         }
     }
 

@@ -8,45 +8,46 @@ namespace PlayerAPI
         public Vector3 Move { get; private set; }
         public Vector2 Look { get; private set; }
         public bool Run { get; private set; }
-        public bool Jump { get; private set; }
 
-        PlayerAction actions;
+        PlayerAction _action;
+        PlayerEvent _event;
 
-        public void Initialize()
+        public void Initialize(PlayerEvent playerEvent)
         {
-            actions = new PlayerAction();
+            _action = new PlayerAction();
+            _event = playerEvent;
         }
 
         public void ActiveInputs()
         {
-            actions.Enable();
+            _action.Enable();
 
-            actions.Battle.Move.performed += OnMove;
-            actions.Battle.Move.canceled += OnMove;
+            _action.Battle.Move.performed += OnMove;
+            _action.Battle.Move.canceled += OnMove;
 
-            actions.Battle.Look.performed += OnLook;
-            actions.Battle.Look.canceled += OnLook;
+            _action.Battle.Look.performed += OnLook;
+            _action.Battle.Look.canceled += OnLook;
 
-            actions.Battle.Jump.performed += OnJump;
+            _action.Battle.Jump.performed += OnJump;
 
-            actions.Battle.Run.performed += OnRun;
-            actions.Battle.Run.canceled += OnRun;
+            _action.Battle.Run.performed += OnRun;
+            _action.Battle.Run.canceled += OnRun;
         }
 
         public void InactiveInputs()
         {
-            actions.Disable();
+            _action.Disable();
 
-            actions.Battle.Move.performed -= OnMove;
-            actions.Battle.Move.canceled -= OnMove;
+            _action.Battle.Move.performed -= OnMove;
+            _action.Battle.Move.canceled -= OnMove;
 
-            actions.Battle.Look.performed -= OnLook;
-            actions.Battle.Look.canceled -= OnLook;
+            _action.Battle.Look.performed -= OnLook;
+            _action.Battle.Look.canceled -= OnLook;
 
-            actions.Battle.Jump.performed -= OnJump;
+            _action.Battle.Jump.performed -= OnJump;
 
-            actions.Battle.Run.performed -= OnRun;
-            actions.Battle.Run.canceled -= OnRun;
+            _action.Battle.Run.performed -= OnRun;
+            _action.Battle.Run.canceled -= OnRun;
         }
 
         public void SetMove(Vector3 move)
@@ -64,11 +65,6 @@ namespace PlayerAPI
             Run = run;
         }
 
-        public void SetJump(bool jump)
-        {
-            Jump = jump;
-        }
-
         private void OnMove(InputAction.CallbackContext context)
         {
             var input = context.ReadValue<Vector2>();
@@ -77,7 +73,7 @@ namespace PlayerAPI
 
         private void OnJump(InputAction.CallbackContext context)
         {
-            Jump = context.performed;
+            _event.RaiseJump();
         }
 
         private void OnLook(InputAction.CallbackContext context)

@@ -20,6 +20,7 @@ namespace PlayerNetcode
                 _state = _controller.Idle;
                 _controller.Event.OnAnimationCallback += () => _state?.OnAnimationCallback();
                 _controller.Event.OnAnimationCommit += () => _state?.OnAnimationCommit();
+                _controller.Event.OnJump += () => _state?.OnJump();
             }
         }
 

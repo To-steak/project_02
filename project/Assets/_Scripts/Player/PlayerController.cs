@@ -51,7 +51,7 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Input.Initialize();
+        Input.Initialize(Event);
         Animation.Initialize(Event);
         Locomotion.Initialize();
     }
