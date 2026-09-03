@@ -4810,7 +4810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6514ba86f976d724ab63844a6015b2aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_dynamicRatio: 1
+  m_dynamicRatio: 0
   m_baseStiffnessForce: 0.01
   m_stiffnessScaleCurve:
     serializedVersion: 2
@@ -5017,7 +5017,7 @@ MonoBehaviour:
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
   SwitchTransformSpaceWhenParented: 0
-  Interpolate: 0
+  Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &6195077959657975028
 MonoBehaviour:
@@ -5138,6 +5138,7 @@ MonoBehaviour:
   Camera: {fileID: 0}
   Server: {fileID: 0}
   Client: {fileID: 0}
+  NetTransform: {fileID: 0}
 --- !u!114 &7128776490650910518
 MonoBehaviour:
   m_ObjectHideFlags: 0

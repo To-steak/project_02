@@ -13,6 +13,7 @@ namespace PlayerNetcode
         BaseState _state;
         readonly SortedDictionary<int, InputPayload> _queue = new();
         int _lastTick = -1;
+        int _starvedTicks;
 
         void Awake()
         {
@@ -30,7 +31,6 @@ namespace PlayerNetcode
             }
         }
 
-        int _starvedTicks;
         void FixedUpdate()
         {
             int consume = _queue.Count > 1 ? 2 : 1;
@@ -43,6 +43,16 @@ namespace PlayerNetcode
                 _controller.AimPitch.Value = Mathf.Clamp(payload.Pitch, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
                 _controller.Simulate(payload);
                 _state?.Tick();
+
+                Debug.Log($"server sending tick {payload.Tick}");
+                _controller.Client.CreateStateRPC(new StatePayload
+                {
+                    Tick = payload.Tick,
+                    Position = transform.position,
+                    RotationY = transform.eulerAngles.y,
+                    VelocityY = _controller.Locomotion.VelocityY,
+                });
+
                 consumed = true;
             }
 
@@ -77,11 +87,11 @@ namespace PlayerNetcode
 
             var first = _queue.Keys.First();
 
-            Debug.Log($"queue: {_queue.Count}, starved: {_starvedTicks}");
-            if (first != _lastTick + 1 && _lastTick >= 0)
-            {
-                Debug.LogWarning($"consumed gap: {_lastTick} → {first}");
-            }
+            // Debug.Log($"queue: {_queue.Count}, starved: {_starvedTicks}");
+            // if (first != _lastTick + 1 && _lastTick >= 0)
+            // {
+            //     Debug.LogWarning($"consumed gap: {_lastTick} → {first}");
+            // }
 
             p = _queue[first];
             _queue.Remove(first);

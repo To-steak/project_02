@@ -20,5 +20,4 @@ namespace PlayerAPI
             serializer.SerializeValue(ref Pitch);
         }
     }
-
 }

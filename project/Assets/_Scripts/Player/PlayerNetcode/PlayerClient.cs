@@ -9,13 +9,10 @@ namespace PlayerNetcode
     public class PlayerClient : NetworkBehaviour
     {
         PlayerController _controller;
-        readonly List<InputPayload> _history = new();
-        const int SEND_COUNT = 3;
-
-        // DEBUG ONLY
-        float _moveTime = -1f;
-        Vector3 _moveStartPos;
-        bool _wasMoving = false;
+        int _tick = 0;
+        const int BUFFER = 1024;
+        readonly InputPayload[] _inputHistory = new InputPayload[BUFFER];
+        readonly StatePayload[] _stateHistory = new StatePayload[BUFFER];
 
         void Awake()
         {
@@ -54,54 +51,35 @@ namespace PlayerNetcode
             {
                 _controller.Camera.RotateCamera(_controller.Input.Look.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
                 _controller.Camera.SetAimTargetFromPitch(_controller.Camera.LookPitch);
+
+                MeasureDelay();
             }
             else
             {
                 _controller.Camera.SetAimTargetFromPitch(_controller.AimPitch.Value);
             }
-
-            // DEBUG ONLY
-            if (!IsOwner) return;
-
-            bool moving = _controller.Input.Move != Vector3.zero;
-            if (moving && !_wasMoving)
-            {
-                _moveTime = Time.realtimeSinceStartup;
-                _moveStartPos = transform.position;
-            }
-            _wasMoving = moving;
-
-            if (_moveTime > 0f)
-            {
-                Vector3 d = transform.position - _moveStartPos;
-                d.y = 0f;
-                if (d.sqrMagnitude > 0.01f * 0.01f)
-                {
-                    Debug.Log($"input→move: {(Time.realtimeSinceStartup - _moveTime) * 1000f:F1}ms");
-                    _moveTime = -1f;
-                }
-            }
         }
 
-        int tick = 0;
+
         void FixedUpdate()
         {
             if (IsOwner)
             {
-                // int tick = NetworkManager.NetworkTickSystem.LocalTime.Tick;
-                var payload = _controller.Input.Capture(tick, _controller.Camera.LookPitch);
+                var payload = _controller.Input.Capture(_tick, _controller.Camera.LookPitch);
+                _inputHistory[_tick % BUFFER] = payload;
+
                 _controller.Server.SubmitInputRPC(payload);
-                tick++;
+                _controller.Simulate(payload);
 
-                // int tick = NetworkManager.NetworkTickSystem.LocalTime.Tick;
-                // _history.Add(_controller.Input.Capture(tick, _controller.Camera.LookPitch));
+                _stateHistory[_tick % BUFFER] = new StatePayload
+                {
+                    Tick = _tick,
+                    Position = transform.position,
+                    RotationY = transform.eulerAngles.y,
+                    VelocityY = _controller.Locomotion.VelocityY,
+                };
 
-                // if (_history.Count > SEND_COUNT)
-                // {
-                //     _history.RemoveAt(0);
-                // }
-
-                // SubmitInputRPC(_history.ToArray());
+                _tick++;
             }
         }
 
@@ -118,23 +96,86 @@ namespace PlayerNetcode
         }
 
 
-        // DEBUG ONLY
-        // int _lastTick = -1;
-        // [Rpc(SendTo.Server)]
-        // void SubmitInputRPC(InputPayload payload)
-        // {
-        //     if (payload.Tick <= _lastTick)
-        //     {
-        //         Debug.LogWarning($"out of order or duplicate: {payload.Tick} after {_lastTick}");
-        //     }
-        //     else if (payload.Tick > _lastTick + 1)
-        //     {
-        //         Debug.LogWarning($"gap: {_lastTick} → {payload.Tick}");
-        //     }
+        [Rpc(SendTo.Owner)]
+        public void CreateStateRPC(StatePayload payload)
+        {
+            var predicted = _stateHistory[payload.Tick % BUFFER];
+            if (predicted.Tick != payload.Tick) return;
 
-        //     _controller.AimPitch.Value = Mathf.Clamp(payload.Pitch, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
-        //     _controller.Input.Apply(payload);
-        //     _lastTick = payload.Tick;
-        // }
+            if (Vector3.Distance(predicted.Position, payload.Position) < 0.1f) return;
+
+            _reconcileCount++;
+            
+            Debug.LogWarning($"reconcile at tick {payload.Tick}");
+
+            _controller.Locomotion.RestoreState(payload.Position, payload.RotationY, payload.VelocityY);
+
+            for (int t = payload.Tick + 1; t < _tick; t++)
+            {
+                _controller.Simulate(_inputHistory[t % BUFFER]);
+                _stateHistory[t % BUFFER] = new StatePayload
+                {
+                    Tick = t,
+                    Position = transform.position,
+                    RotationY = transform.eulerAngles.y,
+                    VelocityY = _controller.Locomotion.VelocityY,
+                };
+
+            }
+
+            float error = Vector3.Distance(predicted.Position, payload.Position);
+            Debug.LogWarning($"reconcile at tick {payload.Tick}, error {error:F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
+        }
+
+        // DEBUG ONLY
+        float _lastDelay;
+        int _reconcileCount;
+        float _moveTime = -1f;
+        Vector3 _moveStartPos;
+        bool _wasMoving;
+
+        void OnGUI()
+        {
+            if (!IsOwner) return;
+
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.normal.textColor = Color.black;
+            style.alignment = TextAnchor.UpperRight;
+
+            float width = 300f;
+            float height = 20f;
+            float paddingRight = 10f;
+            float xPos = Screen.width - width - paddingRight;
+            float fps = 1.0f / Time.unscaledDeltaTime;
+
+            GUI.Label(new Rect(xPos, 10, width, height), $"delay: {_lastDelay:F1}ms", style);
+            GUI.Label(new Rect(xPos, 30, width, height), $"reconcile: {_reconcileCount}", style);
+            GUI.Label(new Rect(xPos, 50, width, height), $"tick: {_tick}", style);
+            GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
+            GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
+        }
+
+        void MeasureDelay()
+        {
+            bool moving = _controller.Input.Move != Vector3.zero;
+
+            if (moving && !_wasMoving)
+            {
+                _moveTime = Time.realtimeSinceStartup;
+                _moveStartPos = transform.position;
+            }
+            _wasMoving = moving;
+
+            if (_moveTime > 0f)
+            {
+                Vector3 d = transform.position - _moveStartPos;
+                d.y = 0f;
+                if (d.sqrMagnitude > 0.01f * 0.01f)
+                {
+                    _lastDelay = (Time.realtimeSinceStartup - _moveTime) * 1000f;
+                    _moveTime = -1f;
+                }
+            }
+        }
     }
 }

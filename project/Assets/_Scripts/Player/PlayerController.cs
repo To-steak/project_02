@@ -3,6 +3,7 @@ using UnityEngine;
 using PlayerAPI;
 using PlayerNetcode;
 using PlayerState;
+using Unity.Netcode.Components;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -21,6 +22,7 @@ public class PlayerController : NetworkBehaviour
 
     [HideInInspector] public PlayerServer Server;
     [HideInInspector] public PlayerClient Client;
+    [HideInInspector] public NetworkTransform NetTransform;
 
     public readonly NetworkVariable<float> AimPitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -39,6 +41,7 @@ public class PlayerController : NetworkBehaviour
 
         Server = GetComponent<PlayerServer>();
         Client = GetComponent<PlayerClient>();
+        NetTransform = GetComponent<NetworkTransform>();
     }
 
     public override void OnNetworkSpawn()
@@ -52,6 +55,7 @@ public class PlayerController : NetworkBehaviour
     {
         Server.enabled = IsServer;
         Client.enabled = IsClient;
+        NetTransform.enabled = !(IsOwner && !IsServer);
     }
 
     public void Simulate(InputPayload payload)

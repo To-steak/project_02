@@ -5,6 +5,7 @@ namespace PlayerAPI
     public class PlayerLocomotion : MonoBehaviour
     {
         public bool IsGrounded { get; private set; }
+        public float VelocityY => _velocity.y;
 
         [SerializeField] Transform groundChecker;
 
@@ -52,6 +53,15 @@ namespace PlayerAPI
             }
 
             _velocity.y = power;
+        }
+
+        public void RestoreState(Vector3 position, float rotationY, float velocityY)
+        {
+            _character.enabled = false;
+            transform.position = position;
+            transform.rotation = Quaternion.Euler(0f, rotationY, 0f);
+            _character.enabled = true;
+            _velocity.y = velocityY;
         }
     }
 }
