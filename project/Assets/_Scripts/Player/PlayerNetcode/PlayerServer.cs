@@ -44,7 +44,6 @@ namespace PlayerNetcode
                 _controller.Simulate(payload);
                 _state?.Tick();
 
-                Debug.Log($"server sending tick {payload.Tick}");
                 _controller.Client.CreateStateRPC(new StatePayload
                 {
                     Tick = payload.Tick,
@@ -83,16 +82,13 @@ namespace PlayerNetcode
 
         public bool TryDequeueInput(out InputPayload p)
         {
-            if (_queue.Count == 0) { p = default; return false; }
+            if (_queue.Count == 0)
+            {
+                p = default;
+                return false;
+            }
 
             var first = _queue.Keys.First();
-
-            // Debug.Log($"queue: {_queue.Count}, starved: {_starvedTicks}");
-            // if (first != _lastTick + 1 && _lastTick >= 0)
-            // {
-            //     Debug.LogWarning($"consumed gap: {_lastTick} → {first}");
-            // }
-
             p = _queue[first];
             _queue.Remove(first);
             _lastTick = first;

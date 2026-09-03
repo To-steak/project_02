@@ -15,7 +15,6 @@ namespace PlayerAPI
         public void ActiveCamera()
         {
             CameraManager.Instance.SetFollowTarget(_lookPos);
-            // CameraManager.Instance.SetFollowTarget(transform);
         }
 
         public void RotateCamera(float lookY, float speed, float min, float max)
