@@ -5,11 +5,10 @@ namespace PlayerAPI
 {
     public class PlayerAnimation : MonoBehaviour, IAnimationEventReceiver
     {
-        NetworkAnimator _animator;
+        [SerializeField] NetworkAnimator _animator;
         PlayerEvent _event;
 
         readonly int Speed = Animator.StringToHash("Speed");
-        readonly int Jump = Animator.StringToHash("Jump");
 
         const float IDLE = 0f;
         const float WALK = 1f;
@@ -17,7 +16,6 @@ namespace PlayerAPI
 
         public void Initialize(PlayerEvent playerEvent)
         {
-            _animator = GetComponent<NetworkAnimator>();
             _event = playerEvent;
         }
 

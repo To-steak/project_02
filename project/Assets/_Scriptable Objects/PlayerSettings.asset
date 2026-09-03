@@ -14,16 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSettings
   WalkSpeed: 3
   RunSpeed: 6
-  HitLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  GravityValue: -9.81
-  JumpPower: 10
+  GravityValue: -20
+  JumpPower: 7
   GroundCheckRadius: 0.3
   GroundLayer:
     serializedVersion: 2
     m_Bits: 64
   RotationSpeed: 15
-  PitchSpeed: 1
+  PitchSpeed: 0.7
   MinPitch: -40
   MaxPitch: 40

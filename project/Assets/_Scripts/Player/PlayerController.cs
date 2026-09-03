@@ -29,7 +29,7 @@ public class PlayerController : NetworkBehaviour
     void Awake()
     {
         Input = GetComponent<PlayerInput>();
-        Animation = GetComponent<PlayerAnimation>();
+        Animation = GetComponentInChildren<PlayerAnimation>();
         Locomotion = GetComponent<PlayerLocomotion>();
         Camera = GetComponent<PlayerCamera>();
         Event = new PlayerEvent();
