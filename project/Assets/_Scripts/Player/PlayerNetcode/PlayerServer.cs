@@ -1,7 +1,6 @@
 using Unity.Netcode;
 using PlayerState;
 using System.Collections.Generic;
-using PlayerAPI;
 using System.Linq;
 using UnityEngine;
 
@@ -13,7 +12,8 @@ namespace PlayerNetcode
         BaseState _state;
         readonly SortedDictionary<int, InputPayload> _queue = new();
         int _lastTick = -1;
-        int _starvedTicks;
+        int _emptyTicks;
+        const int NO_INPUT_THRESHOLD = 5;
 
         void Awake()
         {
@@ -57,12 +57,12 @@ namespace PlayerNetcode
 
             if (consumed)
             {
-                _starvedTicks = 0;
+                _emptyTicks = 0;
             }
             else
             {
-                _starvedTicks++;
-                if (_starvedTicks > 5) _controller.Input.Apply(default);
+                _emptyTicks++;
+                if (_emptyTicks > NO_INPUT_THRESHOLD) _controller.Input.Apply(default);
             }
         }
 

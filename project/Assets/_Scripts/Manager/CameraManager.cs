@@ -12,6 +12,8 @@ namespace Manager
         void Awake()
         {
             Instance = this;
+            _cinemachineCamera.Lens.NearClipPlane = 1f;
+            _cinemachineCamera.Lens.FarClipPlane = 50000f;
         }
 
         public void SetFollowTarget(Transform transform)
