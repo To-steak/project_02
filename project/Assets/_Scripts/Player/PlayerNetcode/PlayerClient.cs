@@ -24,6 +24,7 @@ namespace PlayerNetcode
                 _controller.Event.OnJump += HandleJump;
                 _controller.Input.ActiveInputs();
                 _controller.Camera.ActiveCamera();
+                _controller.Visual.ActiveVisual();
 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
@@ -36,6 +37,7 @@ namespace PlayerNetcode
             {
                 _controller.Event.OnJump -= HandleJump;
                 _controller.Input.InactiveInputs();
+                _controller.Visual.InactiveVisual();
                 CameraManager.Instance.ClearFollowTarget();
 
                 Cursor.lockState = CursorLockMode.None;
@@ -77,10 +79,20 @@ namespace PlayerNetcode
                     VelocityY = _controller.Locomotion.VelocityY,
                 };
 
+                _controller.Visual.Record();
+
                 _tick++;
             }
         }
 
+        void LateUpdate()
+        {
+            if (IsOwner)
+            {
+                _controller.Visual.Interpolate();
+            }
+        }
+        
         [Rpc(SendTo.Server)]
         private void JumpRPC()
         {

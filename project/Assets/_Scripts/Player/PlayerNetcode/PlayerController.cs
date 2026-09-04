@@ -18,6 +18,7 @@ public class PlayerController : NetworkBehaviour
     [HideInInspector] public PlayerAnimation Animation;
     [HideInInspector] public PlayerLocomotion Locomotion;
     [HideInInspector] public PlayerCamera Camera;
+    [HideInInspector] public PlayerVisual Visual;
     public PlayerEvent Event;
 
     [HideInInspector] public PlayerServer Server;
@@ -32,6 +33,7 @@ public class PlayerController : NetworkBehaviour
         Animation = GetComponentInChildren<PlayerAnimation>();
         Locomotion = GetComponent<PlayerLocomotion>();
         Camera = GetComponent<PlayerCamera>();
+        Visual = GetComponent<PlayerVisual>();
         Event = new PlayerEvent();
 
         Idle = new PlayerIdleState(this);
@@ -56,6 +58,11 @@ public class PlayerController : NetworkBehaviour
         Server.enabled = IsServer;
         Client.enabled = IsClient;
         NetTransform.enabled = !(IsOwner && !IsServer);
+
+        var anim = Animation.GetComponent<NetworkAnimator>();
+        Debug.Log($"[{NetworkManager.Singleton.LocalClientId}] obj:{NetworkObjectId} " +
+                  $"server:{Server.NetworkBehaviourId} client:{Client.NetworkBehaviourId} " +
+                  $"anim:{(anim != null ? anim.NetworkBehaviourId.ToString() : "null")}");
     }
 
     public void Simulate(InputPayload payload)

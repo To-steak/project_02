@@ -3,6 +3,7 @@ using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityChan;
+using Unity.Netcode;
 
 namespace PlayerAPI
 {

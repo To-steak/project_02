@@ -2816,6 +2816,7 @@ GameObject:
   - component: {fileID: 6994583281908749333}
   - component: {fileID: 1634119094165126537}
   - component: {fileID: 8005297123998042264}
+  - component: {fileID: 8981090438817471490}
   m_Layer: 0
   m_Name: Player Variant
   m_TagString: Untagged
@@ -2877,7 +2878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2724382985
+  GlobalObjectIdHash: 1869363793
   InScenePlacedSourceGlobalObjectIdHash: 1228119792
   DeferredDespawnTick: 0
   Ownership: 1
@@ -3073,6 +3074,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAPI.PlayerCamera
   _lookPos: {fileID: 4223344401908020589}
   _aimTarget: {fileID: 7182187722142815896}
+--- !u!114 &8981090438817471490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3352041741525735007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 838fa78ad1b4ec84bb4879cd3c129a8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::PlayerAPI.PlayerVisual
+  _visual: {fileID: 9031901744525352242}
+  _snapDistance: 2
 --- !u!1 &3371726832865955048
 GameObject:
   m_ObjectHideFlags: 0
@@ -8632,12 +8647,11 @@ GameObject:
   m_Component:
   - component: {fileID: 9031901744525352242}
   - component: {fileID: 1668923154245640106}
-  - component: {fileID: 8484388241333897775}
   - component: {fileID: 7162084986096518288}
   - component: {fileID: 3900064481986518821}
   - component: {fileID: 7277609601830592212}
+  - component: {fileID: 8484388241333897775}
   - component: {fileID: 5194364054784885374}
-  - component: {fileID: 4850879234674360969}
   m_Layer: 0
   m_Name: Player Visual
   m_TagString: Untagged
@@ -8687,19 +8701,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8484388241333897775
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9186813641752509766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8f15112dcd0bf94cae33eb7b981212a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimations
-  _animator: {fileID: 7162084986096518288}
 --- !u!114 &7162084986096518288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8863,6 +8864,39 @@ MonoBehaviour:
   - {fileID: 6188769246672751589}
   - {fileID: 390849723917235146}
   - {fileID: 3381999541569343936}
+--- !u!114 &8484388241333897775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9186813641752509766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8f15112dcd0bf94cae33eb7b981212a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimations
+  m_faceStateNames:
+  - angry
+  - confuse
+  - damaged
+  - default
+  - eye_close
+  - mth_a
+  - mth_e
+  - mth_i
+  - mth_L
+  - mth_o
+  - mth_R
+  - mth_u
+  - relux
+  - sad
+  - scold
+  - smile
+  - smile2
+  - strain
+  - surprise
+  m_defaultFaceAnimationIndex: 3
 --- !u!114 &5194364054784885374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8879,19 +8913,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 1246772154157894839}
     m_Active: 1
   m_Effectors: []
---- !u!114 &4850879234674360969
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9186813641752509766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 838fa78ad1b4ec84bb4879cd3c129a8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Player::VisualInterpolator
-  _snapDistance: 1
 --- !u!1 &9220857500457348907
 GameObject:
   m_ObjectHideFlags: 0
