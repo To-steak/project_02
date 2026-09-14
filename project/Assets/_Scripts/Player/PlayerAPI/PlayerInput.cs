@@ -28,6 +28,7 @@ namespace PlayerAPI
             _action.Battle.Look.canceled += OnLook;
 
             _action.Battle.Jump.performed += OnJump;
+            _action.Battle.Jump.canceled += OnJump;
 
             _action.Battle.Run.performed += OnRun;
             _action.Battle.Run.canceled += OnRun;
@@ -44,6 +45,7 @@ namespace PlayerAPI
             _action.Battle.Look.canceled -= OnLook;
 
             _action.Battle.Jump.performed -= OnJump;
+            _action.Battle.Jump.canceled -= OnJump;
 
             _action.Battle.Run.performed -= OnRun;
             _action.Battle.Run.canceled -= OnRun;
@@ -57,7 +59,7 @@ namespace PlayerAPI
 
         private void OnJump(InputAction.CallbackContext context)
         {
-            Jump = true;
+            Jump = context.performed;
         }
 
         private void OnLook(InputAction.CallbackContext context)
@@ -82,7 +84,6 @@ namespace PlayerAPI
                 Yaw = yaw
             };
 
-            Jump = false;
             return payload;
         }
 
@@ -90,6 +91,7 @@ namespace PlayerAPI
         {
             Move = payload.Move;
             Run = payload.Run;
+            Jump = payload.Jump;
         }
     }
 }

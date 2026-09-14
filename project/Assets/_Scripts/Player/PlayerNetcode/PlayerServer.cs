@@ -24,7 +24,6 @@ namespace PlayerNetcode
             {
                 _controller.Event.OnAnimationCallback += HandleAnimationCallback;
                 _controller.Event.OnAnimationCommit += HandleAnimationCommit;
-                // _controller.Event.OnJumpExecute += HandleJumpRequest;
             }
         }
 
@@ -34,7 +33,6 @@ namespace PlayerNetcode
             {
                 _controller.Event.OnAnimationCallback -= HandleAnimationCallback;
                 _controller.Event.OnAnimationCommit -= HandleAnimationCommit;
-                // _controller.Event.OnJumpExecute -= HandleJumpRequest;
             }
         }
 
@@ -50,7 +48,6 @@ namespace PlayerNetcode
                 _controller.ApplyPitch(payload.Pitch);
                 _controller.Locomotion.ApplyYaw(payload.Yaw);
 
-                // PlayerServer.FixedUpdate, Simulate 앞
                 if (payload.Jump && _controller.Locomotion.IsGrounded && !_jumping)
                 {
                     _jumping = true;
