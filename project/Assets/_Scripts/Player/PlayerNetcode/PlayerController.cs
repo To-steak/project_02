@@ -6,20 +6,18 @@ using Unity.Netcode.Components;
 
 public class PlayerController : NetworkBehaviour
 {
-    public PlayerSettingSO SettingSO;
+    [SerializeField] internal PlayerSettingSO SettingSO;
+    internal PlayerInput Input;
+    internal PlayerAnimation Animation;
+    internal PlayerLocomotion Locomotion;
+    internal PlayerCamera Camera;
+    internal PlayerVisual Visual;
+    internal PlayerEvent Event;
+    internal PlayerServer Server;
+    internal PlayerClient Client;
+    internal readonly NetworkVariable<float> AimPitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    [HideInInspector] public PlayerInput Input;
-    [HideInInspector] public PlayerAnimation Animation;
-    [HideInInspector] public PlayerLocomotion Locomotion;
-    [HideInInspector] public PlayerCamera Camera;
-    [HideInInspector] public PlayerVisual Visual;
-    public PlayerEvent Event;
-
-    [HideInInspector] public PlayerServer Server;
-    [HideInInspector] public PlayerClient Client;
-    [HideInInspector] public NetworkTransform NetTransform;
-
-    public readonly NetworkVariable<float> AimPitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    NetworkTransform NetTransform;
 
     void Awake()
     {
@@ -37,7 +35,7 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Input.Initialize(Event);
+        Input.Initialize();
         Animation.Initialize(Event);
         Locomotion.Initialize();
     }
@@ -58,7 +56,7 @@ public class PlayerController : NetworkBehaviour
 
         Locomotion.CheckGrounded(SettingSO.GroundCheckRadius, SettingSO.GroundLayer);
         Locomotion.ApplyGravity(SettingSO.GravityValue);
-        
+
         float speed = payload.Move == Vector3.zero ? 0f : (payload.Run ? SettingSO.RunSpeed : SettingSO.WalkSpeed);
         Locomotion.Move(payload.Move, speed, payload.Yaw);
     }

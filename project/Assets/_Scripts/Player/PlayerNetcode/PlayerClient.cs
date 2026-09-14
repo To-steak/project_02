@@ -21,7 +21,6 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.Event.OnJump += HandleJump;
                 _controller.Input.ActiveInputs();
                 _controller.Camera.ActiveCamera();
                 _controller.Visual.ActiveVisual();
@@ -35,7 +34,6 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.Event.OnJump -= HandleJump;
                 _controller.Input.InactiveInputs();
                 _controller.Visual.InactiveVisual();
                 CameraManager.Instance.ClearFollowTarget();
@@ -94,19 +92,6 @@ namespace PlayerNetcode
                 _controller.Visual.Interpolate();
             }
         }
-        
-        [Rpc(SendTo.Server)]
-        private void JumpRPC()
-        {
-            _controller.Event.RaiseJumpExecute();
-        }
-
-        private void HandleJump()
-        {
-            _controller.Animation.PlayJump();
-            JumpRPC();
-        }
-
 
         [Rpc(SendTo.Owner)]
         public void CreateStateRPC(StatePayload payload)
@@ -117,7 +102,7 @@ namespace PlayerNetcode
             if (Vector3.Distance(predicted.Position, payload.Position) < 0.1f) return;
 
             _reconcileCount++;
-            
+
             _controller.Locomotion.RestoreState(payload.Position, payload.VelocityY);
 
             for (int t = payload.Tick + 1; t < _tick; t++)

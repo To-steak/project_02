@@ -8,14 +8,13 @@ namespace PlayerAPI
         public Vector3 Move { get; private set; }
         public Vector2 Look { get; private set; }
         public bool Run { get; private set; }
+        public bool Jump { get; private set; }
 
         PlayerAction _action;
-        PlayerEvent _event;
 
-        public void Initialize(PlayerEvent playerEvent)
+        public void Initialize()
         {
             _action = new PlayerAction();
-            _event = playerEvent;
         }
 
         public void ActiveInputs()
@@ -58,7 +57,7 @@ namespace PlayerAPI
 
         private void OnJump(InputAction.CallbackContext context)
         {
-            _event.RaiseJump();
+            Jump = true;
         }
 
         private void OnLook(InputAction.CallbackContext context)
@@ -78,10 +77,12 @@ namespace PlayerAPI
                 Tick = tick,
                 Move = Move,
                 Run = Run,
+                Jump = Jump,
                 Pitch = pitch,
                 Yaw = yaw
             };
 
+            Jump = false;
             return payload;
         }
 

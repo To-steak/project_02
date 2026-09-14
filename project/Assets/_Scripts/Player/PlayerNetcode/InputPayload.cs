@@ -6,6 +6,7 @@ public struct InputPayload : INetworkSerializable
     public int Tick;
     public Vector3 Move;
     public bool Run;
+    public bool Jump;
     public float Pitch;
     public float Yaw;
 
@@ -14,6 +15,7 @@ public struct InputPayload : INetworkSerializable
         serializer.SerializeValue(ref Tick);
         serializer.SerializeValue(ref Move);
         serializer.SerializeValue(ref Run);
+        serializer.SerializeValue(ref Jump);
         serializer.SerializeValue(ref Pitch);
         serializer.SerializeValue(ref Yaw);
     }

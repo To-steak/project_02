@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class AnimationCommit : StateMachineBehaviour
 {
+    [SerializeField] private AnimationID _id;
     [Range(0, 1)] public float[] commitTimes;
 
     private bool[] _isTriggered;
     private IAnimationEventReceiver _receiver;
-    private AnimationID _id;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {

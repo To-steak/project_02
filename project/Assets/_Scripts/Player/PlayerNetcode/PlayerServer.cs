@@ -10,6 +10,7 @@ namespace PlayerNetcode
         readonly SortedDictionary<int, InputPayload> _queue = new();
         int _lastTick = -1;
         int _emptyTicks;
+        bool _jumping;
         const int NO_INPUT_THRESHOLD = 5;
 
         void Awake()
@@ -23,7 +24,7 @@ namespace PlayerNetcode
             {
                 _controller.Event.OnAnimationCallback += HandleAnimationCallback;
                 _controller.Event.OnAnimationCommit += HandleAnimationCommit;
-                _controller.Event.OnJumpExecute += HandleJumpRequest;
+                // _controller.Event.OnJumpExecute += HandleJumpRequest;
             }
         }
 
@@ -33,7 +34,7 @@ namespace PlayerNetcode
             {
                 _controller.Event.OnAnimationCallback -= HandleAnimationCallback;
                 _controller.Event.OnAnimationCommit -= HandleAnimationCommit;
-                _controller.Event.OnJumpExecute -= HandleJumpRequest;
+                // _controller.Event.OnJumpExecute -= HandleJumpRequest;
             }
         }
 
@@ -48,6 +49,13 @@ namespace PlayerNetcode
 
                 _controller.ApplyPitch(payload.Pitch);
                 _controller.Locomotion.ApplyYaw(payload.Yaw);
+
+                // PlayerServer.FixedUpdate, Simulate 앞
+                if (payload.Jump && _controller.Locomotion.IsGrounded && !_jumping)
+                {
+                    _jumping = true;
+                    _controller.Animation.PlayJump();
+                }
 
                 _controller.Simulate(payload);
 
@@ -116,7 +124,12 @@ namespace PlayerNetcode
 
         void HandleAnimationCallback(AnimationID id)
         {
-            // Not Imp
+            switch (id)
+            {
+                case AnimationID.Jump:
+                    _jumping = false;
+                    break;
+            }
         }
     }
 }
