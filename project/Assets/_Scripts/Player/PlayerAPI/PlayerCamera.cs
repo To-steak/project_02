@@ -5,7 +5,8 @@ namespace PlayerAPI
 {
     public class PlayerCamera : MonoBehaviour
     {
-        public float LookPitch { get; private set; }
+        public float Pitch { get; private set; }
+        public float Yaw { get; private set; }
 
         [SerializeField] private Transform _lookPos;
         [SerializeField] private Transform _aimTarget;
@@ -17,13 +18,18 @@ namespace PlayerAPI
             CameraManager.Instance.SetFollowTarget(_lookPos);
         }
 
-        public void RotateCamera(float lookY, float speed, float min, float max)
+        public void RotatePitch(float lookY, float speed, float min, float max)
         {
-            LookPitch = Mathf.Clamp(LookPitch - lookY * speed, min, max);
-            _lookPos.localRotation = Quaternion.Euler(LookPitch, 0f, 0f);
+            Pitch = Mathf.Clamp(Pitch - lookY * speed, min, max);
+            _lookPos.localRotation = Quaternion.Euler(Pitch, 0f, 0f);
         }
 
-        public void SetAimTargetFromPitch(float pitch)
+        public void RotateYaw(float lookX, float speed)
+        {
+            Yaw = Mathf.Repeat(Yaw + lookX * speed, 360f);            
+        }
+
+        public void ApplyPitch(float pitch)
         {
             Quaternion rotation = Quaternion.Euler(pitch, 0f, 0f);
             Vector3 direction = transform.rotation * rotation * Vector3.forward;

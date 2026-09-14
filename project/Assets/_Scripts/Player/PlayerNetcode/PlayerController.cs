@@ -71,13 +71,17 @@ public class PlayerController : NetworkBehaviour
 
         Locomotion.CheckGrounded(SettingSO.GroundCheckRadius, SettingSO.GroundLayer);
         Locomotion.ApplyGravity(SettingSO.GravityValue);
-        Locomotion.Move(payload.Move, GetMoveSpeed(payload));
-        Locomotion.Rotate(payload.Look.x, SettingSO.RotationSpeed);
+        Locomotion.Move(payload.Move, GetMoveSpeed(payload), payload.Yaw);
     }
 
     private float GetMoveSpeed(InputPayload input)
     {
         if (input.Move == Vector3.zero) return 0f;
         return input.Run ? SettingSO.RunSpeed : SettingSO.WalkSpeed;
+    }
+    
+    public void ApplyPitch(float pitch)
+    {
+        AimPitch.Value = Mathf.Clamp(pitch, SettingSO.MinPitch, SettingSO.MaxPitch);
     }
 }

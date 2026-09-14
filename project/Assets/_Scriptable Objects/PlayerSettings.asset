@@ -20,7 +20,7 @@ MonoBehaviour:
   GroundLayer:
     serializedVersion: 2
     m_Bits: 64
-  RotationSpeed: 15
-  PitchSpeed: 0.7
+  RotationSpeed: 0.35
+  PitchSpeed: 0.35
   MinPitch: -40
   MaxPitch: 40

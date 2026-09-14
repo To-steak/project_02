@@ -49,14 +49,17 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.Camera.RotateCamera(_controller.Input.Look.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
-                _controller.Camera.SetAimTargetFromPitch(_controller.Camera.LookPitch);
+                _controller.Camera.RotatePitch(_controller.Input.Look.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
+                _controller.Camera.RotateYaw(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
+
+                _controller.Locomotion.ApplyYaw(_controller.Camera.Yaw);
+                _controller.Camera.ApplyPitch(_controller.Camera.Pitch);
 
                 MeasureDelay();
             }
             else
             {
-                _controller.Camera.SetAimTargetFromPitch(_controller.AimPitch.Value);
+                _controller.Camera.ApplyPitch(_controller.AimPitch.Value);
             }
         }
 
@@ -65,7 +68,7 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                var payload = _controller.Input.Capture(_tick, _controller.Camera.LookPitch);
+                var payload = _controller.Input.Capture(_tick, _controller.Camera.Pitch, _controller.Camera.Yaw);
                 _inputHistory[_tick % BUFFER] = payload;
 
                 _controller.Server.SubmitInputRPC(payload);
@@ -75,7 +78,6 @@ namespace PlayerNetcode
                 {
                     Tick = _tick,
                     Position = transform.position,
-                    RotationY = transform.eulerAngles.y,
                     VelocityY = _controller.Locomotion.VelocityY,
                 };
 
@@ -118,7 +120,8 @@ namespace PlayerNetcode
 
             Debug.LogWarning($"reconcile at tick {payload.Tick}");
 
-            _controller.Locomotion.RestoreState(payload.Position, payload.RotationY, payload.VelocityY);
+            // _controller.Locomotion.RestoreState(payload.Position, payload.RotationY, payload.VelocityY);
+            _controller.Locomotion.RestoreState(payload.Position, payload.VelocityY);
 
             for (int t = payload.Tick + 1; t < _tick; t++)
             {
@@ -127,7 +130,6 @@ namespace PlayerNetcode
                 {
                     Tick = t,
                     Position = transform.position,
-                    RotationY = transform.eulerAngles.y,
                     VelocityY = _controller.Locomotion.VelocityY,
                 };
 

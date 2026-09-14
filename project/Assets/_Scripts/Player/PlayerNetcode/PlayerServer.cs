@@ -40,7 +40,8 @@ namespace PlayerNetcode
             {
                 if (!TryDequeueInput(out var payload)) break;
 
-                _controller.AimPitch.Value = Mathf.Clamp(payload.Pitch, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
+                _controller.ApplyPitch(payload.Pitch);
+                _controller.Locomotion.ApplyYaw(payload.Yaw);
                 _controller.Simulate(payload);
                 _state?.Tick();
 
@@ -48,7 +49,6 @@ namespace PlayerNetcode
                 {
                     Tick = payload.Tick,
                     Position = transform.position,
-                    RotationY = transform.eulerAngles.y,
                     VelocityY = _controller.Locomotion.VelocityY,
                 });
 
