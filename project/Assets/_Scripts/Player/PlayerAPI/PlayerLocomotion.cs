@@ -39,6 +39,11 @@ namespace PlayerAPI
             _velocity.y += gravity * Time.fixedDeltaTime;
         }
 
+        public void ApplyYaw(float yaw)
+        {
+            Yaw = yaw;
+            transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+        }
         public void Jump(float power)
         {
             if (!IsGrounded)
@@ -55,12 +60,6 @@ namespace PlayerAPI
             transform.position = position;
             _character.enabled = true;
             _velocity.y = velocityY;
-        }
-
-        public void ApplyYaw(float yaw)
-        {
-            Yaw = yaw;
-            transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         }
     }
 }

@@ -7,7 +7,6 @@ namespace PlayerAPI
         [SerializeField] private Transform _visual;
 
         Vector3 _prevPos, _currPos;
-        Quaternion _prevRot, _currRot;
         const float SNAP_DISTANCE = 1f;
 
         public void ActiveVisual()
@@ -15,7 +14,6 @@ namespace PlayerAPI
             if (_visual == null) return;
 
             _prevPos = _currPos = transform.position;
-            _prevRot = _currRot = transform.rotation;
         }
 
         public void InactiveVisual()
@@ -31,15 +29,12 @@ namespace PlayerAPI
         public void Record()
         {
             _prevPos = _currPos;
-            _prevRot = _currRot;
 
             _currPos = transform.position;
-            _currRot = transform.rotation;
 
             if (Vector3.Distance(_prevPos, _currPos) > SNAP_DISTANCE)
             {
                 _prevPos = _currPos;
-                _prevRot = _currRot;
             }
         }
 
@@ -47,10 +42,7 @@ namespace PlayerAPI
         public void Interpolate()
         {
             float alpha = Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
-
-            _visual.SetPositionAndRotation(
-                Vector3.Lerp(_prevPos, _currPos, alpha),
-                Quaternion.Slerp(_prevRot, _currRot, alpha));
+            _visual.position = Vector3.Lerp(_prevPos, _currPos, alpha);
         }
     }
 }
