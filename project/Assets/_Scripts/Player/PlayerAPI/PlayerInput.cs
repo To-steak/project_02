@@ -1,3 +1,4 @@
+using Manager;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,7 @@ namespace PlayerAPI
         public Vector2 Look { get; private set; }
         public bool Run { get; private set; }
         public bool Jump { get; private set; }
+        public bool Aim { get; private set; }
 
         PlayerAction _action;
 
@@ -32,6 +34,9 @@ namespace PlayerAPI
 
             _action.Battle.Run.performed += OnRun;
             _action.Battle.Run.canceled += OnRun;
+
+            _action.Battle.Aim.performed += OnAim;
+            _action.Battle.Aim.canceled += OnAim;
         }
 
         public void InactiveInputs()
@@ -49,6 +54,9 @@ namespace PlayerAPI
 
             _action.Battle.Run.performed -= OnRun;
             _action.Battle.Run.canceled -= OnRun;
+
+            _action.Battle.Aim.performed -= OnAim;
+            _action.Battle.Aim.canceled -= OnAim;
         }
 
         private void OnMove(InputAction.CallbackContext context)
@@ -72,14 +80,20 @@ namespace PlayerAPI
             Run = context.performed;
         }
 
+        private void OnAim(InputAction.CallbackContext context)
+        {
+            Aim = context.performed;
+        }
+
         public InputPayload Capture(int tick, float pitch, float yaw)
         {
-            var payload = new InputPayload
+            InputPayload payload = new InputPayload
             {
                 Tick = tick,
                 Move = Move,
                 Run = Run,
                 Jump = Jump,
+                Aim = Aim,
                 Pitch = pitch,
                 Yaw = yaw
             };
@@ -92,6 +106,7 @@ namespace PlayerAPI
             Move = payload.Move;
             Run = payload.Run;
             Jump = payload.Jump;
+            Aim = payload.Aim;
         }
     }
 }

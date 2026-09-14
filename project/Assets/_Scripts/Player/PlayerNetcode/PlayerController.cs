@@ -15,7 +15,7 @@ public class PlayerController : NetworkBehaviour
     internal PlayerEvent Event;
     internal PlayerServer Server;
     internal PlayerClient Client;
-    internal readonly NetworkVariable<float> AimPitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     NetworkTransform NetTransform;
 
@@ -63,6 +63,6 @@ public class PlayerController : NetworkBehaviour
 
     public void ApplyPitch(float pitch)
     {
-        AimPitch.Value = Mathf.Clamp(pitch, SettingSO.MinPitch, SettingSO.MaxPitch);
+        Pitch.Value = Mathf.Clamp(pitch, SettingSO.MinPitch, SettingSO.MaxPitch);
     }
 }

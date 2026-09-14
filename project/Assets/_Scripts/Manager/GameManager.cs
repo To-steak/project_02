@@ -27,8 +27,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,
-                               NetworkManager.ConnectionApprovalResponse response)
+    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         response.Approved = true;
         response.CreatePlayerObject = true;
@@ -65,10 +64,5 @@ public class GameManager : MonoBehaviour
     public void OpenServer()
     {
         NetworkManager.Singleton.StartServer();
-    }
-
-    public void StartHost()
-    {
-        NetworkManager.Singleton.StartHost();
     }
 }

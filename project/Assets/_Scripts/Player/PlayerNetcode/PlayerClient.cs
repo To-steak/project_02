@@ -36,7 +36,7 @@ namespace PlayerNetcode
             {
                 _controller.Input.InactiveInputs();
                 _controller.Visual.InactiveVisual();
-                CameraManager.Instance.ClearFollowTarget();
+                CameraManager.Instance.ReleaseTarget();
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
@@ -51,13 +51,13 @@ namespace PlayerNetcode
                 _controller.Camera.RotateYaw(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
 
                 _controller.Locomotion.ApplyYaw(_controller.Camera.Yaw);
-                _controller.Camera.ApplyPitch(_controller.Camera.Pitch);
+                _controller.Camera.ApplyAim(_controller.Input.Aim);
 
                 MeasureDelay();
             }
             else
             {
-                _controller.Camera.ApplyPitch(_controller.AimPitch.Value);
+                _controller.Camera.ApplyPitch(_controller.Pitch.Value);
             }
         }
 
