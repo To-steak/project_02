@@ -436,7 +436,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: f631b60d13e56884888ff8352a0e78a5, type: 2}
+  m_Motion: {fileID: 7400020, guid: f320efa63ce12874a9ad50add869c0b5, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1289,6 +1289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3753a606fde40445aec465f6fe7e8b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimationCommit
+  id: 1
   commitTimes:
   - 0.43
 --- !u!114 &8004174054899883798
@@ -1298,11 +1299,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84ce6fecf3895e542a0a7411f5fd0706, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimationCallback
+  id: 1
   finishTime: 0.5
 --- !u!1102 &8048771382514322631
 AnimatorState:
@@ -1325,7 +1327,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c22e3bb28c527b84fa2ea1bb8ae06447, type: 2}
+  m_Motion: {fileID: 7400022, guid: f320efa63ce12874a9ad50add869c0b5, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1375,7 +1377,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: a13ca66420fdaec4a9fda14177f509f8, type: 2}
+  m_Motion: {fileID: 7400024, guid: f320efa63ce12874a9ad50add869c0b5, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

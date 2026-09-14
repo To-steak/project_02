@@ -1,15 +1,12 @@
 using Unity.Netcode;
-using PlayerState;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace PlayerNetcode
 {
     public class PlayerServer : NetworkBehaviour
     {
         PlayerController _controller;
-        BaseState _state;
         readonly SortedDictionary<int, InputPayload> _queue = new();
         int _lastTick = -1;
         int _emptyTicks;
@@ -24,10 +21,19 @@ namespace PlayerNetcode
         {
             if (IsServer)
             {
-                _state = _controller.Idle;
-                _controller.Event.OnAnimationCallback += () => _state?.OnAnimationCallback();
-                _controller.Event.OnAnimationCommit += () => _state?.OnAnimationCommit();
-                _controller.Event.OnJumpExecute += () => _state?.OnJump();
+                _controller.Event.OnAnimationCallback += HandleAnimationCallback;
+                _controller.Event.OnAnimationCommit += HandleAnimationCommit;
+                _controller.Event.OnJumpExecute += HandleJumpRequest;
+            }
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (IsServer)
+            {
+                _controller.Event.OnAnimationCallback -= HandleAnimationCallback;
+                _controller.Event.OnAnimationCommit -= HandleAnimationCommit;
+                _controller.Event.OnJumpExecute -= HandleJumpRequest;
             }
         }
 
@@ -42,8 +48,10 @@ namespace PlayerNetcode
 
                 _controller.ApplyPitch(payload.Pitch);
                 _controller.Locomotion.ApplyYaw(payload.Yaw);
+
                 _controller.Simulate(payload);
-                _state?.Tick();
+
+                _controller.Animation.PlayMove(payload.Move, payload.Run);
 
                 _controller.Client.CreateStateRPC(new StatePayload
                 {
@@ -66,13 +74,6 @@ namespace PlayerNetcode
             }
         }
 
-        public void ChangeState(BaseState state)
-        {
-            _state.Exit();
-            _state = state;
-            _state.Enter();
-        }
-
         [Rpc(SendTo.Server)]
         public void SubmitInputRPC(InputPayload p)
         {
@@ -93,6 +94,29 @@ namespace PlayerNetcode
             _queue.Remove(first);
             _lastTick = first;
             return true;
+        }
+
+        void HandleJumpRequest()
+        {
+            if (_controller.Locomotion.IsGrounded)
+            {
+                _controller.Animation.PlayJump();
+            }
+        }
+
+        void HandleAnimationCommit(AnimationID id)
+        {
+            switch (id)
+            {
+                case AnimationID.Jump:
+                    _controller.Locomotion.Jump(_controller.SettingSO.JumpPower);
+                    break;
+            }
+        }
+
+        void HandleAnimationCallback(AnimationID id)
+        {
+            // Not Imp
         }
     }
 }

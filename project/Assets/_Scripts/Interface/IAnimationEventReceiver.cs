@@ -1,5 +1,5 @@
 public interface IAnimationEventReceiver
 {
-    void NotifyAnimationCallback();
-    void NotifyAnimationCommit();
+    void NotifyAnimationCallback(AnimationID id);
+    void NotifyAnimationCommit(AnimationID id);
 }

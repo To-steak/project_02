@@ -44,6 +44,7 @@ namespace PlayerAPI
             Yaw = yaw;
             transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         }
+        
         public void Jump(float power)
         {
             if (!IsGrounded)

@@ -6,6 +6,7 @@ public class AnimationCallback : StateMachineBehaviour
 
     private IAnimationEventReceiver _receiver;
     private bool _isTriggered;
+    private AnimationID _id;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -22,7 +23,7 @@ public class AnimationCallback : StateMachineBehaviour
         if (!_isTriggered && stateInfo.normalizedTime >= finishTime)
         {
             _isTriggered = true;
-            _receiver?.NotifyAnimationCallback();
+            _receiver?.NotifyAnimationCallback(_id);
         }
     }
 }

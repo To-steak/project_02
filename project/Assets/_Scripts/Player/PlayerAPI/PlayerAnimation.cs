@@ -3,7 +3,6 @@ using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityChan;
-using Unity.Netcode;
 
 namespace PlayerAPI
 {
@@ -30,19 +29,10 @@ namespace PlayerAPI
             m_faceStateNameSet = new HashSet<string>(m_faceStateNames);
         }
 
-        public void PlayIdle()
+        public void PlayMove(Vector3 move, bool run)
         {
-            _animator.Animator.SetFloat(Speed, IDLE);
-        }
-
-        public void PlayWalk()
-        {
-            _animator.Animator.SetFloat(Speed, WALK);
-        }
-
-        public void PlayRun()
-        {
-            _animator.Animator.SetFloat(Speed, RUN);
+            float speed = move == Vector3.zero ? IDLE : (run ? RUN : WALK);
+            _animator.Animator.SetFloat(Speed, speed);
         }
 
         public void PlayJump()
@@ -50,8 +40,8 @@ namespace PlayerAPI
             _animator.SetTrigger("Jump");
         }
 
-        public void NotifyAnimationCallback() => _event.RaiseAnimationCallback();
-        public void NotifyAnimationCommit() => _event.RaiseAnimationCommit();
+        public void NotifyAnimationCallback(AnimationID id) => _event.RaiseAnimationCallback(id);
+        public void NotifyAnimationCommit(AnimationID id) => _event.RaiseAnimationCommit(id);
 
         private void OnCallChangeFace(string str)
         {

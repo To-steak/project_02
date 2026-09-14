@@ -117,10 +117,7 @@ namespace PlayerNetcode
             if (Vector3.Distance(predicted.Position, payload.Position) < 0.1f) return;
 
             _reconcileCount++;
-
-            Debug.LogWarning($"reconcile at tick {payload.Tick}");
-
-            // _controller.Locomotion.RestoreState(payload.Position, payload.RotationY, payload.VelocityY);
+            
             _controller.Locomotion.RestoreState(payload.Position, payload.VelocityY);
 
             for (int t = payload.Tick + 1; t < _tick; t++)

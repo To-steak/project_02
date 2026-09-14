@@ -2,17 +2,11 @@ using Unity.Netcode;
 using UnityEngine;
 using PlayerAPI;
 using PlayerNetcode;
-using PlayerState;
 using Unity.Netcode.Components;
 
 public class PlayerController : NetworkBehaviour
 {
     public PlayerSettingSO SettingSO;
-
-    public PlayerIdleState Idle;
-    public PlayerWalkState Walk;
-    public PlayerRunState Run;
-    public PlayerJumpState Jump;
 
     [HideInInspector] public PlayerInput Input;
     [HideInInspector] public PlayerAnimation Animation;
@@ -36,11 +30,6 @@ public class PlayerController : NetworkBehaviour
         Visual = GetComponent<PlayerVisual>();
         Event = new PlayerEvent();
 
-        Idle = new PlayerIdleState(this);
-        Walk = new PlayerWalkState(this);
-        Run = new PlayerRunState(this);
-        Jump = new PlayerJumpState(this);
-
         Server = GetComponent<PlayerServer>();
         Client = GetComponent<PlayerClient>();
         NetTransform = GetComponent<NetworkTransform>();
@@ -59,10 +48,8 @@ public class PlayerController : NetworkBehaviour
         Client.enabled = IsClient;
         NetTransform.enabled = !(IsOwner && !IsServer);
 
-        var anim = Animation.GetComponent<NetworkAnimator>();
-        Debug.Log($"[{NetworkManager.Singleton.LocalClientId}] obj:{NetworkObjectId} " +
-                  $"server:{Server.NetworkBehaviourId} client:{Client.NetworkBehaviourId} " +
-                  $"anim:{(anim != null ? anim.NetworkBehaviourId.ToString() : "null")}");
+        NetworkAnimator animator = Animation.GetComponent<NetworkAnimator>();
+        Debug.Log($"[{NetworkManager.Singleton.LocalClientId}] obj:{NetworkObjectId} " + $"server:{Server.NetworkBehaviourId} client:{Client.NetworkBehaviourId} " + $"anim:{(animator != null ? animator.NetworkBehaviourId.ToString() : "null")}");
     }
 
     public void Simulate(InputPayload payload)
@@ -71,15 +58,11 @@ public class PlayerController : NetworkBehaviour
 
         Locomotion.CheckGrounded(SettingSO.GroundCheckRadius, SettingSO.GroundLayer);
         Locomotion.ApplyGravity(SettingSO.GravityValue);
-        Locomotion.Move(payload.Move, GetMoveSpeed(payload), payload.Yaw);
+        
+        float speed = payload.Move == Vector3.zero ? 0f : (payload.Run ? SettingSO.RunSpeed : SettingSO.WalkSpeed);
+        Locomotion.Move(payload.Move, speed, payload.Yaw);
     }
 
-    private float GetMoveSpeed(InputPayload input)
-    {
-        if (input.Move == Vector3.zero) return 0f;
-        return input.Run ? SettingSO.RunSpeed : SettingSO.WalkSpeed;
-    }
-    
     public void ApplyPitch(float pitch)
     {
         AimPitch.Value = Mathf.Clamp(pitch, SettingSO.MinPitch, SettingSO.MaxPitch);

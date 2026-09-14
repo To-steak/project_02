@@ -71,14 +71,19 @@ namespace PlayerAPI
             Run = context.performed;
         }
 
-        public InputPayload Capture(int tick, float pitch, float yaw) => new InputPayload
+        public InputPayload Capture(int tick, float pitch, float yaw)
         {
-            Tick = tick,
-            Move = Move,
-            Run = Run,
-            Pitch = pitch,
-            Yaw = yaw
-        };
+            var payload = new InputPayload
+            {
+                Tick = tick,
+                Move = Move,
+                Run = Run,
+                Pitch = pitch,
+                Yaw = yaw
+            };
+
+            return payload;
+        }
 
         public void Apply(InputPayload payload)
         {

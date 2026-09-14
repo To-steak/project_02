@@ -5,11 +5,11 @@ namespace PlayerAPI
 {
     public class PlayerEvent
     {
-        public event Action OnAnimationCallback;
-        public event Action OnAnimationCommit;
+        public event Action<AnimationID> OnAnimationCallback;
+        public event Action<AnimationID> OnAnimationCommit;
 
-        public void RaiseAnimationCallback() => OnAnimationCallback?.Invoke();
-        public void RaiseAnimationCommit() => OnAnimationCommit?.Invoke();
+        public void RaiseAnimationCallback(AnimationID id) => OnAnimationCallback?.Invoke(id);
+        public void RaiseAnimationCommit(AnimationID id) => OnAnimationCommit?.Invoke(id);
 
         public event Action OnJump;
         public void RaiseJump() => OnJump?.Invoke();

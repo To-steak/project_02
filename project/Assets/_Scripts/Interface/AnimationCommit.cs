@@ -7,6 +7,7 @@ public class AnimationCommit : StateMachineBehaviour
 
     private bool[] _isTriggered;
     private IAnimationEventReceiver _receiver;
+    private AnimationID _id;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -41,7 +42,7 @@ public class AnimationCommit : StateMachineBehaviour
             if (!_isTriggered[i] && stateInfo.normalizedTime >= commitTimes[i])
             {
                 _isTriggered[i] = true;
-                _receiver?.NotifyAnimationCommit();
+                _receiver?.NotifyAnimationCommit(_id);
             }
         }
     }
