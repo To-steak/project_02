@@ -11,6 +11,7 @@ namespace PlayerAPI
         public bool Run { get; private set; }
         public bool Jump { get; private set; }
         public bool Aim { get; private set; }
+        public bool Attack { get; private set; }
 
         PlayerAction _action;
 
@@ -30,13 +31,15 @@ namespace PlayerAPI
             _action.Battle.Look.canceled += OnLook;
 
             _action.Battle.Jump.performed += OnJump;
-            _action.Battle.Jump.canceled += OnJump;
 
             _action.Battle.Run.performed += OnRun;
             _action.Battle.Run.canceled += OnRun;
 
             _action.Battle.Aim.performed += OnAim;
             _action.Battle.Aim.canceled += OnAim;
+
+            _action.Battle.Attack.performed += OnAttack;
+            _action.Battle.Attack.canceled += OnAttack;
         }
 
         public void InactiveInputs()
@@ -50,13 +53,15 @@ namespace PlayerAPI
             _action.Battle.Look.canceled -= OnLook;
 
             _action.Battle.Jump.performed -= OnJump;
-            _action.Battle.Jump.canceled -= OnJump;
 
             _action.Battle.Run.performed -= OnRun;
             _action.Battle.Run.canceled -= OnRun;
 
             _action.Battle.Aim.performed -= OnAim;
             _action.Battle.Aim.canceled -= OnAim;
+
+            _action.Battle.Attack.performed -= OnAttack;
+            _action.Battle.Attack.canceled -= OnAttack;
         }
 
         private void OnMove(InputAction.CallbackContext context)
@@ -67,7 +72,7 @@ namespace PlayerAPI
 
         private void OnJump(InputAction.CallbackContext context)
         {
-            Jump = context.performed;
+            if (context.performed) Jump = true;
         }
 
         private void OnLook(InputAction.CallbackContext context)
@@ -85,6 +90,11 @@ namespace PlayerAPI
             Aim = context.performed;
         }
 
+        private void OnAttack(InputAction.CallbackContext context)
+        {
+            Attack = context.performed;
+        }
+
         public InputPayload Capture(int tick, float pitch, float yaw)
         {
             InputPayload payload = new InputPayload
@@ -93,20 +103,12 @@ namespace PlayerAPI
                 Move = Move,
                 Run = Run,
                 Jump = Jump,
-                Aim = Aim,
                 Pitch = pitch,
                 Yaw = yaw
             };
-
+            
+            Jump = false;
             return payload;
-        }
-
-        public void Apply(InputPayload payload)
-        {
-            Move = payload.Move;
-            Run = payload.Run;
-            Jump = payload.Jump;
-            Aim = payload.Aim;
         }
     }
 }

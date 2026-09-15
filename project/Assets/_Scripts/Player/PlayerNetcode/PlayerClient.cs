@@ -70,7 +70,12 @@ namespace PlayerNetcode
                 _inputHistory[_tick % BUFFER] = payload;
 
                 _controller.Server.SubmitInputRPC(payload);
-                _controller.Simulate(payload);
+
+                if (_controller.Simulate(payload))
+                {
+                    _controller.Animation.PlayJump();
+                }
+                _controller.Animation.PlayMove(payload.Move, payload.Run);
 
                 _stateHistory[_tick % BUFFER] = new StatePayload
                 {
@@ -97,36 +102,39 @@ namespace PlayerNetcode
         public void CreateStateRPC(StatePayload payload)
         {
             var predicted = _stateHistory[payload.Tick % BUFFER];
-            if (predicted.Tick != payload.Tick) return;
-
-            if (Vector3.Distance(predicted.Position, payload.Position) < 0.1f) return;
-
-            _reconcileCount++;
-
-            _controller.Locomotion.RestoreState(payload.Position, payload.VelocityY);
-
-            for (int t = payload.Tick + 1; t < _tick; t++)
+            if (predicted.Tick != payload.Tick)
             {
-                _controller.Simulate(_inputHistory[t % BUFFER]);
-                _stateHistory[t % BUFFER] = new StatePayload
-                {
-                    Tick = t,
-                    Position = transform.position,
-                    VelocityY = _controller.Locomotion.VelocityY,
-                };
-
+                return;
             }
 
-            float error = Vector3.Distance(predicted.Position, payload.Position);
-            Debug.LogWarning($"reconcile at tick {payload.Tick}, error {error:F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
+            if (Vector3.Distance(predicted.Position, payload.Position) >= 0.1f)
+            {
+                DEBUG_RECONCILE++;
+                Vector3 before = _controller.Visual.CaptureVisualPosition();
+                _controller.Locomotion.RestoreState(payload.Position, payload.VelocityY);
+
+                for (int t = payload.Tick + 1; t < _tick; t++)
+                {
+                    _controller.Simulate(_inputHistory[t % BUFFER]);
+                    _stateHistory[t % BUFFER] = new StatePayload
+                    {
+                        Tick = t,
+                        Position = transform.position,
+                        VelocityY = _controller.Locomotion.VelocityY,
+                    };
+
+                }
+                _controller.Visual.AbsorbCorrection(before);
+                Debug.LogWarning($"reconcile at tick {payload.Tick}, error {Vector3.Distance(predicted.Position, payload.Position):F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
+            }
         }
 
         // DEBUG ONLY
-        float _lastDelay;
-        int _reconcileCount;
-        float _moveTime = -1f;
-        Vector3 _moveStartPos;
-        bool _wasMoving;
+        float DEBUG_LAST_DELAY;
+        int DEBUG_RECONCILE;
+        float DEBUG_MOVE_TIEM = -1f;
+        Vector3 DEBUG_MOVE_START_POS;
+        bool DEBUG_WAS_MOVING;
 
         void OnGUI()
         {
@@ -142,8 +150,8 @@ namespace PlayerNetcode
             float xPos = Screen.width - width - paddingRight;
             float fps = 1.0f / Time.unscaledDeltaTime;
 
-            GUI.Label(new Rect(xPos, 10, width, height), $"delay: {_lastDelay:F1}ms", style);
-            GUI.Label(new Rect(xPos, 30, width, height), $"reconcile: {_reconcileCount}", style);
+            GUI.Label(new Rect(xPos, 10, width, height), $"delay: {DEBUG_LAST_DELAY:F1}ms", style);
+            GUI.Label(new Rect(xPos, 30, width, height), $"reconcile: {DEBUG_RECONCILE}", style);
             GUI.Label(new Rect(xPos, 50, width, height), $"tick: {_tick}", style);
             GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
             GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
@@ -153,21 +161,21 @@ namespace PlayerNetcode
         {
             bool moving = _controller.Input.Move != Vector3.zero;
 
-            if (moving && !_wasMoving)
+            if (moving && !DEBUG_WAS_MOVING)
             {
-                _moveTime = Time.realtimeSinceStartup;
-                _moveStartPos = transform.position;
+                DEBUG_MOVE_TIEM = Time.realtimeSinceStartup;
+                DEBUG_MOVE_START_POS = transform.position;
             }
-            _wasMoving = moving;
+            DEBUG_WAS_MOVING = moving;
 
-            if (_moveTime > 0f)
+            if (DEBUG_MOVE_TIEM > 0f)
             {
-                Vector3 d = transform.position - _moveStartPos;
+                Vector3 d = transform.position - DEBUG_MOVE_START_POS;
                 d.y = 0f;
                 if (d.sqrMagnitude > 0.01f * 0.01f)
                 {
-                    _lastDelay = (Time.realtimeSinceStartup - _moveTime) * 1000f;
-                    _moveTime = -1f;
+                    DEBUG_LAST_DELAY = (Time.realtimeSinceStartup - DEBUG_MOVE_TIEM) * 1000f;
+                    DEBUG_MOVE_TIEM = -1f;
                 }
             }
         }

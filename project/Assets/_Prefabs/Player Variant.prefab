@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8706196773244254708
 Transform:
   m_ObjectHideFlags: 0
@@ -2305,7 +2305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8022614242852115615
 Transform:
   m_ObjectHideFlags: 0
@@ -2606,6 +2606,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 59157b56-5036-4107-a6ea-a96985e426af
     m_ActionName: 'Battle/Run[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e455197c-95a6-4bff-9fd4-add738ccba46
+    m_ActionName: 'Battle/Aim[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c1bf9d7c-9dcb-401a-a2bd-375cb463785c
+    m_ActionName: 'Battle/Attack[/Mouse/leftButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Player Control Scheme
   m_DefaultActionMap: Battle
@@ -2703,6 +2711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Player::PlayerAPI.PlayerVisual
   _visual: {fileID: 9031901744525352242}
+  _smoothing: 10
 --- !u!1 &3371726832865955048
 GameObject:
   m_ObjectHideFlags: 0
@@ -3852,7 +3861,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3991320714053880281
 Transform:
   m_ObjectHideFlags: 0
@@ -4015,7 +4024,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2293208674610420221
 Transform:
   m_ObjectHideFlags: 0
@@ -4028,8 +4037,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2301653966375993933}
+  m_Children: []
   m_Father: {fileID: 3957597456606673112}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1719501134210586405
@@ -4339,7 +4347,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1712018936503759265
 Transform:
   m_ObjectHideFlags: 0
@@ -4655,7 +4663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1561157761877215345
 Transform:
   m_ObjectHideFlags: 0
@@ -5017,7 +5025,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1757511485114970890
 Transform:
   m_ObjectHideFlags: 0
@@ -5316,7 +5324,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3286756359043865487
 Transform:
   m_ObjectHideFlags: 0
@@ -5414,37 +5422,6 @@ Transform:
   m_Children:
   - {fileID: 2027190741059508476}
   m_Father: {fileID: 4114000038386810953}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6989273185047223010
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2574472697606877255}
-  m_Layer: 0
-  m_Name: RighttHand_Two_Bone_IK_target
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2574472697606877255
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6989273185047223010}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.6645918, y: 0.22276653, z: -0.25821277, w: 0.6648451}
-  m_LocalPosition: {x: 0.25027266, y: 0.44790617, z: 0.0037084594}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 887299535234921814}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7110630240866706377
 GameObject:
@@ -5723,7 +5700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5336821088759257306
 Transform:
   m_ObjectHideFlags: 0
@@ -5841,7 +5818,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1791741841726752635
 Transform:
   m_ObjectHideFlags: 0
@@ -5959,7 +5936,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &887299535234921814
 Transform:
   m_ObjectHideFlags: 0
@@ -5972,8 +5949,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2574472697606877255}
+  m_Children: []
   m_Father: {fileID: 3957597456606673112}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8984948248652391563
@@ -6207,37 +6183,6 @@ Transform:
   m_Children:
   - {fileID: 9079543327575009214}
   m_Father: {fileID: 7065617826825236159}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7808250440461080390
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2301653966375993933}
-  m_Layer: 0
-  m_Name: LeftHand_Two_Bone_IK_target
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2301653966375993933
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808250440461080390}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.66475344, y: -0.22272134, z: 0.25807324, w: 0.66475284}
-  m_LocalPosition: {x: -0.2502736, y: 0.44790688, z: 0.0037083998}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2293208674610420221}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7854161785254236284
 GameObject:
@@ -7783,7 +7728,7 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     m_Visible: 1
-  - m_Transform: {fileID: 2301653966375993933}
+  - m_Transform: {fileID: 0}
     m_Style:
       shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
       color: {r: 1, g: 0, b: 0, a: 0.5}
@@ -7815,7 +7760,7 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     m_Visible: 1
-  - m_Transform: {fileID: 2301653966375993933}
+  - m_Transform: {fileID: 0}
     m_Style:
       shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
       color: {r: 1, g: 0, b: 0, a: 0.5}
@@ -7831,7 +7776,7 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     m_Visible: 1
-  - m_Transform: {fileID: 2574472697606877255}
+  - m_Transform: {fileID: 0}
     m_Style:
       shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
       color: {r: 1, g: 0, b: 0, a: 0.5}
@@ -7894,7 +7839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6135455272851955806
 Transform:
   m_ObjectHideFlags: 0
@@ -8094,7 +8039,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9031901744525352242}
   - component: {fileID: 1668923154245640106}
-  - component: {fileID: 7162084986096518288}
+  - component: {fileID: 8552094098785501123}
   - component: {fileID: 3900064481986518821}
   - component: {fileID: 7277609601830592212}
   - component: {fileID: 8484388241333897775}
@@ -8146,15 +8091,14 @@ Animator:
   m_AnimatePhysics: 0
   m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
     are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'Character1_RightHand'\n\tTransform 'Character1_LeftShoulder'\n\tTransform
-    'Character1_RightShoulder'\n\tTransform 'Character1_LeftHand'\n\tTransform 'Character1_LeftArm'\n\tTransform
-    'Character1_Neck'\n\tTransform 'Character1_LeftForeArm'\n\tTransform 'Character1_RightArm'\n\tTransform
-    'Character1_Spine2'\n\tTransform 'Character1_RightForeArm'\n\tand more ..."
+    by Humanoid clips.\n\tTransform 'Character1_Neck'\n\tTransform 'Character1_Spine2'\n\tTransform
+    'Character1_Neck'\n\tTransform 'Character1_Spine2'\n\tTransform 'Character1_Neck'\n\tTransform
+    'Character1_Spine2'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7162084986096518288
+--- !u!114 &8552094098785501123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8163,9 +8107,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 9186813641752509766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e36b6dd013da934abe4766dcb4b7b39, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
+  m_EditorClassIdentifier: Player::PlayerNetworkAnimator
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkAnimatorExpanded: 0
   AuthorityMode: 0
@@ -8175,7 +8119,7 @@ MonoBehaviour:
     Layer: 0
     OriginatingState: 448209748
     DestinationState: -549114815
-    TransitionDuration: 0.25
+    TransitionDuration: 0
     TriggerNameHash: 125937960
     TransitionIndex: 1
   - IsCrossFadeExit: 0
@@ -8608,7 +8552,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9168346059068791604, guid: d325bd5ddf177974e8e92bd5c17db2dd, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

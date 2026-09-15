@@ -45,20 +45,21 @@ public class PlayerController : NetworkBehaviour
         Server.enabled = IsServer;
         Client.enabled = IsClient;
         NetTransform.enabled = !(IsOwner && !IsServer);
-
-        NetworkAnimator animator = Animation.GetComponent<NetworkAnimator>();
-        Debug.Log($"[{NetworkManager.Singleton.LocalClientId}] obj:{NetworkObjectId} " + $"server:{Server.NetworkBehaviourId} client:{Client.NetworkBehaviourId} " + $"anim:{(animator != null ? animator.NetworkBehaviourId.ToString() : "null")}");
     }
 
-    public void Simulate(InputPayload payload)
+    public bool Simulate(InputPayload payload)
     {
-        Input.Apply(payload);
-
         Locomotion.CheckGrounded(SettingSO.GroundCheckRadius, SettingSO.GroundLayer);
+
+        bool jumped = payload.Jump && Locomotion.IsGrounded;
+        if (jumped) Locomotion.Jump(SettingSO.JumpPower);
+
         Locomotion.ApplyGravity(SettingSO.GravityValue);
 
         float speed = payload.Move == Vector3.zero ? 0f : (payload.Run ? SettingSO.RunSpeed : SettingSO.WalkSpeed);
         Locomotion.Move(payload.Move, speed, payload.Yaw);
+
+        return jumped;
     }
 
     public void ApplyPitch(float pitch)
