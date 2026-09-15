@@ -13,7 +13,7 @@ namespace Manager
         CinemachineThirdPersonFollow _cmtpf;
         Camera _camera;
         const float MAX_RANGE = 200f;
-        const float MIN_RANGE = 1f;
+        const float MIN_RANGE = 3f;
 
         void Awake()
         {
