@@ -6,7 +6,7 @@ namespace PlayerAPI
 {
     public class PlayerInput : MonoBehaviour
     {
-        public Vector3 Move { get; private set; }
+        public Vector2 Move { get; private set; }
         public Vector2 Look { get; private set; }
         public bool Run { get; private set; }
         public bool Jump { get; private set; }
@@ -66,8 +66,7 @@ namespace PlayerAPI
 
         private void OnMove(InputAction.CallbackContext context)
         {
-            var input = context.ReadValue<Vector2>();
-            Move = new Vector3(input.x, 0f, input.y);
+            Move = context.ReadValue<Vector2>();
         }
 
         private void OnJump(InputAction.CallbackContext context)
@@ -95,7 +94,7 @@ namespace PlayerAPI
             Attack = context.performed;
         }
 
-        public InputPayload Capture(int tick, float pitch, float yaw)
+        public InputPayload Capture(int tick, float yaw)
         {
             InputPayload payload = new InputPayload
             {
@@ -103,10 +102,9 @@ namespace PlayerAPI
                 Move = Move,
                 Run = Run,
                 Jump = Jump,
-                Pitch = pitch,
                 Yaw = yaw
             };
-            
+
             Jump = false;
             return payload;
         }

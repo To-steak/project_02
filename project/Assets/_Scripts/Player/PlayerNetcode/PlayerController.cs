@@ -15,7 +15,7 @@ public class PlayerController : NetworkBehaviour
     internal PlayerEvent Event;
     internal PlayerServer Server;
     internal PlayerClient Client;
-    internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     NetworkTransform NetTransform;
 
@@ -45,25 +45,5 @@ public class PlayerController : NetworkBehaviour
         Server.enabled = IsServer;
         Client.enabled = IsClient;
         NetTransform.enabled = !(IsOwner && !IsServer);
-    }
-
-    public bool Simulate(InputPayload payload)
-    {
-        Locomotion.CheckGrounded(SettingSO.GroundCheckRadius, SettingSO.GroundLayer);
-
-        bool jumped = payload.Jump && Locomotion.IsGrounded;
-        if (jumped) Locomotion.Jump(SettingSO.JumpPower);
-
-        Locomotion.ApplyGravity(SettingSO.GravityValue);
-
-        float speed = payload.Move == Vector3.zero ? 0f : (payload.Run ? SettingSO.RunSpeed : SettingSO.WalkSpeed);
-        Locomotion.Move(payload.Move, speed, payload.Yaw);
-
-        return jumped;
-    }
-
-    public void ApplyPitch(float pitch)
-    {
-        Pitch.Value = Mathf.Clamp(pitch, SettingSO.MinPitch, SettingSO.MaxPitch);
     }
 }

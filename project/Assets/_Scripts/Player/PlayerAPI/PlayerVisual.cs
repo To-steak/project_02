@@ -48,9 +48,9 @@ namespace PlayerAPI
             _visual.position = Vector3.Lerp(_prevPos, _currPos, alpha) + _offset;
         }
 
-        public Vector3 CaptureVisualPosition() => _visual.position;
+        public Vector3 GetVisualPosition() => _visual.position;
 
-        public void AbsorbCorrection(Vector3 beforePosition)
+        public void SetOffset(Vector3 beforePosition)
         {
             _prevPos = _currPos = transform.position;
             _offset = beforePosition - transform.position;

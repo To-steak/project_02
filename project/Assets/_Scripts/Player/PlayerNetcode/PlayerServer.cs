@@ -1,6 +1,7 @@
 using Unity.Netcode;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace PlayerNetcode
 {
@@ -8,7 +9,7 @@ namespace PlayerNetcode
     {
         PlayerController _controller;
         readonly SortedDictionary<int, InputPayload> _queue = new();
-        int _lastTick = -1;
+        int _previousTick = -1;
 
         void Awake()
         {
@@ -18,46 +19,40 @@ namespace PlayerNetcode
         void FixedUpdate()
         {
             int consume = _queue.Count > 1 ? 2 : 1;
-
+            Debug.LogWarning($"{_queue.Count}");
             for (int i = 0; i < consume; i++)
             {
-                if (!TryDequeueInput(out var payload)) break;
-
-                _controller.ApplyPitch(payload.Pitch);
-                _controller.Locomotion.ApplyYaw(payload.Yaw);
-
-                _controller.Simulate(payload);
-
-                _controller.Client.CreateStateRPC(new StatePayload
+                if (TryDequeue(out InputPayload payload))
                 {
-                    Tick = payload.Tick,
-                    Position = transform.position,
-                    VelocityY = _controller.Locomotion.VelocityY,
-                });
+                    _controller.Locomotion.Rotate(payload.Yaw);
+                    _controller.Locomotion.Simulate(payload, _controller.SettingSO);
 
+                    StatePayload state = _controller.Locomotion.Capture(payload.Tick);
+                    _controller.Client.StateRPC(state);
+                }
             }
         }
 
-        [Rpc(SendTo.Server)]
-        public void SubmitInputRPC(InputPayload p)
-        {
-            if (p.Tick <= _lastTick) return;
-            _queue[p.Tick] = p;
-        }
-
-        private bool TryDequeueInput(out InputPayload p)
+        private bool TryDequeue(out InputPayload payload)
         {
             if (_queue.Count == 0)
             {
-                p = default;
+                payload = default;
                 return false;
             }
 
-            var first = _queue.Keys.First();
-            p = _queue[first];
-            _queue.Remove(first);
-            _lastTick = first;
+            int tick = _queue.Keys.First();
+            payload = _queue[tick];
+            _queue.Remove(tick);
+            _previousTick = tick;
             return true;
+        }
+
+        [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
+        public void InputRPC(InputPayload payload)
+        {
+            if (payload.Tick <= _previousTick) return;
+            _queue[payload.Tick] = payload;
         }
     }
 }

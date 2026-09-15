@@ -22,6 +22,7 @@ namespace PlayerAPI
         public void RotatePitch(float lookY, float speed, float min, float max)
         {
             Pitch = Mathf.Clamp(Pitch - lookY * speed, min, max);
+            
             _lookPos.localRotation = Quaternion.Euler(Pitch, 0f, 0f);
         }
 
@@ -30,10 +31,11 @@ namespace PlayerAPI
             Yaw = Mathf.Repeat(Yaw + lookX * speed, 360f);
         }
 
-        public void ApplyPitch(float pitch)
+        public void ApplyAimTarget(float pitch)
         {
             Quaternion rotation = Quaternion.Euler(pitch, 0f, 0f);
             Vector3 direction = transform.rotation * rotation * Vector3.forward;
+
             _aimTarget.position = _lookPos.position + direction * AIM_TARGET_DISTANCE;
         }
 
@@ -58,7 +60,7 @@ namespace PlayerAPI
             }
             else
             {
-                ApplyPitch(Pitch);
+                ApplyAimTarget(Pitch);
             }
         }
 

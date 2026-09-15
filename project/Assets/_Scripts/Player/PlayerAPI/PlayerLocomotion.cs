@@ -5,8 +5,6 @@ namespace PlayerAPI
     public class PlayerLocomotion : MonoBehaviour
     {
         public bool IsGrounded { get; private set; }
-        public float VelocityY => _velocity.y;
-        public float Yaw { get; private set; }
 
         [SerializeField] Transform groundChecker;
 
@@ -18,13 +16,12 @@ namespace PlayerAPI
             _character = GetComponent<CharacterController>();
         }
 
-        public void Move(Vector3 move, float speed, float yaw)
+        private void Move(Vector3 direction, float speed)
         {
-            Vector3 direction = Quaternion.Euler(0f, yaw, 0f) * new Vector3(move.x, 0f, move.z);
             _character.Move((direction * speed + Vector3.up * _velocity.y) * Time.fixedDeltaTime);
         }
 
-        public void CheckGrounded(float radius, LayerMask layer)
+        private void CheckGrounded(float radius, LayerMask layer)
         {
             IsGrounded = Physics.CheckSphere(groundChecker.position, radius, layer);
 
@@ -34,17 +31,16 @@ namespace PlayerAPI
             }
         }
 
-        public void ApplyGravity(float gravity)
+        public void Rotate(float yaw)
+        {
+            transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+        }
+
+        private void ApplyGravity(float gravity)
         {
             _velocity.y += gravity * Time.fixedDeltaTime;
         }
 
-        public void ApplyYaw(float yaw)
-        {
-            Yaw = yaw;
-            transform.rotation = Quaternion.Euler(0f, yaw, 0f);
-        }
-        
         public void Jump(float power)
         {
             if (!IsGrounded)
@@ -55,12 +51,39 @@ namespace PlayerAPI
             _velocity.y = power;
         }
 
-        public void RestoreState(Vector3 position, float velocityY)
+        public StatePayload Capture(int tick) => new StatePayload
+        {
+            Tick = tick,
+            Position = transform.position,
+            VelocityY = _velocity.y,
+            IsGrounded = IsGrounded
+        };
+
+        public void RollbackState(StatePayload payload)
         {
             _character.enabled = false;
-            transform.position = position;
+
+            transform.position = payload.Position;
+            _velocity.y = payload.VelocityY;
+            IsGrounded = payload.IsGrounded;
+
             _character.enabled = true;
-            _velocity.y = velocityY;
+        }
+
+        public bool Simulate(InputPayload payload, PlayerSettingSO setting)
+        {
+            CheckGrounded(setting.GroundCheckRadius, setting.GroundLayer);
+
+            bool jumped = payload.Jump && IsGrounded;
+            if (jumped) Jump(setting.JumpPower);
+
+            ApplyGravity(setting.GravityValue);
+
+            float speed = payload.Move == Vector2.zero ? 0f : (payload.Run ? setting.RunSpeed : setting.WalkSpeed);
+            Vector3 direction = Quaternion.Euler(0f, payload.Yaw, 0f) * new Vector3(payload.Move.x, 0f, payload.Move.y);
+            Move(direction, speed);
+
+            return jumped;
         }
     }
 }
