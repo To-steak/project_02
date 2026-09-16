@@ -19,7 +19,7 @@ namespace PlayerNetcode
         void FixedUpdate()
         {
             int consume = _queue.Count > 1 ? 2 : 1;
-            Debug.LogWarning($"{_queue.Count}");
+
             for (int i = 0; i < consume; i++)
             {
                 if (TryDequeue(out InputPayload payload))
@@ -49,10 +49,16 @@ namespace PlayerNetcode
         }
 
         [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
-        public void InputRPC(InputPayload payload)
+        public void InputRPC(InputBundle bundle)
         {
-            if (payload.Tick <= _previousTick) return;
-            _queue[payload.Tick] = payload;
+            if (bundle.Inputs == null) return;
+
+            for (int i = 0; i < bundle.Inputs.Length; i++)
+            {
+                InputPayload payload = bundle.Inputs[i];
+                if (payload.Tick <= _previousTick) continue;
+                _queue[payload.Tick] = payload;
+            }
         }
     }
 }
