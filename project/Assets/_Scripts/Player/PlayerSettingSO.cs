@@ -9,9 +9,15 @@ public class PlayerSettingSO : ScriptableObject
     
     [Header("Physics")]
     public float GravityValue;
-    public float JumpHeight;
+    public float JumpPower;
 
     [Header("Ground Check")]
     public float GroundCheckRadius;
     public LayerMask GroundLayer;
+
+    [Header("Mouse Input")]
+    public float RotationSpeed;
+    public float PitchSpeed;
+    public float MinPitch;
+    public float MaxPitch;
 }

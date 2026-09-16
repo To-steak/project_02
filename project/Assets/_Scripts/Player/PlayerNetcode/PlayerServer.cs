@@ -1,36 +1,58 @@
 using Unity.Netcode;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class PlayerServer : NetworkBehaviour
+namespace PlayerNetcode
 {
-    PlayerController _controller;
-    PlayerState _state;
-
-    void Awake()
+    public class PlayerServer : NetworkBehaviour
     {
-        _controller = GetComponent<PlayerController>();
-    }
+        PlayerController _controller;
+        readonly SortedDictionary<int, InputPayload> _queue = new();
+        int _previousTick = -1;
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsServer)
+        void Awake()
         {
-            _state = _controller.Idle;
+            _controller = GetComponent<PlayerController>();
         }
-    }
 
-    void FixedUpdate()
-    {
-        _state?.Tick();
-        _controller.Locomotions.CheckGrounded(_controller.SettingSO.GroundCheckRadius, _controller.SettingSO.GroundLayer);
-        _controller.Locomotions.ApplyGravity(_controller.SettingSO.GravityValue);
-        _controller.Locomotions.Move(_controller.Inputs.Move, _state.MoveSpeed);
-    }
+        void FixedUpdate()
+        {
+            int consume = _queue.Count > 1 ? 2 : 1;
+            Debug.LogWarning($"{_queue.Count}");
+            for (int i = 0; i < consume; i++)
+            {
+                if (TryDequeue(out InputPayload payload))
+                {
+                    _controller.Locomotion.Rotate(payload.Yaw);
+                    _controller.Locomotion.Simulate(payload, _controller.SettingSO);
 
-    public void ChangeState(PlayerState state)
-    {
-        _state.Exit();
-        _state = state;
-        _state.Enter();
+                    StatePayload state = _controller.Locomotion.Capture(payload.Tick);
+                    _controller.Client.StateRPC(state);
+                }
+            }
+        }
+
+        private bool TryDequeue(out InputPayload payload)
+        {
+            if (_queue.Count == 0)
+            {
+                payload = default;
+                return false;
+            }
+
+            int tick = _queue.Keys.First();
+            payload = _queue[tick];
+            _queue.Remove(tick);
+            _previousTick = tick;
+            return true;
+        }
+
+        [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
+        public void InputRPC(InputPayload payload)
+        {
+            if (payload.Tick <= _previousTick) return;
+            _queue[payload.Tick] = payload;
+        }
     }
 }

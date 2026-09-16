@@ -1,25 +1,20 @@
 # 이 프로젝트는 현재 개발 중입니다. (2026-8-15 ~ )
 
-## Project 02
+# Project 02
 ![thumbnail](./Image/thumbnail.png)
 
 4인용 액션 어드벤처 게임을 개발 중입니다.
-
 - Netcode for GameObjects를 활용한 headless Dedicated Server 구조
 
-## Devlogs
-
+# Devlogs
 개발 과정 중 일어난 문제는 [Devlog](https://to-steak.github.io/)에 기록하고 있습니다.
-
 1. [NGO 멀티플레이 구조 세우기](https://to-steak.github.io/client/client_04.html)
 
-## Demo - 아래 이미지 클릭 시 YouTube로 이동합니다
-
+# Demo - 아래 이미지 클릭 시 YouTube로 이동합니다
 [![project_02 멀티플레이 시연](https://img.youtube.com/vi/5y8YZ3YwcL4/maxresdefault.jpg)](https://www.youtube.com/watch?v=5y8YZ3YwcL4)
 
-## 사용한 에셋 및 라이선스(License)
-
-아래 에셋들은 [Unity Asset Store](https://assetstore.unity.com/)에서 배포되며, [Unity Asset Store Terms of Service and EULA](https://unity.com/legal/as-terms)에 따라 라이선스가 적용됩니다.
+# License
+프로젝트에 사용한 아래 에셋들은 [Unity Asset Store](https://assetstore.unity.com/)에서 배포되며, [Unity Asset Store Terms of Service and EULA](https://unity.com/legal/as-terms)에 따라 라이선스가 적용됩니다.
 - [Stylized Nature & Environment MEGA PACK](https://assetstore.unity.com/packages/3d/environments/stylized-nature-environment-mega-pack-326646) - by [So Stylized](https://assetstore.unity.com/publishers/113914)
 - [RPG Monster Couple PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-couple-pbr-polyart-355988) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)
 - [RPG Monster Buddy PBR Polyart](https://assetstore.unity.com/packages/3d/characters/creatures/rpg-monster-buddy-pbr-polyart-253961) - by [Dungeon Mason](https://assetstore.unity.com/publishers/23554)

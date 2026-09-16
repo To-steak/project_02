@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d753d2ed93e8e4942bb49e3c895205a3, type: 3}
   m_Name: PlayerSettings
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSettings
-  WalkSpeed: 3
-  RunSpeed: 6
-  GravityValue: -9.81
-  JumpHeight: 10
+  WalkSpeed: 1
+  RunSpeed: 3
+  GravityValue: -20
+  JumpPower: 7
   GroundCheckRadius: 0.3
   GroundLayer:
     serializedVersion: 2
     m_Bits: 64
+  RotationSpeed: 0.35
+  PitchSpeed: 0.35
+  MinPitch: -30
+  MaxPitch: 40
