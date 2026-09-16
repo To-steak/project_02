@@ -2439,7 +2439,7 @@ GameObject:
   - component: {fileID: 6994583281908749333}
   - component: {fileID: 1634119094165126537}
   - component: {fileID: 8005297123998042264}
-  - component: {fileID: 8981090438817471490}
+  - component: {fileID: 3124304013075138114}
   m_Layer: 8
   m_Name: Player Variant
   m_TagString: Untagged
@@ -2698,7 +2698,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAPI.PlayerCamera
   _lookPos: {fileID: 4223344401908020589}
   _aimTarget: {fileID: 7182187722142815896}
---- !u!114 &8981090438817471490
+--- !u!114 &3124304013075138114
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2711,7 +2711,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Player::PlayerAPI.PlayerVisual
   _visual: {fileID: 9031901744525352242}
-  _smoothing: 10
 --- !u!1 &3371726832865955048
 GameObject:
   m_ObjectHideFlags: 0
@@ -8089,11 +8088,7 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'Character1_Neck'\n\tTransform 'Character1_Spine2'\n\tTransform
-    'Character1_Neck'\n\tTransform 'Character1_Spine2'\n\tTransform 'Character1_Neck'\n\tTransform
-    'Character1_Spine2'"
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
