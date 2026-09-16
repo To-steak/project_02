@@ -19,7 +19,8 @@ public class GameSettings
     public float SFXVolume = 0.75f;
 
     // Keyboard
-    public float MouseSensitivity = 1f;
+    public float MouseSensitivity = 0.5f;
+    public string KeyBinding = string.Empty;
 
     // Language
     public string LocaleCode = "en";
