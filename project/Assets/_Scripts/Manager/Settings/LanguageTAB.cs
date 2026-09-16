@@ -7,7 +7,7 @@ public class LanguageTAB : SettingsTAB
     [SerializeField] TMP_Dropdown languageDropdown;
 
     static readonly string[] LOCALE_CODES = { "en", "ko" };
-    static readonly string[] LOCALE_LABELS = { "English", "HanGeul" };
+    static readonly string[] LOCALE_LABELS = { "English", "한국어" };
 
     protected override void OnBind()
     {
