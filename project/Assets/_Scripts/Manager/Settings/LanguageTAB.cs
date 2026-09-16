@@ -6,22 +6,24 @@ public class LanguageTAB : SettingsTAB
 {
     [SerializeField] TMP_Dropdown languageDropdown;
 
-    static readonly string[] LANGUAGES = { "한국어", "English" };
+    static readonly string[] LOCALE_CODES = { "en", "ko" };
+    static readonly string[] LOCALE_LABELS = { "English", "HanGeul" };
 
     protected override void OnBind()
     {
         languageDropdown.ClearOptions();
-        languageDropdown.AddOptions(new List<string>(LANGUAGES));
+        languageDropdown.AddOptions(new List<string>(LOCALE_LABELS));
         languageDropdown.onValueChanged.AddListener(index =>
         {
-            Current.LanguageIndex = index;
+            Current.LocaleCode = LOCALE_CODES[index];
             NotifyChanged();
         });
     }
 
     public override void Refresh()
     {
-        int index = Mathf.Clamp(Current.LanguageIndex, 0, LANGUAGES.Length - 1);
+        int index = System.Array.IndexOf(LOCALE_CODES, Current.LocaleCode);
+        if (index < 0) index = 0;
         languageDropdown.SetValueWithoutNotify(index);
         languageDropdown.RefreshShownValue();
     }

@@ -124,15 +124,20 @@ public class SettingsManager : MonoBehaviour
     {
         FullScreenMode mode = _current.WindowMode switch
         {
-            0 => FullScreenMode.ExclusiveFullScreen,
-            1 => FullScreenMode.FullScreenWindow,
+            GameSettings.WindowModeType.ExclusiveFullScreen => FullScreenMode.ExclusiveFullScreen,
+            GameSettings.WindowModeType.FullScreenWindow => FullScreenMode.FullScreenWindow,
+            GameSettings.WindowModeType.Windowed => FullScreenMode.Windowed,
             _ => FullScreenMode.Windowed
         };
 
         int width = _current.ResolutionWidth > 0 ? _current.ResolutionWidth : Screen.width;
         int height = _current.ResolutionHeight > 0 ? _current.ResolutionHeight : Screen.height;
 
-        Screen.SetResolution(width, height, mode);
+        if (Screen.width != width || Screen.height != height || Screen.fullScreenMode != mode)
+        {
+            Screen.SetResolution(width, height, mode);
+        }
+        
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = _current.TargetFrameRate;
     }

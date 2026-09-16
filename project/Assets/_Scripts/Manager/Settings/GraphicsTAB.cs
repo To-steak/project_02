@@ -10,6 +10,7 @@ public class GraphicsTAB : SettingsTAB
 
     readonly List<Vector2Int> resolutions = new();
     static readonly int[] FRAME_RATES = { 60, 120, 144, -1 }; // -1 = inf
+    const int DEFAULT_FRAME_RATE_INDEX = 0;
 
     protected override void OnBind()
     {
@@ -64,7 +65,7 @@ public class GraphicsTAB : SettingsTAB
         resolutionDropdown.SetValueWithoutNotify(FindResolutionIndex());
         resolutionDropdown.RefreshShownValue();
 
-        windowmodeDropdown.SetValueWithoutNotify(Mathf.Clamp(Current.WindowMode, 0, 2));
+        windowmodeDropdown.SetValueWithoutNotify((int)Current.WindowMode);
         windowmodeDropdown.RefreshShownValue();
 
         framerateDropdown.SetValueWithoutNotify(FindFrameRateIndex());
@@ -94,7 +95,7 @@ public class GraphicsTAB : SettingsTAB
             }
         }
 
-        return 1;
+        return DEFAULT_FRAME_RATE_INDEX;
     }
 
     private void OnResolutionChanged(int index)
@@ -112,7 +113,7 @@ public class GraphicsTAB : SettingsTAB
 
     private void OnWindowModeChanged(int index)
     {
-        Current.WindowMode = index;
+        Current.WindowMode = (GameSettings.WindowModeType)index;
 
         NotifyChanged();
     }

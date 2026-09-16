@@ -9,7 +9,8 @@ public class GameSettings
     // Graphic
     public int ResolutionWidth = 0;
     public int ResolutionHeight = 0;
-    public int WindowMode = 0;
+    public enum WindowModeType { ExclusiveFullScreen = 0, FullScreenWindow = 1, Windowed = 2 }
+    public WindowModeType WindowMode = WindowModeType.FullScreenWindow;
     public int TargetFrameRate = 60;
 
     // Audio
@@ -21,7 +22,7 @@ public class GameSettings
     public float MouseSensitivity = 1f;
 
     // Language
-    public int LanguageIndex = 0;
+    public string LocaleCode = "en";
 
     /// <summary>
     /// 얕은 복사
