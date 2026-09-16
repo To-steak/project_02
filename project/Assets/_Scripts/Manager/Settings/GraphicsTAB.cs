@@ -14,33 +14,7 @@ public class GraphicsTAB : SettingsTAB
 
     protected override void OnBind()
     {
-        BuildResolutionList();
-
-        windowmodeDropdown.ClearOptions();
-        windowmodeDropdown.AddOptions(new List<string>
-        {
-           "Full", "Borderless", "Windowed"
-        });
-
-        framerateDropdown.ClearOptions();
-        List<string> labels = new();
-        foreach (int fps in FRAME_RATES)
-        {
-            labels.Add(fps < 0 ? "inf" : $"{fps} FPS");
-        }
-        framerateDropdown.AddOptions(labels);
-
-        resolutionDropdown.onValueChanged.AddListener(OnResolutionChanged);
-        windowmodeDropdown.onValueChanged.AddListener(OnWindowModeChanged);
-        framerateDropdown.onValueChanged.AddListener(OnFrameRateChanged);
-    }
-
-    private void BuildResolutionList()
-    {
-        resolutions.Clear();
-
         HashSet<Vector2Int> seen = new();
-
         foreach (var resolution in Screen.resolutions)
         {
             Vector2Int size = new(resolution.width, resolution.height);
@@ -50,52 +24,63 @@ public class GraphicsTAB : SettingsTAB
             }
         }
 
-        List<string> labels = new();
+        List<string> resolutionLabels = new();
         foreach (var resolution in resolutions)
         {
-            labels.Add($"{resolution.x} x {resolution.y}");
+            resolutionLabels.Add($"{resolution.x} x {resolution.y}");
         }
-
         resolutionDropdown.ClearOptions();
-        resolutionDropdown.AddOptions(labels);
+        resolutionDropdown.AddOptions(resolutionLabels);
+
+        windowmodeDropdown.ClearOptions();
+        List<string> windowmodeLabels = new() { "Full", "Borderless", "Windowed" };
+        windowmodeDropdown.AddOptions(windowmodeLabels);
+
+        framerateDropdown.ClearOptions();
+        List<string> framerateLabels = new();
+        foreach (int fps in FRAME_RATES)
+        {
+            framerateLabels.Add(fps < 0 ? "inf" : $"{fps} FPS");
+        }
+        framerateDropdown.AddOptions(framerateLabels);
+
+        resolutionDropdown.onValueChanged.AddListener(OnResolutionChanged);
+        windowmodeDropdown.onValueChanged.AddListener(OnWindowModeChanged);
+        framerateDropdown.onValueChanged.AddListener(OnFrameRateChanged);
     }
 
     public override void Refresh()
     {
-        resolutionDropdown.SetValueWithoutNotify(FindResolutionIndex());
-        resolutionDropdown.RefreshShownValue();
-
-        windowmodeDropdown.SetValueWithoutNotify((int)Current.WindowMode);
-        windowmodeDropdown.RefreshShownValue();
-
-        framerateDropdown.SetValueWithoutNotify(FindFrameRateIndex());
-        framerateDropdown.RefreshShownValue();
-    }
-
-    int FindResolutionIndex()
-    {
-        int width = Current.ResolutionWidth > 0 ? Current.ResolutionWidth : Screen.width;
-        int height = Current.ResolutionHeight > 0 ? Current.ResolutionHeight : Screen.height;
-
+        int width = CurrentSettings.ResolutionWidth > 0 ? CurrentSettings.ResolutionWidth : Screen.width;
+        int height = CurrentSettings.ResolutionHeight > 0 ? CurrentSettings.ResolutionHeight : Screen.height;
+        int resolutionIndex = Mathf.Max(0, resolutions.Count - 1);
         for (int i = 0; i < resolutions.Count; i++)
         {
-            if (resolutions[i].x == width && resolutions[i].y == height) return i;
-        }
-
-        return Mathf.Max(0, resolutions.Count - 1);
-    }
-
-    private int FindFrameRateIndex()
-    {
-        for (int i = 0; i < FRAME_RATES.Length; i++)
-        {
-            if (FRAME_RATES[i] == Current.TargetFrameRate)
+            if (resolutions[i].x == width && resolutions[i].y == height)
             {
-                return i;
+                resolutionIndex = i;
+                break;
             }
         }
 
-        return DEFAULT_FRAME_RATE_INDEX;
+        resolutionDropdown.SetValueWithoutNotify(resolutionIndex);
+        resolutionDropdown.RefreshShownValue();
+
+        windowmodeDropdown.SetValueWithoutNotify((int)CurrentSettings.WindowMode);
+        windowmodeDropdown.RefreshShownValue();
+
+        int framerateIndex = DEFAULT_FRAME_RATE_INDEX;
+        for (int i = 0; i < FRAME_RATES.Length; i++)
+        {
+            if (FRAME_RATES[i] == CurrentSettings.TargetFrameRate)
+            {
+                framerateIndex = i;
+                break;
+            }
+        }
+
+        framerateDropdown.SetValueWithoutNotify(framerateIndex);
+        framerateDropdown.RefreshShownValue();
     }
 
     private void OnResolutionChanged(int index)
@@ -105,22 +90,22 @@ public class GraphicsTAB : SettingsTAB
             return;
         }
 
-        Current.ResolutionWidth = resolutions[index].x;
-        Current.ResolutionHeight = resolutions[index].y;
+        CurrentSettings.ResolutionWidth = resolutions[index].x;
+        CurrentSettings.ResolutionHeight = resolutions[index].y;
 
         NotifyChanged();
     }
 
     private void OnWindowModeChanged(int index)
     {
-        Current.WindowMode = (GameSettings.WindowModeType)index;
+        CurrentSettings.WindowMode = (GameSettings.WindowModeType)index;
 
         NotifyChanged();
     }
 
     private void OnFrameRateChanged(int index)
     {
-        Current.TargetFrameRate = FRAME_RATES[Mathf.Clamp(index, 0, FRAME_RATES.Length - 1)];
+        CurrentSettings.TargetFrameRate = FRAME_RATES[Mathf.Clamp(index, 0, FRAME_RATES.Length - 1)];
 
         NotifyChanged();
     }

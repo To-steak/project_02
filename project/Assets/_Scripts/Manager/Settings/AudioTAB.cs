@@ -12,57 +12,54 @@ public class AudioTAB : SettingsTAB
     [SerializeField] TMP_Text musicLabel;
     [SerializeField] TMP_Text sfxLabel;
 
+    const int MIN_AUDIO_VOLUME = 0;
+    const int MAX_AUDIO_VOLUME = 100;
     const float VOLUME_SCALE = 100f;
-
-    static void SetupSlider(Slider slider)
-    {
-        slider.minValue = 0f;
-        slider.maxValue = 1f;
-        slider.wholeNumbers = false;
-    }
 
     protected override void OnBind()
     {
-        SetupSlider(masterSlider);
-        SetupSlider(musicSlider);
-        SetupSlider(sfxSlider);
+        SetupSlider(masterSlider, MIN_AUDIO_VOLUME, MAX_AUDIO_VOLUME);
+        SetupSlider(musicSlider, MIN_AUDIO_VOLUME, MAX_AUDIO_VOLUME);
+        SetupSlider(sfxSlider, MIN_AUDIO_VOLUME, MAX_AUDIO_VOLUME);
 
-        masterSlider.onValueChanged.AddListener(volume =>
-        {
-            Current.MasterVolume = volume;
-            UpdateLabel(masterLabel, volume);
-            NotifyChanged();
-        });
-        musicSlider.onValueChanged.AddListener(volume =>
-        {
-            Current.MusicVolume = volume;
-            UpdateLabel(musicLabel, volume);
-            NotifyChanged();
-        });
-        sfxSlider.onValueChanged.AddListener(volume =>
-        {
-            Current.SFXVolume = volume;
-            UpdateLabel(sfxLabel, volume);
-            NotifyChanged();
-        });
+        masterSlider.onValueChanged.AddListener(OnMasterChanged);
+        musicSlider.onValueChanged.AddListener(OnMusicChanged);
+        sfxSlider.onValueChanged.AddListener(OnSFXChanged);
     }
 
     public override void Refresh()
     {
-        masterSlider.SetValueWithoutNotify(Current.MasterVolume);
-        musicSlider.SetValueWithoutNotify(Current.MusicVolume);
-        sfxSlider.SetValueWithoutNotify(Current.SFXVolume);
+        float master = CurrentSettings.MasterVolume * VOLUME_SCALE;
+        float music = CurrentSettings.MusicVolume * VOLUME_SCALE;
+        float sfx = CurrentSettings.SFXVolume * VOLUME_SCALE;
 
-        UpdateLabel(masterLabel, Current.MasterVolume);
-        UpdateLabel(musicLabel, Current.MusicVolume);
-        UpdateLabel(sfxLabel, Current.SFXVolume);
+        masterSlider.SetValueWithoutNotify(master);
+        musicSlider.SetValueWithoutNotify(music);
+        sfxSlider.SetValueWithoutNotify(sfx);
+
+        UpdateLabel(masterLabel, master);
+        UpdateLabel(musicLabel, music);
+        UpdateLabel(sfxLabel, sfx);
     }
 
-    static void UpdateLabel(TMP_Text label, float volume)
+    private void OnMasterChanged(float value)
     {
-        if (label != null)
-        {
-            label.text = Mathf.RoundToInt(volume * VOLUME_SCALE).ToString();
-        }
+        CurrentSettings.MasterVolume = value / VOLUME_SCALE;
+        UpdateLabel(masterLabel, value);
+        NotifyChanged();
+    }
+
+    private void OnMusicChanged(float value)
+    {
+        CurrentSettings.MusicVolume = value / VOLUME_SCALE;
+        UpdateLabel(musicLabel, value);
+        NotifyChanged();
+    }
+
+    private void OnSFXChanged(float value)
+    {
+        CurrentSettings.SFXVolume = value / VOLUME_SCALE;
+        UpdateLabel(sfxLabel, value);
+        NotifyChanged();
     }
 }

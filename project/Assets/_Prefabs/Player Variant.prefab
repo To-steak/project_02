@@ -8038,11 +8038,11 @@ GameObject:
   m_Component:
   - component: {fileID: 9031901744525352242}
   - component: {fileID: 1668923154245640106}
-  - component: {fileID: 8552094098785501123}
   - component: {fileID: 3900064481986518821}
   - component: {fileID: 7277609601830592212}
   - component: {fileID: 8484388241333897775}
   - component: {fileID: 5194364054784885374}
+  - component: {fileID: 687248103442614298}
   m_Layer: 0
   m_Name: Player Visual
   m_TagString: Untagged
@@ -8093,55 +8093,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8552094098785501123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9186813641752509766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e36b6dd013da934abe4766dcb4b7b39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Player::PlayerNetworkAnimator
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetworkAnimatorExpanded: 0
-  AuthorityMode: 0
-  m_Animator: {fileID: 1668923154245640106}
-  TransitionStateInfoList:
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: 448209748
-    DestinationState: -549114815
-    TransitionDuration: 0
-    TriggerNameHash: 125937960
-    TransitionIndex: 1
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: 1857416930
-    DestinationState: -549114815
-    TransitionDuration: 0.25
-    TriggerNameHash: 125937960
-    TransitionIndex: 2
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: -1503937591
-    DestinationState: -549114815
-    TransitionDuration: 0.25
-    TriggerNameHash: 125937960
-    TransitionIndex: 1
-  AnimatorParameterEntries:
-    ParameterEntries:
-    - name: Speed
-      NameHash: -823668238
-      Synchronize: 1
-      ParameterType: 1
-    - name: Jump
-      NameHash: 125937960
-      Synchronize: 1
-      ParameterType: 9
-  AnimatorParametersExpanded: 0
 --- !u!114 &3900064481986518821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8305,6 +8256,55 @@ MonoBehaviour:
   - m_Rig: {fileID: 1246772154157894839}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &687248103442614298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9186813641752509766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e36b6dd013da934abe4766dcb4b7b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::PlayerNetworkAnimator
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkAnimatorExpanded: 0
+  AuthorityMode: 0
+  m_Animator: {fileID: 1668923154245640106}
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 448209748
+    DestinationState: -549114815
+    TransitionDuration: 0
+    TriggerNameHash: 125937960
+    TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 1857416930
+    DestinationState: -549114815
+    TransitionDuration: 0.25
+    TriggerNameHash: 125937960
+    TransitionIndex: 2
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -1503937591
+    DestinationState: -549114815
+    TransitionDuration: 0.25
+    TriggerNameHash: 125937960
+    TransitionIndex: 1
+  AnimatorParameterEntries:
+    ParameterEntries:
+    - name: Speed
+      NameHash: -823668238
+      Synchronize: 1
+      ParameterType: 1
+    - name: Jump
+      NameHash: 125937960
+      Synchronize: 1
+      ParameterType: 9
+  AnimatorParametersExpanded: 0
 --- !u!1 &9220857500457348907
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,31 +13,23 @@ public class KeyboardTAB : SettingsTAB
 
     protected override void OnBind()
     {
-        mouseSensitivitySlider.minValue = MIN_MOUSE_SENSITIVITY;
-        mouseSensitivitySlider.maxValue = MAX_MOUSE_SENSITIVITY;
-        mouseSensitivitySlider.wholeNumbers = true;
-
-        mouseSensitivitySlider.onValueChanged.AddListener(value =>
-        {
-            Current.MouseSensitivity = value / SENSITIVITY_SCALE;
-            UpdateLabel(value);
-            NotifyChanged();
-        });
+        SetupSlider(mouseSensitivitySlider, MIN_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY);
+        
+        mouseSensitivitySlider.onValueChanged.AddListener(OnMouseSensitivityChanged);
     }
 
     public override void Refresh()
     {
-        float display = Mathf.Round(Current.MouseSensitivity * SENSITIVITY_SCALE);
+        float display = Mathf.Round(CurrentSettings.MouseSensitivity * SENSITIVITY_SCALE);
         display = Mathf.Clamp(display, MIN_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY);
         mouseSensitivitySlider.SetValueWithoutNotify(display);
-        UpdateLabel(display);
+        UpdateLabel(mouseSensitivityLabel, display);
     }
 
-    private void UpdateLabel(float value)
+    private void OnMouseSensitivityChanged(float value)
     {
-        if (mouseSensitivityLabel != null)
-        {
-            mouseSensitivityLabel.text = Mathf.RoundToInt(value).ToString();
-        }
+        CurrentSettings.MouseSensitivity = value;
+        UpdateLabel(mouseSensitivityLabel, value);
+        NotifyChanged();
     }
 }

@@ -1,14 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
-    // MAIN MENU
-    [SerializeField] GameObject menuPanel;
-    [SerializeField] GameObject settingsPanel;
-
-    // SETTINGS
     [SerializeField] Button[] header;
     [SerializeField] GameObject[] body;
     [SerializeField] SettingsTAB[] tabs;
@@ -16,28 +12,30 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] Button back;
     [SerializeField] Button reset;
 
-    // AUDIO
     [SerializeField] AudioMixer mixer;
-    [SerializeField] string masterParam = "MasterVolume";
-    [SerializeField] string musicParam = "MusicVolume";
-    [SerializeField] string sfxParam = "SFXVolume";
+    const string MASTER = "MasterVolume";
+    const string MUSIC = "MusicVolume";
+    const string SFX = "SFXVolume";
 
-    GameSettings _current;
-    GameSettings _saved;
+    GameSettings _currentSettings;
+    GameSettings _savedSettings;
 
-    public GameSettings Current => _current;
-    public bool IsDirty => !GameSettings.AreEqual(_current, _saved);
+    public GameSettings Current => _currentSettings;
+    public bool IsDirty => !GameSettings.AreEqual(_currentSettings, _savedSettings);
+    public event Action OnClose;
+
+    const int DEFAULT_TAB_INDEX = 0;
 
     void Awake()
     {
-        _saved = SettingsIO.Load();
-        _current = _saved.Clone();
+        _savedSettings = SettingsIO.Load();
+        _currentSettings = _savedSettings.Clone();
 
-        foreach (var item in tabs)
+        foreach (var tab in tabs)
         {
-            if (item != null)
+            if (tab != null)
             {
-                item.Bind(this);
+                tab.Bind(this);
             }
         }
 
@@ -50,23 +48,15 @@ public class SettingsManager : MonoBehaviour
         back.onClick.AddListener(OnBack);
         reset.onClick.AddListener(OnReset);
 
-        ApplyPreview();
         ApplyDisplay();
         RefreshSaveButton();
-
-        settingsPanel.SetActive(false);
-        menuPanel.SetActive(true);
     }
 
     public void OpenSettings()
     {
-        _current = _saved.Clone();
-        ApplyPreview();
+        _currentSettings = _savedSettings.Clone();
 
-        menuPanel.SetActive(false);
-        settingsPanel.SetActive(true);
-
-        SelectTab(0);
+        SelectTab(DEFAULT_TAB_INDEX);
         RefreshSaveButton();
     }
 
@@ -74,25 +64,21 @@ public class SettingsManager : MonoBehaviour
     {
         ApplyDisplay();
 
-        _saved = _current.Clone();
-        SettingsIO.Save(_saved);
+        _savedSettings = _currentSettings.Clone();
+        SettingsIO.Save(_savedSettings);
         RefreshSaveButton();
-
     }
 
     public void OnBack()
     {
-        _current = _saved.Clone();
-        ApplyPreview();
-
-        settingsPanel.SetActive(false);
-        menuPanel.SetActive(true);
+        _currentSettings = _savedSettings.Clone();
+        // ApplyPreview();
+        OnClose?.Invoke();
     }
 
     public void OnReset()
     {
-        _current = new GameSettings();
-        ApplyPreview();
+        _currentSettings = new GameSettings();
 
         foreach (var tab in tabs)
         {
@@ -104,8 +90,6 @@ public class SettingsManager : MonoBehaviour
 
         RefreshSaveButton();
     }
-
-
 
     private void SelectTab(int index)
     {
@@ -122,7 +106,7 @@ public class SettingsManager : MonoBehaviour
 
     private void ApplyDisplay()
     {
-        FullScreenMode mode = _current.WindowMode switch
+        FullScreenMode mode = _currentSettings.WindowMode switch
         {
             GameSettings.WindowModeType.ExclusiveFullScreen => FullScreenMode.ExclusiveFullScreen,
             GameSettings.WindowModeType.FullScreenWindow => FullScreenMode.FullScreenWindow,
@@ -130,23 +114,23 @@ public class SettingsManager : MonoBehaviour
             _ => FullScreenMode.Windowed
         };
 
-        int width = _current.ResolutionWidth > 0 ? _current.ResolutionWidth : Screen.width;
-        int height = _current.ResolutionHeight > 0 ? _current.ResolutionHeight : Screen.height;
+        int width = _currentSettings.ResolutionWidth > 0 ? _currentSettings.ResolutionWidth : Screen.width;
+        int height = _currentSettings.ResolutionHeight > 0 ? _currentSettings.ResolutionHeight : Screen.height;
 
         if (Screen.width != width || Screen.height != height || Screen.fullScreenMode != mode)
         {
             Screen.SetResolution(width, height, mode);
         }
-        
+
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = _current.TargetFrameRate;
+        Application.targetFrameRate = _currentSettings.TargetFrameRate;
     }
 
     private void ApplyPreview()
     {
-        SetMixerVolume(masterParam, _current.MasterVolume);
-        SetMixerVolume(musicParam, _current.MusicVolume);
-        SetMixerVolume(sfxParam, _current.SFXVolume);
+        SetMixerVolume(MASTER, _currentSettings.MasterVolume);
+        SetMixerVolume(MUSIC, _currentSettings.MusicVolume);
+        SetMixerVolume(SFX, _currentSettings.SFXVolume);
     }
 
     private void SetMixerVolume(string param, float linear)
@@ -156,13 +140,16 @@ public class SettingsManager : MonoBehaviour
             return;
         }
 
+        // 볼륨은 로그 스케일이라 선형 값을 그대로 dB로 넣으면 체감이 이상하다.
+        // 0은 log10에서 -무한대가 되므로 하한을 둔다. (-80dB = 믹서 최소값)
         float db = Mathf.Log10(Mathf.Max(linear, 0.0001f)) * 20f;
         mixer.SetFloat(param, db);
     }
 
     public void OnSettingsChanged()
     {
-        ApplyPreview();
+        // TODO: AudioMixer 연결 후 ApplyAudio 호출 복구
+        // ApplyPreview();
         RefreshSaveButton();
     }
 

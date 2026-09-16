@@ -3988,10 +3988,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d0ee66d11883a459b1e5c80dae8b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Manager::MainManager
-  play: {fileID: 2098559446}
-  settings: {fileID: 197114852}
-  exit: {fileID: 2074631368}
-  settingsManager: {fileID: 1809701614}
+  menuPanel: {fileID: 282396824}
+  settingsPanel: {fileID: 637953387}
+  playButton: {fileID: 2098559446}
+  settingsButton: {fileID: 197114852}
+  exitButton: {fileID: 2074631368}
+  settingsManager: {fileID: 637953393}
   gameSceneName: TEST
 --- !u!4 &605970508
 Transform:
@@ -4544,6 +4546,7 @@ GameObject:
   - component: {fileID: 637953391}
   - component: {fileID: 637953390}
   - component: {fileID: 637953392}
+  - component: {fileID: 637953393}
   m_Layer: 5
   m_Name: Panel - Settings
   m_TagString: Untagged
@@ -4571,7 +4574,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -400, y: -400}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &637953390
 MonoBehaviour:
@@ -4637,6 +4640,36 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &637953393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637953387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7248aefcadf670c4a9762b101da25fc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Manager::SettingsManager
+  header:
+  - {fileID: 1186779816}
+  - {fileID: 1314545244}
+  - {fileID: 345511736}
+  - {fileID: 1496162920}
+  body:
+  - {fileID: 1358354828}
+  - {fileID: 480917083}
+  - {fileID: 678557704}
+  - {fileID: 1585678511}
+  tabs:
+  - {fileID: 1358354833}
+  - {fileID: 480917088}
+  - {fileID: 678557709}
+  - {fileID: 1585678516}
+  save: {fileID: 700406031}
+  back: {fileID: 1604876745}
+  reset: {fileID: 565786203}
 --- !u!1 &659981960
 GameObject:
   m_ObjectHideFlags: 0
@@ -5405,7 +5438,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: m_PresetReference
-      value: 17358354019778677
+      value: 17358360825036928
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: 'managedReferences[17358354019778648]'
@@ -5416,11 +5449,27 @@ PrefabInstance:
       value: Unity.Multiplayer.Tools.NetworkSimulator.Runtime Unity.Multiplayer.Tools.NetworkSimulator.Runtime.NetworkSimulatorPreset
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: 'managedReferences[17358360825036916]'
+      value: Unity.Multiplayer.Tools.NetworkSimulator.Runtime Unity.Multiplayer.Tools.NetworkSimulator.Runtime.NetworkSimulatorPreset
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: 'managedReferences[17358360825036928]'
+      value: Unity.Multiplayer.Tools.NetworkSimulator.Runtime Unity.Multiplayer.Tools.NetworkSimulator.Runtime.NetworkSimulatorPreset
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: managedReferences[17358354019778648].<Name>k__BackingField
       value: 'Home Broadband [WIFI, Cable, Console, PC]'
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: managedReferences[17358354019778677].<Name>k__BackingField
+      value: 'Home Broadband [WIFI, Cable, Console, PC]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036916].<Name>k__BackingField
+      value: 'Home Broadband [WIFI, Cable, Console, PC]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036928].<Name>k__BackingField
       value: 'Home Broadband [WIFI, Cable, Console, PC]'
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
@@ -5434,11 +5483,29 @@ PrefabInstance:
         mobile players too).
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036916].<Description>k__BackingField
+      value: Typical of desktop and console platforms (and generally speaking most
+        mobile players too).
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036928].<Description>k__BackingField
+      value: Typical of desktop and console platforms (and generally speaking most
+        mobile players too).
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: managedReferences[17358354019778648].<PacketDelayMs>k__BackingField
       value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: managedReferences[17358354019778677].<PacketDelayMs>k__BackingField
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036916].<PacketDelayMs>k__BackingField
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036928].<PacketDelayMs>k__BackingField
       value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
@@ -5450,6 +5517,14 @@ PrefabInstance:
       value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036916].<PacketJitterMs>k__BackingField
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036928].<PacketJitterMs>k__BackingField
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: managedReferences[17358354019778648].<PacketLossPercent>k__BackingField
       value: 2
       objectReference: {fileID: 0}
@@ -5458,11 +5533,27 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036916].<PacketLossPercent>k__BackingField
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036928].<PacketLossPercent>k__BackingField
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: managedReferences[17358354019778648].<PacketLossInterval>k__BackingField
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
       propertyPath: managedReferences[17358354019778677].<PacketLossInterval>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036916].<PacketLossInterval>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510576607090075693, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
+      propertyPath: managedReferences[17358360825036928].<PacketLossInterval>k__BackingField
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7262883879361062179, guid: 69320195eed450347a138d3c8ee1f23a, type: 3}
@@ -11476,7 +11567,7 @@ GameObject:
   - component: {fileID: 1695749409}
   - component: {fileID: 1695749408}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Panel - Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11891,7 +11982,6 @@ GameObject:
   - component: {fileID: 1809701612}
   - component: {fileID: 1809701611}
   - component: {fileID: 1809701610}
-  - component: {fileID: 1809701614}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -11982,42 +12072,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1809701614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1809701609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7248aefcadf670c4a9762b101da25fc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Manager::SettingsManager
-  menuPanel: {fileID: 282396824}
-  settingsPanel: {fileID: 637953387}
-  header:
-  - {fileID: 1186779816}
-  - {fileID: 1314545244}
-  - {fileID: 345511736}
-  - {fileID: 1496162920}
-  body:
-  - {fileID: 1358354828}
-  - {fileID: 480917083}
-  - {fileID: 678557704}
-  - {fileID: 1585678511}
-  tabs:
-  - {fileID: 1358354833}
-  - {fileID: 480917088}
-  - {fileID: 678557709}
-  - {fileID: 1585678516}
-  save: {fileID: 700406031}
-  back: {fileID: 1604876745}
-  reset: {fileID: 565786203}
-  mixer: {fileID: 0}
-  masterParam: MasterVolume
-  musicParam: MusicVolume
-  sfxParam: SFXVolume
 --- !u!1 &1819043749
 GameObject:
   m_ObjectHideFlags: 0

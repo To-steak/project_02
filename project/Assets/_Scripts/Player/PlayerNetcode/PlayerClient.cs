@@ -26,6 +26,8 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
+                _controller.Input.Initialize();
+                
                 _controller.Input.ActiveInputs();
                 _controller.Camera.ActiveCamera();
                 _controller.Visual.ActiveVisual();

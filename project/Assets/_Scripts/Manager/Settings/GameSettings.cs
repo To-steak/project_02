@@ -4,6 +4,7 @@ using UnityEngine;
 [Serializable]
 public class GameSettings
 {
+    // 필드 추가 시 최하단의 AreEqual에도 추가 해야 함.
     public int Version = 1;
 
     // Graphic
@@ -36,11 +37,27 @@ public class GameSettings
 
     /// <summary>
     /// 두 설정이 같은지 비교.
-    /// 필드가 늘어나도 수정할 필요 없도록 직렬화 비교.
-    /// 슬라이더 값이 바뀔 때마다 호출되므로 필드가 크게 늘면 필드 비교로 교체할 것.
+    /// 필드를 추가하면 여기도 추가할 것.
+    /// float 필드는 부동소수점 오차 때문에 근사값으로 비교.
     /// </summary>
-    /// <param name="a">대조군 A</param>
-    /// <param name="b">대조군 B</param>
+    /// <param name="a">비교군 A</param>
+    /// <param name="b">비교군 B</param>
     /// <returns>비교 결과</returns>
-    public static bool AreEqual(GameSettings a, GameSettings b) => JsonUtility.ToJson(a) == JsonUtility.ToJson(b);
+    public static bool AreEqual(GameSettings a, GameSettings b)
+    {
+        if (ReferenceEquals(a, b)) return true;
+        if (a == null || b == null) return false;
+
+        return a.Version == b.Version
+            && a.ResolutionWidth == b.ResolutionWidth
+            && a.ResolutionHeight == b.ResolutionHeight
+            && a.WindowMode == b.WindowMode
+            && a.TargetFrameRate == b.TargetFrameRate
+            && Mathf.Approximately(a.MasterVolume, b.MasterVolume)
+            && Mathf.Approximately(a.MusicVolume, b.MusicVolume)
+            && Mathf.Approximately(a.SFXVolume, b.SFXVolume)
+            && Mathf.Approximately(a.MouseSensitivity, b.MouseSensitivity)
+            && a.KeyBinding == b.KeyBinding
+            && a.LocaleCode == b.LocaleCode;
+    }
 }
