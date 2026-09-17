@@ -36,8 +36,6 @@ public class GameManager : MonoBehaviour
         GetSpawnPose(out var position, out var rotation);
         response.Position = position;
         response.Rotation = rotation;
-
-        Debug.Log($"[Approval] client:{request.ClientNetworkId} spawn:{position}");
     }
 
     private void GetSpawnPose(out Vector3 position, out Quaternion rotation)
