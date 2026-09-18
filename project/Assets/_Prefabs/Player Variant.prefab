@@ -2440,7 +2440,7 @@ GameObject:
   - component: {fileID: 1634119094165126537}
   - component: {fileID: 8005297123998042264}
   - component: {fileID: 3124304013075138114}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Player Variant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2633,6 +2633,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
   SettingSO: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
+  PlayerInput: {fileID: 6994583281908749333}
+  PlayerAnimation: {fileID: 8484388241333897775}
+  PlayerLocomotion: {fileID: 1634119094165126537}
+  PlayerCamera: {fileID: 8005297123998042264}
+  PlayerVisual: {fileID: 3124304013075138114}
+  PlayerServer: {fileID: 8287365391867684976}
+  PlayerClient: {fileID: 7078905302864766859}
+  _netTransform: {fileID: 3691936339058646927}
 --- !u!114 &8287365391867684976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2646,6 +2654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerServer
   ShowTopMostFoldoutHeaderGroup: 1
+  _controller: {fileID: 6006245556683299649}
 --- !u!114 &7078905302864766859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2659,6 +2668,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerClient
   ShowTopMostFoldoutHeaderGroup: 1
+  _controller: {fileID: 6006245556683299649}
 --- !u!114 &6994583281908749333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2683,7 +2693,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78156b991a837454885c64d205cff019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovements
-  groundChecker: {fileID: 2467046992343359823}
+  _groundChecker: {fileID: 2467046992343359823}
+  _character: {fileID: 1363522755486275092}
 --- !u!114 &8005297123998042264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8038,11 +8049,11 @@ GameObject:
   m_Component:
   - component: {fileID: 9031901744525352242}
   - component: {fileID: 1668923154245640106}
+  - component: {fileID: 5194364054784885374}
   - component: {fileID: 3900064481986518821}
   - component: {fileID: 7277609601830592212}
   - component: {fileID: 8484388241333897775}
-  - component: {fileID: 5194364054784885374}
-  - component: {fileID: 687248103442614298}
+  - component: {fileID: 8456076102521360366}
   m_Layer: 0
   m_Name: Player Visual
   m_TagString: Untagged
@@ -8093,6 +8104,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5194364054784885374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9186813641752509766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.RigBuilder
+  m_RigLayers:
+  - m_Rig: {fileID: 1246772154157894839}
+    m_Active: 1
+  m_Effectors: []
 --- !u!114 &3900064481986518821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8219,7 +8246,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8f15112dcd0bf94cae33eb7b981212a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimations
-  m_faceStateNames:
+  _animator: {fileID: 8456076102521360366}
+  _faceStateNames:
   - angry
   - confuse
   - damaged
@@ -8239,8 +8267,8 @@ MonoBehaviour:
   - smile2
   - strain
   - surprise
-  m_defaultFaceAnimationIndex: 3
---- !u!114 &5194364054784885374
+  _defaultFaceAnimationIndex: 3
+--- !u!114 &8456076102521360366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8249,51 +8277,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 9186813641752509766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.RigBuilder
-  m_RigLayers:
-  - m_Rig: {fileID: 1246772154157894839}
-    m_Active: 1
-  m_Effectors: []
---- !u!114 &687248103442614298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9186813641752509766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e36b6dd013da934abe4766dcb4b7b39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Player::PlayerNetworkAnimator
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkAnimatorExpanded: 0
-  AuthorityMode: 0
+  AuthorityMode: 1
   m_Animator: {fileID: 1668923154245640106}
   TransitionStateInfoList:
   - IsCrossFadeExit: 0
     Layer: 0
-    OriginatingState: 448209748
-    DestinationState: -549114815
-    TransitionDuration: 0
-    TriggerNameHash: 125937960
-    TransitionIndex: 1
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: 1857416930
+    OriginatingState: 275084835
     DestinationState: -549114815
     TransitionDuration: 0.25
     TriggerNameHash: 125937960
-    TransitionIndex: 2
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: -1503937591
-    DestinationState: -549114815
-    TransitionDuration: 0.25
-    TriggerNameHash: 125937960
-    TransitionIndex: 1
+    TransitionIndex: 0
   AnimatorParameterEntries:
     ParameterEntries:
     - name: Speed

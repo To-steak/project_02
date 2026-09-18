@@ -1,4 +1,5 @@
 using UnityEngine;
+using PlayerNetcode;
 
 namespace PlayerAPI
 {
@@ -6,15 +7,10 @@ namespace PlayerAPI
     {
         public bool IsGrounded { get; private set; }
 
-        [SerializeField] Transform groundChecker;
+        [SerializeField] private Transform _groundChecker;
+        [SerializeField] private CharacterController _character;
 
-        CharacterController _character;
-        Vector3 _velocity;
-
-        public void Initialize()
-        {
-            _character = GetComponent<CharacterController>();
-        }
+        private Vector3 _velocity;
 
         private void Move(Vector3 direction, float speed)
         {
@@ -23,7 +19,7 @@ namespace PlayerAPI
 
         private void CheckGrounded(float radius, LayerMask layer)
         {
-            IsGrounded = Physics.CheckSphere(groundChecker.position, radius, layer);
+            IsGrounded = Physics.CheckSphere(_groundChecker.position, radius, layer);
 
             if (IsGrounded && _velocity.y < 0f)
             {

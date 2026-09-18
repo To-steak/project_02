@@ -11,9 +11,10 @@ namespace PlayerAPI
         [SerializeField] private Transform _lookPos;
         [SerializeField] private Transform _aimTarget;
 
-        const float AIM_TARGET_DISTANCE = 2f;
-        bool _aim;
-
+        private const float AIM_TARGET_DISTANCE = 2f;
+        
+        private bool _aim;
+        
         public void ActiveCamera()
         {
             CameraManager.Instance.SetTarget(_lookPos);
@@ -65,7 +66,7 @@ namespace PlayerAPI
         }
 
 #if UNITY_EDITOR
-        void OnDrawGizmos()
+        private void OnDrawGizmos()
         {
             if (_lookPos == null || _aimTarget == null) return;
 
