@@ -1,23 +1,43 @@
+using System;
 using Unity.Netcode;
-using UnityEngine;
 
-public struct InputBundle : INetworkSerializable
+namespace PlayerNetcode
 {
-    public InputPayload[] Inputs;
-
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    public struct InputBundle : INetworkSerializable
     {
-        int count = Inputs?.Length ?? 0;
-        serializer.SerializeValue(ref count);
+        public const int CAPACITY = 3;
+        public byte Count;
+        public InputPayload Input0;
+        public InputPayload Input1;
+        public InputPayload Input2;
 
-        if (serializer.IsReader)
+        public InputPayload this[int index] => index switch
         {
-            Inputs = new InputPayload[count];
+            0 => Input0,
+            1 => Input1,
+            2 => Input2,
+            _ => throw new IndexOutOfRangeException(nameof(index))
+        };
+
+        public void Set(int index, in InputPayload payload)
+        {
+            switch (index)
+            {
+                case 0: Input0 = payload; break;
+                case 1: Input1 = payload; break;
+                case 2: Input2 = payload; break;
+                default: throw new IndexOutOfRangeException(nameof(index));
+            }
         }
 
-        for (int i = 0; i < count; i++)
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
-            serializer.SerializeValue(ref Inputs[i]);
+            serializer.SerializeValue(ref Count);
+
+            if (Count > CAPACITY) Count = 0;
+            if (Count > 0) serializer.SerializeValue(ref Input0);
+            if (Count > 1) serializer.SerializeValue(ref Input1);
+            if (Count > 2) serializer.SerializeValue(ref Input2);
         }
     }
 }

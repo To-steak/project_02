@@ -1,18 +1,21 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public struct StatePayload : INetworkSerializable
+namespace PlayerNetcode
 {
-    public int Tick;
-    public Vector3 Position;
-    public float VelocityY;
-    public bool IsGrounded;
-
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    public struct StatePayload : INetworkSerializable
     {
-        serializer.SerializeValue(ref Tick);
-        serializer.SerializeValue(ref Position);
-        serializer.SerializeValue(ref VelocityY);
-        serializer.SerializeValue(ref IsGrounded);
+        public int Tick;
+        public Vector3 Position;
+        public float VelocityY;
+        public bool IsGrounded;
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref Tick);
+            serializer.SerializeValue(ref Position);
+            serializer.SerializeValue(ref VelocityY);
+            serializer.SerializeValue(ref IsGrounded);
+        }
     }
 }

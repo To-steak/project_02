@@ -6,31 +6,24 @@ namespace PlayerNetcode
 {
     public class PlayerClient : NetworkBehaviour
     {
-        PlayerController _controller;
-        int _tick = 0;
+        [SerializeField] private PlayerController _controller;
+        private int _tick = 0;
 
-        const int BUFFER_SIZE = 1024;
-        const int REDUNDANCY = 3;
-        const float THRESHOLD = 0.1f;
+        private const int BUFFER_SIZE = 1024;
+        private const int BUFFER_MASK = BUFFER_SIZE - 1;
+        private const float THRESHOLD = 0.1f;
 
-        readonly InputPayload[] _inputHistory = new InputPayload[BUFFER_SIZE];
-        readonly InputPayload[] _sendBuffer = new InputPayload[REDUNDANCY];
-        readonly StatePayload[] _stateHistory = new StatePayload[BUFFER_SIZE];
-
-        void Awake()
-        {
-            _controller = GetComponent<PlayerController>();
-        }
+        private readonly InputPayload[] _inputHistory = new InputPayload[BUFFER_SIZE];
+        private readonly StatePayload[] _stateHistory = new StatePayload[BUFFER_SIZE];
 
         public override void OnNetworkSpawn()
         {
             if (IsOwner)
             {
-                _controller.Input.Initialize();
-                
-                _controller.Input.ActiveInputs();
-                _controller.Camera.ActiveCamera();
-                _controller.Visual.ActiveVisual();
+                _controller.PlayerInput.Initialize(new PlayerAction());
+                _controller.PlayerInput.Enable();
+                _controller.PlayerCamera.ActiveCamera();
+                _controller.PlayerVisual.Initialzie(transform.position);
 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
@@ -41,71 +34,73 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.Input.InactiveInputs();
-                _controller.Visual.InactiveVisual();
+                _controller.PlayerInput.Disable();
                 CameraManager.Instance.ReleaseTarget();
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+
+                _controller.PlayerInput.Destroy();
             }
         }
 
-        void Update()
+        private void Update()
         {
             if (IsOwner)
             {
-                _controller.Camera.RotatePitch(_controller.Input.Look.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
-                _controller.Pitch.Value = _controller.Camera.Pitch;
-                _controller.Camera.RotateYaw(_controller.Input.Look.x, _controller.SettingSO.RotationSpeed);
+                _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
+                _controller.Pitch.Value = _controller.PlayerCamera.Pitch;
+                _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, _controller.SettingSO.RotationSpeed);
 
-                _controller.Locomotion.Rotate(_controller.Camera.Yaw);
-                _controller.Camera.ApplyAim(_controller.Input.Aim);
+                _controller.PlayerLocomotion.Rotate(_controller.PlayerCamera.Yaw);
+                _controller.PlayerCamera.ApplyAim(_controller.PlayerInput.AimInput);
             }
             else
             {
-                _controller.Camera.ApplyAimTarget(_controller.Pitch.Value);
+                _controller.PlayerCamera.ApplyAimTarget(_controller.Pitch.Value);
             }
         }
 
-
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             if (IsOwner)
             {
-                InputPayload input = _controller.Input.Capture(_tick, _controller.Camera.Yaw);
-                _inputHistory[_tick % BUFFER_SIZE] = input;
+                InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw);
+                _inputHistory[_tick & BUFFER_MASK] = input;
 
-                if (_controller.Locomotion.Simulate(input, _controller.SettingSO)) _controller.Animation.PlayJump();
-                _controller.Animation.PlayMove(input.Move, input.Run);
+                if (_controller.PlayerLocomotion.Simulate(input, _controller.SettingSO)) _controller.PlayerAnimation.PlayJump();
+                _controller.PlayerAnimation.SetMoveBlendTree(input.Move, input.Run, Time.fixedDeltaTime);
 
-                StatePayload state = _controller.Locomotion.Capture(_tick);
-                _stateHistory[_tick % BUFFER_SIZE] = state;
+                StatePayload state = _controller.PlayerLocomotion.Capture(_tick);
+                _stateHistory[_tick & BUFFER_MASK] = state;
 
-                _controller.Visual.Record();
+                _controller.PlayerVisual.Record();
 
-                int count = Mathf.Min(REDUNDANCY, _tick + 1);
+                int count = Mathf.Min(InputBundle.CAPACITY, _tick + 1);
+                InputBundle bundle = new InputBundle { Count = (byte)count };
                 for (int i = 0; i < count; i++)
                 {
-                    _sendBuffer[i] = _inputHistory[(_tick - i) % BUFFER_SIZE];
+                    bundle.Set(i, _inputHistory[(_tick - i) & BUFFER_MASK]);
+
                 }
-                _controller.Server.InputRPC(new InputBundle { Inputs = _sendBuffer });
+                _controller.PlayerServer.InputRPC(bundle);
 
                 _tick++;
             }
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             if (IsOwner)
             {
-                _controller.Visual.Interpolate();
+                _controller.PlayerVisual.Interpolate();
             }
         }
 
         [Rpc(SendTo.Owner, Delivery = RpcDelivery.Unreliable)]
         public void StateRPC(StatePayload payload)
         {
-            var predicted = _stateHistory[payload.Tick % BUFFER_SIZE];
+            var predicted = _stateHistory[payload.Tick & BUFFER_MASK];
             if (predicted.Tick != payload.Tick)
             {
                 return;
@@ -115,20 +110,20 @@ namespace PlayerNetcode
             {
                 DEBUG_RECONCILE++;
 
-                _controller.Locomotion.RollbackState(payload);
+                _controller.PlayerLocomotion.RollbackState(payload);
 
                 for (int tick = payload.Tick + 1; tick < _tick; tick++)
                 {
-                    _controller.Locomotion.Simulate(_inputHistory[tick % BUFFER_SIZE], _controller.SettingSO);
-                    _stateHistory[tick % BUFFER_SIZE] = _controller.Locomotion.Capture(tick);
+                    _controller.PlayerLocomotion.Simulate(_inputHistory[tick & BUFFER_MASK], _controller.SettingSO);
+                    _stateHistory[tick & BUFFER_MASK] = _controller.PlayerLocomotion.Capture(tick);
                 }
 
                 Debug.LogWarning($"reconcile at tick {payload.Tick}, error {Vector3.Distance(predicted.Position, payload.Position):F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
             }
         }
 
-        int DEBUG_RECONCILE;
-        void OnGUI()
+        private int DEBUG_RECONCILE;
+        private void OnGUI()
         {
             if (!IsOwner) return;
 

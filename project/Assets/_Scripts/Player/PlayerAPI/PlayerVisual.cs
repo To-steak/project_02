@@ -6,31 +6,20 @@ namespace PlayerAPI
     {
         [SerializeField] private Transform _visual;
 
-        Vector3 _previous;
-        Vector3 _current;
-        const float SNAP_DISTANCE = 1f;
+        private Vector3 _previous;
+        private Vector3 _current;
 
-        public void ActiveVisual()
+        private const float SNAP_DISTANCE = 1f;
+
+        public void Initialzie(Vector3 position)
         {
-            if (_visual == null) return;
-
-            _previous = _current = transform.position;
-        }
-
-        public void InactiveVisual()
-        {
-            if (_visual != null)
-            {
-                _visual.localPosition = Vector3.zero;
-                _visual.localRotation = Quaternion.identity;
-            }
+            _previous = _current = position;
         }
 
         // FixedUpdate - Simulate() 직후
         public void Record()
         {
             _previous = _current;
-
             _current = transform.position;
 
             if (Vector3.Distance(_previous, _current) > SNAP_DISTANCE)

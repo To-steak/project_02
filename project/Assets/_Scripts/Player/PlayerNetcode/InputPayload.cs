@@ -1,20 +1,23 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public struct InputPayload : INetworkSerializable
+namespace PlayerNetcode
 {
-    public int Tick;
-    public Vector2 Move;
-    public bool Run;
-    public bool Jump;
-    public float Yaw;
-
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    public struct InputPayload : INetworkSerializable
     {
-        serializer.SerializeValue(ref Tick);
-        serializer.SerializeValue(ref Move);
-        serializer.SerializeValue(ref Run);
-        serializer.SerializeValue(ref Jump);
-        serializer.SerializeValue(ref Yaw);
+        public int Tick;
+        public Vector2 Move;
+        public bool Run;
+        public bool Jump;
+        public float Yaw;
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref Tick);
+            serializer.SerializeValue(ref Move);
+            serializer.SerializeValue(ref Run);
+            serializer.SerializeValue(ref Jump);
+            serializer.SerializeValue(ref Yaw);
+        }
     }
 }

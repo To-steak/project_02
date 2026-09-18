@@ -4,45 +4,29 @@ using PlayerAPI;
 using PlayerNetcode;
 using Unity.Netcode.Components;
 
-public class PlayerController : NetworkBehaviour
+namespace PlayerNetcode
 {
-    [SerializeField] internal PlayerSettingSO SettingSO;
-    internal PlayerInput Input;
-    internal PlayerAnimation Animation;
-    internal PlayerLocomotion Locomotion;
-    internal PlayerCamera Camera;
-    internal PlayerVisual Visual;
-    internal PlayerEvent Event;
-    internal PlayerServer Server;
-    internal PlayerClient Client;
-    internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
-    NetworkTransform NetTransform;
-
-    void Awake()
+    public class PlayerController : NetworkBehaviour
     {
-        Input = GetComponent<PlayerInput>();
-        Animation = GetComponentInChildren<PlayerAnimation>();
-        Locomotion = GetComponent<PlayerLocomotion>();
-        Camera = GetComponent<PlayerCamera>();
-        Visual = GetComponent<PlayerVisual>();
-        Event = new PlayerEvent();
+        [SerializeField] internal PlayerSettingSO SettingSO;
+        [SerializeField] internal PlayerInput PlayerInput;
+        [SerializeField] internal PlayerAnimation PlayerAnimation;
+        [SerializeField] internal PlayerLocomotion PlayerLocomotion;
+        [SerializeField] internal PlayerCamera PlayerCamera;
+        [SerializeField] internal PlayerVisual PlayerVisual;
+        [SerializeField] internal PlayerServer PlayerServer;
+        [SerializeField] internal PlayerClient PlayerClient;
+        [SerializeField] private NetworkTransform _netTransform;
 
-        Server = GetComponent<PlayerServer>();
-        Client = GetComponent<PlayerClient>();
-        NetTransform = GetComponent<NetworkTransform>();
-    }
+        internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        internal PlayerEvent Event = new();
 
-    public override void OnNetworkSpawn()
-    {
-        Animation.Initialize(Event);
-        Locomotion.Initialize();
-    }
+        protected override void OnNetworkPostSpawn()
+        {
+            PlayerServer.enabled = IsServer;
+            PlayerClient.enabled = IsClient;
 
-    protected override void OnNetworkPostSpawn()
-    {
-        Server.enabled = IsServer;
-        Client.enabled = IsClient;
-        NetTransform.enabled = !(IsOwner && !IsServer);
+            _netTransform.enabled = !(IsOwner && !IsServer);
+        }
     }
 }

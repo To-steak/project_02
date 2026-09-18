@@ -6,57 +6,53 @@ using UnityChan;
 
 namespace PlayerAPI
 {
-    public class PlayerAnimation : MonoBehaviour, IAnimationEventReceiver
+    public class PlayerAnimation : MonoBehaviour
     {
-        NetworkAnimator _animator;
-        PlayerEvent _event;
+        [SerializeField] private NetworkAnimator _animator;
+        private readonly int _speed = Animator.StringToHash("Speed");
+        private readonly int _jump = Animator.StringToHash("Jump");
 
-        readonly int Speed = Animator.StringToHash("Speed");
+        private const float BLEND_TREE_IDLE = 0.0f;
+        private const float BLEND_TREE_WALK = 1.0f;
+        private const float BLEND_TREE_RUN = 2.0f;
+        private const float BLEND_TREE_DAMP_TIME = 0.1f;
 
-        const float IDLE = 0f;
-        const float WALK = 1f;
-        const float RUN = 2f;
-        const int FACE_LAYER_INDEX = 1;
+        private const int FACE_LAYER_INDEX = 1;
 
-        [HideInInspector][SerializeField] private List<string> m_faceStateNames = new List<string>();
-        [HideInInspector][SerializeField] private int m_defaultFaceAnimationIndex = 0;
-        private HashSet<string> m_faceStateNameSet;
+        [HideInInspector][SerializeField] private List<string> _faceStateNames = new List<string>();
+        [HideInInspector][SerializeField] private int _defaultFaceAnimationIndex = 0;
+        private HashSet<string> _faceStateNameSet;
 
-        public void Initialize(PlayerEvent playerEvent)
+        private void Awake()
         {
-            _event = playerEvent;
-            _animator = GetComponent<NetworkAnimator>();
-            m_faceStateNameSet = new HashSet<string>(m_faceStateNames);
+            _faceStateNameSet = new HashSet<string>(_faceStateNames);
         }
 
-        public void PlayMove(Vector3 move, bool run)
+        public void SetMoveBlendTree(Vector3 move, bool run, float time)
         {
-            float speed = move == Vector3.zero ? IDLE : (run ? RUN : WALK);
-            _animator.Animator.SetFloat(Speed, speed);
+            float speed = move == Vector3.zero ? BLEND_TREE_IDLE : (run ? BLEND_TREE_RUN : BLEND_TREE_WALK);
+            _animator.Animator.SetFloat(_speed, speed, BLEND_TREE_DAMP_TIME, time);
         }
 
         public void PlayJump()
         {
-            _animator.SetTrigger("Jump");
+            _animator.Animator.SetTrigger(_jump);
         }
-
-        public void NotifyAnimationCallback(AnimationID id) => _event.RaiseAnimationCallback(id);
-        public void NotifyAnimationCommit(AnimationID id) => _event.RaiseAnimationCommit(id);
 
         private void OnCallChangeFace(string str)
         {
             str = str.Split('@')[0];
-            Assert.IsNotNull(m_faceStateNameSet);
-            if (m_faceStateNameSet.Contains(str))
+            Assert.IsNotNull(_faceStateNameSet);
+            if (_faceStateNameSet.Contains(str))
             {
                 TryOverrideFaceAnimation(str);
             }
             else
             {
-                Assert.IsTrue(m_faceStateNames.Count > 0, "No face animation states found in the animator controller.");
-                if (m_faceStateNames.Count > 0)
+                Assert.IsTrue(_faceStateNames.Count > 0, "No face animation states found in the animator controller.");
+                if (_faceStateNames.Count > 0)
                 {
-                    TryOverrideFaceAnimation(m_faceStateNames[m_defaultFaceAnimationIndex]);
+                    TryOverrideFaceAnimation(_faceStateNames[_defaultFaceAnimationIndex]);
                 }
             }
         }
@@ -73,13 +69,13 @@ namespace PlayerAPI
             Animator animator = GetComponent<Animator>();
             if (animator != null)
             {
-                m_faceStateNames = AnimationEditorUtility.FindStateNames(animator, FACE_LAYER_INDEX);
+                _faceStateNames = AnimationEditorUtility.FindStateNames(animator, FACE_LAYER_INDEX);
 
-                if (m_faceStateNames != null && m_faceStateNames.Count > 0)
+                if (_faceStateNames != null && _faceStateNames.Count > 0)
                 {
-                    m_faceStateNames.Sort();
-                    m_defaultFaceAnimationIndex = m_faceStateNames.FindIndex(stateName => stateName.Contains("default"));
-                    if (m_defaultFaceAnimationIndex == -1) m_defaultFaceAnimationIndex = 0;
+                    _faceStateNames.Sort();
+                    _defaultFaceAnimationIndex = _faceStateNames.FindIndex(stateName => stateName.Contains("default"));
+                    if (_defaultFaceAnimationIndex == -1) _defaultFaceAnimationIndex = 0;
                 }
             }
 #endif

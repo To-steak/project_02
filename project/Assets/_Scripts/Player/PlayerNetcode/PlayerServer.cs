@@ -1,64 +1,103 @@
 using Unity.Netcode;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace PlayerNetcode
 {
     public class PlayerServer : NetworkBehaviour
     {
-        PlayerController _controller;
-        readonly SortedDictionary<int, InputPayload> _queue = new();
-        int _previousTick = -1;
+        [SerializeField] private PlayerController _controller;
+        private readonly InputPayload[] _inputBuffer = new InputPayload[BUFFER_SIZE];
+        private InputPayload _lastInput;
+        private int _consumedTick = -1;
+        private int _latestTick = -1;
+        private const int BUFFER_SIZE = 64;
+        private const int BUFFER_MASK = BUFFER_SIZE - 1;
 
-        void Awake()
+        private void Awake()
         {
-            _controller = GetComponent<PlayerController>();
+            for (int i = 0; i < BUFFER_SIZE; i++)
+            {
+                _inputBuffer[i].Tick = -1;
+            }
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
-            int consume = _queue.Count > 1 ? 2 : 1;
+            int consume = _latestTick - _consumedTick > 1 ? 2 : 1;
 
             for (int i = 0; i < consume; i++)
             {
-                if (TryDequeue(out InputPayload payload))
+                if (!TryDequeue(out InputPayload payload))
                 {
-                    _controller.Locomotion.Rotate(payload.Yaw);
-                    _controller.Locomotion.Simulate(payload, _controller.SettingSO);
-
-                    StatePayload state = _controller.Locomotion.Capture(payload.Tick);
-                    _controller.Client.StateRPC(state);
+                    break;
                 }
+                _controller.PlayerLocomotion.Rotate(payload.Yaw);
+                _controller.PlayerLocomotion.Simulate(payload, _controller.SettingSO);
+
+                StatePayload state = _controller.PlayerLocomotion.Capture(payload.Tick);
+                _controller.PlayerClient.StateRPC(state);
             }
         }
 
         private bool TryDequeue(out InputPayload payload)
         {
-            if (_queue.Count == 0)
+            int tick = _consumedTick + 1;
+            if (tick > _latestTick)
             {
                 payload = default;
                 return false;
             }
 
-            int tick = _queue.Keys.First();
-            payload = _queue[tick];
-            _queue.Remove(tick);
-            _previousTick = tick;
+            InputPayload slot = _inputBuffer[tick & BUFFER_MASK];
+            if (slot.Tick == tick)
+            {
+                payload = slot;
+                _lastInput = slot;
+            }
+            else
+            {
+                payload = _lastInput;
+                payload.Tick = tick;
+                payload.Jump = false;
+            }
+
+            _consumedTick = tick;
             return true;
         }
 
         [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
         public void InputRPC(InputBundle bundle)
         {
-            if (bundle.Inputs == null) return;
-
-            for (int i = 0; i < bundle.Inputs.Length; i++)
+            for (int i = 0; i < bundle.Count; i++)
             {
-                InputPayload payload = bundle.Inputs[i];
-                if (payload.Tick <= _previousTick) continue;
-                _queue[payload.Tick] = payload;
+                InputPayload payload = bundle[i];
+                if (payload.Tick <= _consumedTick)
+                {
+                    continue;
+                }
+
+                if (payload.Tick > _consumedTick + BUFFER_SIZE)
+                {
+                    Resync(payload.Tick);
+                }
+
+                _inputBuffer[payload.Tick & BUFFER_MASK] = payload;
+                if (payload.Tick > _latestTick)
+                {
+                    _latestTick = payload.Tick;
+                }
             }
+        }
+
+        private void Resync(int tick)
+        {
+            for (int i = 0; i < BUFFER_SIZE; i++)
+            {
+                _inputBuffer[i].Tick = -1;
+            }
+
+            _consumedTick = tick - 1;
+            _latestTick = tick - 1;
         }
     }
 }
