@@ -1,4 +1,4 @@
-using Manager;
+using GameInterface;
 using UnityEngine;
 
 namespace PlayerAPI
@@ -12,18 +12,26 @@ namespace PlayerAPI
         [SerializeField] private Transform _aimTarget;
 
         private const float AIM_TARGET_DISTANCE = 2f;
-        
+
         private bool _aim;
-        
-        public void ActiveCamera()
+        private ICameraService _service;
+
+        public void Initialize(ICameraService service)
         {
-            CameraManager.Instance.SetTarget(_lookPos);
+            _service = service;
+            _service.SetTarget(_lookPos);
         }
 
+        public void Release()
+        {
+            _service?.ReleaseTarget();
+            _service = null;
+        }
+        
         public void RotatePitch(float lookY, float speed, float min, float max)
         {
             Pitch = Mathf.Clamp(Pitch - lookY * speed, min, max);
-            
+
             _lookPos.localRotation = Quaternion.Euler(Pitch, 0f, 0f);
         }
 
@@ -47,17 +55,17 @@ namespace PlayerAPI
                 _aim = aim;
                 if (aim)
                 {
-                    CameraManager.Instance.SetAim();
+                    _service.SetAim();
                 }
                 else
                 {
-                    CameraManager.Instance.ReleaseAim();
+                    _service.ReleaseAim();
                 }
             }
 
             if (aim)
             {
-                _aimTarget.position = CameraManager.Instance.GetAimPoint();
+                _aimTarget.position = _service.GetAimPoint();
             }
             else
             {

@@ -1,12 +1,11 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using GameInterface;
 
-namespace Manager
+namespace GameManager
 {
-    public class CameraManager : MonoBehaviour
+    public class CameraManager : MonoBehaviour, ICameraService
     {
-        public static CameraManager Instance { get; private set; }
-
         [SerializeField] private LayerMask layer;
         [SerializeField] private CinemachineCamera cmCamera;
 
@@ -15,15 +14,20 @@ namespace Manager
         const float MAX_RANGE = 200f;
         const float MIN_RANGE = 3f;
 
-        void Awake()
+        private void Awake()
         {
-            Instance = this;
+            GameServices.Register(this);
 
             cmCamera.Lens.NearClipPlane = 0.3f;
             cmCamera.Lens.FarClipPlane = 50000f;
-            
+
             _cmtpf = cmCamera.GetComponent<CinemachineThirdPersonFollow>();
             _camera = Camera.main;
+        }
+
+        private void OnDestroy()
+        {
+            GameServices.Unregister(this);
         }
 
         public void SetTarget(Transform transform)
