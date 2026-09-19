@@ -1,4 +1,4 @@
-using Manager;
+using GameInterface;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -22,7 +22,7 @@ namespace PlayerNetcode
             {
                 _controller.PlayerInput.Initialize(new PlayerAction());
                 _controller.PlayerInput.Enable();
-                _controller.PlayerCamera.ActiveCamera();
+                _controller.PlayerCamera.Initialize(GameServices.Camera);
                 _controller.PlayerVisual.Initialzie(transform.position);
 
                 Cursor.lockState = CursorLockMode.Locked;
@@ -35,7 +35,7 @@ namespace PlayerNetcode
             if (IsOwner)
             {
                 _controller.PlayerInput.Disable();
-                CameraManager.Instance.ReleaseTarget();
+                _controller.PlayerCamera.Release();
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
