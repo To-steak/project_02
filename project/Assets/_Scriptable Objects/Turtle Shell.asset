@@ -21,3 +21,10 @@ MonoBehaviour:
   WalkSpeed: 1
   RunSpeed: 3
   RotationSpeed: 360
+  Radius: 0.5
+  Height: 1
+  SlopeLimit: 45
+  StepHeight: 0.2
+  Gravity: -9.81
+  MaxFallSpeed: 20
+  GroundStickSpeed: -5

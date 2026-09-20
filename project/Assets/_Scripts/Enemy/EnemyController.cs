@@ -10,22 +10,26 @@ public class EnemyController : MonoBehaviour
 
     private Vector3 _destination;
     private bool _hasDestination;
+    private bool _isGrounded;
+    private float _fallSpeed;
 
     private const int MAX_ATTEMPTS = 8;          // 목적지 후보를 최대 몇 번 뽑아볼지
     private const float MIN_RAY_LENGTH = 1.0f;   // 배회 반경 최소 (이보다 가까우면 후보 기각)
     private const float MAX_RAY_LENGTH = 4.0f;   // 배회 반경 최대
     private const float SKIN = 0.2f;             // 벽에 박히지 않도록 떨어뜨릴 거리
-    private const float EYE_HEIGHT = 0.5f;       // 수평 Ray 발사 높이 (턱·경사 오판 방지)
+    private const float EYE_HEIGHT = 0.5f;       // 수평 Ray 발사 높이 (턱, 경사 오판 방지)
     private const float MAX_STEP_UP = 3.0f;      // 후보 지점에서 오를 수 있는 최대 높이
     private const float MAX_STEP_DOWN = 3.0f;    // 후보 지점에서 내려갈 수 있는 최대 높이
     private const float WANDER_INTERVAL = 3.0f;  // 도착 후 다음 배회까지 대기 시간
-    private const float ARRIVE_THRESHOLD = 0.1f; // 도착 판정 거리 (진동 방지)
+    private const float ARRIVE_THRESHOLD = 0.5f; // 도착 판정 거리 (진동 방지)
 
     private void OnEnable()
     {
         // TODO: Object Pool에서 나오면 초기화
         _destination = transform.position;
         _hasDestination = false;
+        _isGrounded = false;
+        _fallSpeed = 0.0f;
         Timer = 0.0f;
 
 #if UNITY_EDITOR
@@ -38,6 +42,8 @@ public class EnemyController : MonoBehaviour
     private void FixedUpdate()
     {
         float time = Time.fixedDeltaTime;
+        Vector3 position = transform.position;
+
         if (!_hasDestination)
         {
             Timer += time;
@@ -49,21 +55,35 @@ public class EnemyController : MonoBehaviour
             _hasDestination = TryGetDestination(out _destination);
         }
 
+        Vector2 input = Vector2.zero;
+
         if (_hasDestination)
         {
-            Vector3 flat = _destination;
-            flat.y = transform.position.y;
+            Vector3 direction = _destination - position;
+            direction.y = 0.0f;
 
-            if (Vector3.Distance(transform.position, flat) < ARRIVE_THRESHOLD)
+            if (direction.sqrMagnitude < ARRIVE_THRESHOLD * ARRIVE_THRESHOLD)
             {
                 _hasDestination = false;
-                return;
             }
-
-            Vector3 direction = (flat - transform.position).normalized;
-            transform.position = Vector3.MoveTowards(transform.position, flat, _settings.WalkSpeed * time);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), _settings.RotationSpeed * time);
+            else
+            {
+                input = new Vector2(direction.x, direction.z).normalized;
+                Vector3 move = CharacterPhysics.Move(position, input, _settings.WalkSpeed, time);
+                position = CharacterPhysics.Walk(position, move, _settings.Radius, _settings.Height, _settings.SlopeLimit, _settings.StepHeight, _settings.GroundLayer, _isGrounded, out _);
+            }
         }
+
+        _fallSpeed = CharacterPhysics.ApplyGravity(_fallSpeed, _settings.Gravity, _settings.MaxFallSpeed, time);
+        Vector3 fall = CharacterPhysics.Fall(position, _fallSpeed, time);
+        position = CharacterPhysics.Collide(position, fall, _settings.Radius, _settings.Height, _settings.GroundLayer);
+
+        _isGrounded = CharacterPhysics.IsGrounded(fall, position, _fallSpeed);
+        if (_isGrounded) _fallSpeed = _settings.GroundStickSpeed;
+
+        Quaternion rotation = input != Vector2.zero ? CharacterPhysics.Rotate(transform.rotation, input, _settings.RotationSpeed, time) : transform.rotation;
+
+        transform.SetPositionAndRotation(position, rotation);
     }
 
     private void Update()
@@ -90,6 +110,7 @@ public class EnemyController : MonoBehaviour
 
         for (int i = 0; i < MAX_ATTEMPTS; i++)
         {
+            // 해당 값은 테스트 전용 임시 값으로 나중에 서버에서 받아야 한다. 아니면 각 클라마다 결과가 다름.
             float random = Random.Range(0f, Mathf.PI * 2f);
             Vector3 direction = new Vector3(Mathf.Cos(random), 0f, Mathf.Sin(random));
             float length = Random.Range(MIN_RAY_LENGTH, MAX_RAY_LENGTH);
