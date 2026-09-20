@@ -43,6 +43,7 @@ public class EnemyController : MonoBehaviour
     {
         float time = Time.fixedDeltaTime;
         Vector3 position = transform.position;
+        Quaternion rotation = transform.rotation;
 
         if (!_hasDestination)
         {
@@ -81,7 +82,7 @@ public class EnemyController : MonoBehaviour
         _isGrounded = CharacterPhysics.IsGrounded(fall, position, _fallSpeed);
         if (_isGrounded) _fallSpeed = _settings.GroundStickSpeed;
 
-        Quaternion rotation = input != Vector2.zero ? CharacterPhysics.Rotate(transform.rotation, input, _settings.RotationSpeed, time) : transform.rotation;
+        rotation = input != Vector2.zero ? CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time) : rotation;
 
         transform.SetPositionAndRotation(position, rotation);
     }
@@ -174,10 +175,6 @@ public class EnemyController : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    [Header("Debug")]
-    [SerializeField] private bool _drawGizmos = true;
-    [SerializeField] private bool _drawOnlyWhenSelected = false;
-
     private static readonly Color ColorWhiteFaint = new Color(1f, 1f, 1f, 0.25f);
 
     private struct DebugRay
@@ -219,27 +216,7 @@ public class EnemyController : MonoBehaviour
         });
     }
 
-    private void OnDrawGizmos()
-    {
-        if (!_drawGizmos || _drawOnlyWhenSelected)
-        {
-            return;
-        }
-
-        DrawDebug();
-    }
-
     private void OnDrawGizmosSelected()
-    {
-        if (!_drawGizmos || !_drawOnlyWhenSelected)
-        {
-            return;
-        }
-
-        DrawDebug();
-    }
-
-    private void DrawDebug()
     {
         // 마지막 탐색에서 쏜 레이들
         for (int i = 0; i < _debugRays.Count; i++)
@@ -256,7 +233,7 @@ public class EnemyController : MonoBehaviour
             Gizmos.DrawSphere(point.Position, point.Radius);
         }
 
-        // 레이 길이 범위를 바닥에 원으로 표시 (1 ~ 4가 실제로 나오는지 눈으로 확인)
+        // 레이 길이 범위를 바닥에 원으로 표시
         Gizmos.color = new Color(0f, 0.6f, 1f, 0.35f);
         DrawCircle(transform.position, MIN_RAY_LENGTH);
         DrawCircle(transform.position, MAX_RAY_LENGTH);
