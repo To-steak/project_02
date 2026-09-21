@@ -46,23 +46,6 @@ public static class CharacterPhysics
     private const int MAX_SLIDE_COUNT = 3;
 
     /// <summary>
-    /// 입력 방향으로 이동한 목표 지점을 계산한다.
-    /// 충돌은 고려하지 않으므로 결과를 <see cref="Walk"/>나 <see cref="Collide"/>에 넘겨 실제로 갈 수 있는 위치로 보정해야 한다.
-    /// </summary>
-    /// <param name="source">현재 위치.</param>
-    /// <param name="input">이동 입력. x는 좌우, y는 앞뒤로 XZ 평면에 매핑된다. 
-    /// 정규화하지 않아 벡터 크기가 그대로 속도 배율이 된다. 2D Vector Composite는 기본 모드(Digital Normalized)에서 대각 입력을 크기 1로 맞춰줌. 
-    /// Digital 모드를 쓴다면 호출 전에 정규화할 것.</param>
-    /// <param name="speed">초당 이동 거리.</param>
-    /// <param name="time">경과 시간. 보통 <see cref="Time.fixedDeltaTime"/>사용</param>
-    /// <returns>충돌을 반영하기 전의 목표 위치.</returns>
-    public static Vector3 Move(Vector3 source, Vector2 input, float speed, float time)
-    {
-        Vector3 delta = new Vector3(input.x, 0.0f, input.y) * speed * time;
-        return source + delta;
-    }
-
-    /// <summary>
     /// 입력 방향을 바라보도록 회전을 보간한다.
     /// 입력이 데드존 이하이면 회전하지 않고 <paramref name="source"/>을 그대로 돌려주므로,
     /// 멈춘 캐릭터는 마지막으로 향하던 방향을 유지한다.
@@ -90,7 +73,7 @@ public static class CharacterPhysics
     /// 경사를 올라야 하거나 턱을 넘어야 한다면 <see cref="Walk"/>를 쓸 것.
     /// </summary>
     /// <param name="source">현재 위치. 캡슐의 발밑 기준이다(<see cref="GetCapsule"/> 참고).</param>
-    /// <param name="target">가려는 위치. 보통 <see cref="Move"/>나 <see cref="Fall"/>의 결과.</param>
+    /// <param name="target">가려는 위치.
     /// <param name="radius">캡슐 반지름.</param>
     /// <param name="height">캡슐 전체 높이. 지름보다 작으면 지름으로 보정된다.</param>
     /// <param name="layer">충돌로 판정할 레이어. 트리거는 무시된다.</param>
@@ -142,7 +125,7 @@ public static class CharacterPhysics
     /// 경사와 계단을 무시하고 전부 벽으로 취급하려면 <see cref="Collide"/>를 쓸 것.
     /// </summary>
     /// <param name="origin">현재 위치. 캡슐의 발밑 기준이다(<see cref="GetCapsule"/> 참고).</param>
-    /// <param name="target">가려는 위치. 보통 <see cref="Move"/>의 결과.</param>
+    /// <param name="target">가려는 위치.
     /// <param name="radius">캡슐 반지름.</param>
     /// <param name="height">캡슐 전체 높이. 지름보다 작으면 지름으로 보정된다.</param>
     /// <param name="slopeLimit">걸어 오를 수 있는 최대 경사각(도). 이보다 가파르면 벽으로 취급한다.</param>

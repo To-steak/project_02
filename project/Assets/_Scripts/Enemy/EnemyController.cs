@@ -56,8 +56,8 @@ public class EnemyController : MonoBehaviour
             else
             {
                 input = new Vector2(direction.x, direction.z).normalized;
-                Vector3 move = CharacterPhysics.Move(position, input, _settings.WalkSpeed, time);
-                position = CharacterPhysics.Walk(position, move, _settings.Profile.Radius, _settings.Profile.Height, _settings.Profile.SlopeLimit, _settings.Profile.StepHeight, layer, _isGrounded, out _);
+                Vector3 move = new Vector3(input.x, 0.0f, input.y) * _settings.WalkSpeed * time;
+                position = CharacterPhysics.Walk(position, position + move, _settings.Profile.Radius, _settings.Profile.Height, _settings.Profile.SlopeLimit, _settings.Profile.StepHeight, layer, _isGrounded, out _);
             }
         }
 
