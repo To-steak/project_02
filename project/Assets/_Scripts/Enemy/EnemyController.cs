@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private PathGrid _grid;
 
     private bool _isGrounded;
-    private float _fallSpeed;
+    private float _verticalSpeed;
 
     private readonly List<int> _path = new();
     private int _waypoint;
@@ -22,7 +22,7 @@ public class EnemyController : MonoBehaviour
         _path.Clear();
         _waypoint = 0;
         _isGrounded = false;
-        _fallSpeed = 0.0f;
+        _verticalSpeed = 0.0f;
         Timer = 0.0f;
     }
 
@@ -61,12 +61,13 @@ public class EnemyController : MonoBehaviour
             }
         }
 
-        _fallSpeed = CharacterPhysics.ApplyGravity(_fallSpeed, _settings.Profile.Gravity, _settings.Profile.MaxFallSpeed, time);
-        Vector3 fall = CharacterPhysics.Fall(position, _fallSpeed, time);
-        position = CharacterPhysics.Collide(position, fall, _settings.Profile.Radius, _settings.Profile.Height, layer);
+        _verticalSpeed = CharacterPhysics.ApplyGravity(_verticalSpeed, _settings.Profile.Gravity, _settings.Profile.MaxFallSpeed, time);
+        Vector3 verticalPosition = position + Vector3.up * _verticalSpeed * time;
+        
+        position = CharacterPhysics.Collide(position, verticalPosition, _settings.Profile.Radius, _settings.Profile.Height, layer);
 
-        _isGrounded = CharacterPhysics.IsGrounded(fall, position, _fallSpeed);
-        if (_isGrounded) _fallSpeed = _settings.Profile.GroundStickSpeed;
+        _isGrounded = CharacterPhysics.IsGrounded(verticalPosition, position, _verticalSpeed);
+        if (_isGrounded) _verticalSpeed = _settings.Profile.GroundStickSpeed;
 
         rotation = input != Vector2.zero ? CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time) : rotation;
 

@@ -16,7 +16,7 @@ MonoBehaviour:
   Height: 1
   SlopeLimit: 55
   StepHeight: 0.2
-  Gravity: -9.81
+  Gravity: 9.81
   MaxFallSpeed: 20
   GroundStickSpeed: -5
   GroundLayer:

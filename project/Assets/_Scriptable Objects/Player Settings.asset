@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSettings
   WalkSpeed: 1
   RunSpeed: 3
-  GravityValue: -20
+  GravityValue: 20
   JumpPower: 7
   GroundCheckRadius: 0.3
   GroundLayer:
