@@ -3,15 +3,13 @@ using System.Collections.Generic;
 
 public class EnemyController : MonoBehaviour
 {
-    public float Timer;
     [SerializeField] private EnemySettings _settings;
     [SerializeField] private PathGrid _grid;
-
+    private float _timer;
     private bool _isGrounded;
     private float _verticalSpeed;
-
-    private readonly List<int> _path = new();
     private int _waypoint;
+    private readonly List<int> _path = new();
 
     private const float WANDER_INTERVAL = 1.0f;  // 도착 후 다음 배회까지 대기 시간
     private const float ARRIVE_THRESHOLD = 0.2f; // 도착 판정 거리 (진동 방지)
@@ -23,7 +21,7 @@ public class EnemyController : MonoBehaviour
         _waypoint = 0;
         _isGrounded = false;
         _verticalSpeed = 0.0f;
-        Timer = 0.0f;
+        _timer = 0.0f;
     }
 
 
@@ -36,10 +34,10 @@ public class EnemyController : MonoBehaviour
 
         if (_waypoint >= _path.Count)
         {
-            Timer += time;
-            if (Timer >= WANDER_INTERVAL)
+            _timer += time;
+            if (_timer >= WANDER_INTERVAL)
             {
-                Timer = 0.0f;
+                _timer = 0.0f;
                 Wander();
             }
         }
@@ -63,11 +61,11 @@ public class EnemyController : MonoBehaviour
 
         _verticalSpeed = CharacterPhysics.ApplyGravity(_verticalSpeed, _settings.Profile.Gravity, _settings.Profile.MaxFallSpeed, time);
         Vector3 verticalPosition = position + Vector3.up * _verticalSpeed * time;
-        
+
         position = CharacterPhysics.Collide(position, verticalPosition, _settings.Profile.Radius, _settings.Profile.Height, layer);
 
         _isGrounded = CharacterPhysics.IsGrounded(verticalPosition, position, _verticalSpeed);
-        if (_isGrounded) _verticalSpeed = _settings.Profile.GroundStickSpeed;
+        if (_isGrounded) _verticalSpeed = -_settings.Profile.GroundStickSpeed;
 
         rotation = input != Vector2.zero ? CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time) : rotation;
 

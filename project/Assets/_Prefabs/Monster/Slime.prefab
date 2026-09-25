@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3362507526786381292}
+  - component: {fileID: 5203634724905451394}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Untagged
@@ -32,6 +33,20 @@ Transform:
   - {fileID: 5920042134838719628}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5203634724905451394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5286053159367743861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec73d32a7514044c9128704d43671e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameEnemy::EnemyController
+  _settings: {fileID: 11400000, guid: e3c6321d5f39cb34182a57e0e8cadf7f, type: 2}
+  _grid: {fileID: 0}
 --- !u!1001 &5920042134839111168
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -84,6 +99,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 6520c6d7889f4c72b416f07f34edd515, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 02e87f86d96db2d4c89ac080ce95ab1c, type: 2}
     - target: {fileID: 13700000, guid: 6520c6d7889f4c72b416f07f34edd515, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

@@ -10,10 +10,10 @@ using UnityEngine;
 /// 일반적인 호출 순서는 다음과 같다.
 /// 1. Walk
 /// 2. ApplyGravity
-/// 3. Fall
-/// 4. Collide
-/// 5. IsGrounded
-/// 6. Rotate
+/// 3. Collide
+/// 4. IsGrounded
+/// 5. Rotate
+/// 
 /// 위치는 모두 캡슐의 발밑 기준이다(<see cref="GetCapsule"/> 참고).
 /// 물리 질의는 <c>CapsuleCast</c>로 수행한다.
 /// <c>QueryTriggerInteraction.Ignore</c>로 IsTrigger는 무시한다.
@@ -27,80 +27,6 @@ public static class CharacterPhysics
     private const float MIN_INPUT = 0.01f;
     private const float MIN_INPUT_SQR = MIN_INPUT * MIN_INPUT;
     private const int MAX_SLIDE_COUNT = 3;
-
-    /// <summary>
-    /// 입력 방향을 바라보도록 회전을 보간한다.
-    /// 입력이 Vector.zero이면 회전하지 않고 <paramref name="source"/>을 그대로 돌려준다.
-    /// 멈춘 캐릭터는 마지막으로 향하던 방향을 유지한다.
-    /// </summary>
-    /// <param name="source">현재 회전</param>
-    /// <param name="input">바라볼 방향</param>
-    /// <param name="speed">초당 회전 각도(도)</param>
-    /// <param name="time">경과 시간</param>
-    /// <returns>보간된 회전</returns>
-    public static Quaternion Rotate(Quaternion source, Vector2 input, float speed, float time)
-    {
-        Vector3 direction = new Vector3(input.x, 0.0f, input.y);
-        if (direction.sqrMagnitude < MIN_INPUT_SQR)
-        {
-            return source;
-        }
-
-        Quaternion rotation = Quaternion.LookRotation(direction);
-        return Quaternion.RotateTowards(source, rotation, speed * time);
-    }
-
-    /// <summary>
-    /// 목표 지점까지 캡슐을 이동시키되 막히면 벽면을 따라 미끄러진다.
-    /// 충돌면의 수평 성분만 사용하므로 경사면도 벽처럼 취급해 밀어낸다.
-    /// 경사를 올라야 하거나 턱을 넘어야 한다면 <see cref="Walk"/>를 쓸 것.
-    /// </summary>
-    /// <param name="source">현재 위치</param>
-    /// <param name="target">가려는 위치</param>
-    /// <param name="radius">캡슐 반지름</param>
-    /// <param name="height">캡슐 전체 높이</param>
-    /// <param name="layer">충돌로 판정할 레이어</param>
-    /// <returns>벽에서 <c>SKIN</c>만큼 떨어진 실제로 도달한 위치</returns>
-    /// <remarks>
-    /// 미끄러짐은 최대 <c>MAX_SLIDE_COUNT</c>회까지만 계산한다.
-    /// 좁은 구석처럼 반복이 부족한 상황에서는 남은 이동량이 버려져 실제보다 덜 움직인다.
-    /// 이미 벽에 파묻힌 상태는 밀어내지 않으므로 스폰 위치나 텔레포트 지점은 호출자가 확인해야 한다.
-    /// </remarks>
-    public static Vector3 Collide(Vector3 source, Vector3 target, float radius, float height, LayerMask layer)
-    {
-        Vector3 position = source;
-        Vector3 delta = target - source;
-
-        for (int i = 0; i < MAX_SLIDE_COUNT; i++)
-        {
-            float distance = delta.magnitude;
-            if (distance < MIN_DISTANCE)
-            {
-                break;
-            }
-
-            Vector3 direction = delta / distance;
-            if (!Cast(position, direction, distance, radius, height, layer, out RaycastHit hit))
-            {
-                position += delta;
-                break;
-            }
-
-            float moved = Mathf.Max(hit.distance - SKIN, 0.0f);
-            position += direction * moved;
-
-            Vector3 remain = delta - direction * moved;
-            Vector3 normal = new Vector3(hit.normal.x, 0.0f, hit.normal.z);
-            if (normal.sqrMagnitude < MIN_NORMAL_SQR)
-            {
-                break;
-            }
-
-            delta = Vector3.ProjectOnPlane(remain, normal.normalized);
-        }
-
-        return position;
-    }
 
     /// <summary>
     /// 목표 지점까지 캡슐을 걸어서 이동시킨다.
@@ -120,8 +46,7 @@ public static class CharacterPhysics
     /// <remarks>
     /// 미끄러짐은 최대 <c>MAX_SLIDE_COUNT</c>회까지만 계산하며 반복이 모자라면 남은 이동량이 버려진다.
     /// 턱을 올라선 경우에는 그 자리에서 루프를 끝내므로 한 프레임에 한 단씩만 오른다.
-    /// 중력은 다루지 않는다. 
-    /// 낙하는 <see cref="Fall"/>과 <see cref="ApplyGravity"/>로 따로 처리할 것.
+    /// 중력은 다루지 않는다.
     /// </remarks>
     public static Vector3 Walk(Vector3 origin, Vector3 target, float radius, float height, float slopeLimit, float stepHeight, LayerMask layer, bool grounded, out float climbed)
     {
@@ -177,8 +102,78 @@ public static class CharacterPhysics
     }
 
     /// <summary>
+    /// 수직 속도에 중력을 누적하고 최대 낙하 속도로 제한한다.
+    /// 위로 향하는 속도(점프)는 제한하지 않는다.
+    /// </summary>
+    /// <param name="velocity">현재 수직 속도(seconds)</param>
+    /// <param name="gravity">중력 가속도</param>
+    /// <param name="maxSpeed">최대 낙하 속도</param>
+    /// <param name="time">경과 시간</param>
+    /// <returns>갱신된 수직 속도</returns>
+    /// <remarks>
+    /// 속도가 양수이면 위, 음수이면 아래로 향한다.
+    /// 중력가속도는 음수로 넣으면 안 된다.
+    /// </remarks>
+    public static float ApplyGravity(float velocity, float gravity, float maxSpeed, float time)
+    {
+        return Mathf.Max(velocity - gravity * time, -maxSpeed);
+    }
+
+    /// <summary>
+    /// 목표 지점까지 캡슐을 이동시키되 막히면 벽면을 따라 미끄러진다.
+    /// 충돌면의 수평 성분만 사용하므로 경사면도 벽처럼 취급해 밀어낸다.
+    /// 경사를 올라야 하거나 턱을 넘어야 한다면 <see cref="Walk"/>를 쓸 것.
+    /// </summary>
+    /// <param name="source">현재 위치</param>
+    /// <param name="target">가려는 위치</param>
+    /// <param name="radius">캡슐 반지름</param>
+    /// <param name="height">캡슐 전체 높이</param>
+    /// <param name="layer">충돌로 판정할 레이어</param>
+    /// <returns>벽에서 <c>SKIN</c>만큼 떨어진 실제로 도달한 위치</returns>
+    /// <remarks>
+    /// 미끄러짐은 최대 <c>MAX_SLIDE_COUNT</c>회까지만 계산한다.
+    /// 좁은 구석처럼 반복이 부족한 상황에서는 남은 이동량이 버려져 실제보다 덜 움직인다.
+    /// 이미 벽에 파묻힌 상태는 밀어내지 않으므로 스폰 위치나 텔레포트 지점은 호출자가 확인해야 한다.
+    /// </remarks>
+    public static Vector3 Collide(Vector3 source, Vector3 target, float radius, float height, LayerMask layer)
+    {
+        Vector3 position = source;
+        Vector3 delta = target - source;
+
+        for (int i = 0; i < MAX_SLIDE_COUNT; i++)
+        {
+            float distance = delta.magnitude;
+            if (distance < MIN_DISTANCE)
+            {
+                break;
+            }
+
+            Vector3 direction = delta / distance;
+            if (!Cast(position, direction, distance, radius, height, layer, out RaycastHit hit))
+            {
+                position += delta;
+                break;
+            }
+
+            float moved = Mathf.Max(hit.distance - SKIN, 0.0f);
+            position += direction * moved;
+
+            Vector3 remain = delta - direction * moved;
+            Vector3 normal = new Vector3(hit.normal.x, 0.0f, hit.normal.z);
+            if (normal.sqrMagnitude < MIN_NORMAL_SQR)
+            {
+                break;
+            }
+
+            delta = Vector3.ProjectOnPlane(remain, normal.normalized);
+        }
+
+        return position;
+    }
+
+    /// <summary>
     /// 충돌면이 걸어 오를 수 있는 경사인지 판정한다.
-    /// 면의 기울기를 법선의 기울기로 바꿔서 Vector3.up과 비교해 각도를 반환한다.
+    /// 면의 기울기를 법선의 기울기로 바꿔서 Vector3.up과 비교해 경사 여부를 판단한다.
     /// </summary>
     /// <param name="normal">충돌면의 법선</param>
     /// <param name="slopeLimit">걸어 오를 수 있는 최대 경사각(도)</param>
@@ -305,7 +300,7 @@ public static class CharacterPhysics
     /// 캡슐의 발밑이 지면에 닿는다.
     /// 높이가 지름보다 작으면 지름으로 보정한다.
     /// 발밑에서 반지름만큼 위가 <paramref name="bottom"/>이다.
-    /// 정수리에서 반지름만큼 아래가 <paramref name="height"/>이다.
+    /// 정수리에서 반지름만큼 아래가 <paramref name="top"/>이다.
     /// </remarks>
     public static void GetCapsule(Vector3 position, float radius, float height, out Vector3 bottom, out Vector3 top)
     {
@@ -314,22 +309,25 @@ public static class CharacterPhysics
         top = position + Vector3.up * (clamped - radius);
     }
 
-
     /// <summary>
-    /// 수직 속도에 중력을 누적하고 최대 낙하 속도로 제한한다.
-    /// 위로 향하는 속도(점프)는 제한하지 않는다.
+    /// 입력 방향을 바라보도록 회전을 보간한다.
+    /// 입력이 Vector.zero이면 회전하지 않고 <paramref name="source"/>을 그대로 돌려준다.
+    /// 멈춘 캐릭터는 마지막으로 향하던 방향을 유지한다.
     /// </summary>
-    /// <param name="velocity">현재 수직 속도(seconds)</param>
-    /// <param name="gravity">중력 가속도</param>
-    /// <param name="maxSpeed">최대 낙하 속도</param>
+    /// <param name="source">현재 회전</param>
+    /// <param name="input">바라볼 방향</param>
+    /// <param name="speed">초당 회전 각도(도)</param>
     /// <param name="time">경과 시간</param>
-    /// <returns>갱신된 수직 속도. <see cref="Fall"/>에 그대로 넘긴다.</returns>
-    /// <remarks>
-    /// 속도가 양수이면 위, 음수이면 아래로 향한다.
-    /// 중력가속도는 음수로 넣으면 안 된다.
-    /// </remarks>
-    public static float ApplyGravity(float velocity, float gravity, float maxSpeed, float time)
+    /// <returns>보간된 회전</returns>
+    public static Quaternion Rotate(Quaternion source, Vector2 input, float speed, float time)
     {
-        return Mathf.Max(velocity - gravity * time, -maxSpeed);
+        Vector3 direction = new Vector3(input.x, 0.0f, input.y);
+        if (direction.sqrMagnitude < MIN_INPUT_SQR)
+        {
+            return source;
+        }
+
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        return Quaternion.RotateTowards(source, rotation, speed * time);
     }
 }

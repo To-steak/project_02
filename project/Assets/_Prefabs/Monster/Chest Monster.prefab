@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3386637504095413987}
+  - component: {fileID: 1937936881674736981}
   m_Layer: 0
   m_Name: Chest Monster
   m_TagString: Untagged
@@ -32,6 +33,20 @@ Transform:
   - {fileID: 2682783475273268986}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1937936881674736981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2707234777111422931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec73d32a7514044c9128704d43671e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameEnemy::EnemyController
+  _settings: {fileID: 11400000, guid: e999b2eb7a2ac914bbe80d598ea3f2db, type: 2}
+  _grid: {fileID: 0}
 --- !u!1001 &2682783475273393278
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88,6 +103,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 379af92262f34e06ab580c86e8d7c6a6, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bcb1db420fd618542add91949ff764b5, type: 2}
     - target: {fileID: 13700000, guid: 379af92262f34e06ab580c86e8d7c6a6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

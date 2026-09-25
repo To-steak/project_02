@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9003531919295370365}
+  - component: {fileID: 5987303803794456433}
   m_Layer: 0
   m_Name: Mushroom
   m_TagString: Untagged
@@ -32,6 +33,20 @@ Transform:
   - {fileID: 1250221800653751455}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5987303803794456433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2508418642587265472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec73d32a7514044c9128704d43671e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameEnemy::EnemyController
+  _settings: {fileID: 11400000, guid: c3036f2fa031a874fa1f5064c0a382ed, type: 2}
+  _grid: {fileID: 0}
 --- !u!1001 &1644684024110113652
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -203,7 +218,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: a736566565a0467eb2ba23a7007ba560, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 541b89bf3d364f31986cf3ca81475cc2, type: 2}
+      objectReference: {fileID: 9100000, guid: 570080aae72ca8745a6992249431ab99, type: 2}
     - target: {fileID: 6011346713305344742, guid: a736566565a0467eb2ba23a7007ba560, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 13.397736

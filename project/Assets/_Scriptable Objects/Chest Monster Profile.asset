@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b16b906a232be094e8256721ee566e84, type: 3}
-  m_Name: Turtle Profile
+  m_Name: Chest Monster Profile
   m_EditorClassIdentifier: GameEnemy::AgentProfile
-  Radius: 0.35
-  Height: 1
-  SlopeLimit: 55
+  Radius: 0.47
+  Height: 1.42
+  SlopeLimit: 45
   StepHeight: 0.2
   Gravity: 9.81
   MaxFallSpeed: 20
-  GroundStickSpeed: -5
+  GroundStickSpeed: 5
   GroundLayer:
     serializedVersion: 2
     m_Bits: 64

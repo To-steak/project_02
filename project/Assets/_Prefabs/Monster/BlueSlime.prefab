@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2247508739305611160}
+  - component: {fileID: 8259167197041315548}
   m_Layer: 0
   m_Name: BlueSlime
   m_TagString: Untagged
@@ -32,6 +33,20 @@ Transform:
   - {fileID: 7458954445720650152}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8259167197041315548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6883312894200461697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec73d32a7514044c9128704d43671e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameEnemy::EnemyController
+  _settings: {fileID: 11400000, guid: e3c6321d5f39cb34182a57e0e8cadf7f, type: 2}
+  _grid: {fileID: 0}
 --- !u!1001 &6920131511194576451
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -84,6 +99,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BlueSlime
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: a800f430494f4634d884a0b03271e79c, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bedf5263c5b4add46aa0de5b4c176711, type: 2}
     - target: {fileID: 8537307234063701628, guid: a800f430494f4634d884a0b03271e79c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
