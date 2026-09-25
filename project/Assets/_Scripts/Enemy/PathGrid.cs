@@ -18,7 +18,10 @@ public class PathGrid : MonoBehaviour
 
     public Vector3 Origin => transform.position - new Vector3(GRID_SIZE * CELL_SIZE, 0.0f, GRID_SIZE * CELL_SIZE) * 0.5f;
 
-    private void Awake()
+    private static readonly int[] DIRECTION_X = { 1, -1, 0, 0 };
+    private static readonly int[] DIRECTION_Z = { 0, 0, 1, -1 };
+
+    void Awake()
     {
         BakeWorld();
     }
@@ -33,6 +36,22 @@ public class PathGrid : MonoBehaviour
             for (int x = 0; x < GRID_SIZE; x++)
             {
                 _cells[z * GRID_SIZE + x] = Probe(x, z, layer);
+            }
+        }
+
+        for (int z = 0; z < GRID_SIZE; z++)
+        {
+            for (int x = 0; x < GRID_SIZE; x++)
+            {
+                byte connections = 0;
+                for (int d = 0; d < DIRECTION_X.Length; d++)
+                {
+                    if (ComputeConnection(x, z, x + DIRECTION_X[d], z + DIRECTION_Z[d], layer))
+                    {
+                        connections |= (byte)(1 << d);
+                    }
+                }
+                _cells[z * GRID_SIZE + x].Connections = connections;
             }
         }
     }
@@ -63,6 +82,76 @@ public class PathGrid : MonoBehaviour
 
         cell.IsWalkable = true;
         return cell;
+    }
+
+    public Vector3 ConvertWorldCoord(int index)
+    {
+        return ConvertWorldCoord(index % GRID_SIZE, index / GRID_SIZE);
+    }
+
+    public Vector3 ConvertWorldCoord(int x, int z)
+    {
+        _ = TryGetGridCell(x, z, out GridCell cell);
+        return Origin + new Vector3((x + 0.5f) * CELL_SIZE, 0.0f, (z + 0.5f) * CELL_SIZE) + Vector3.up * cell.GroundHeight;
+    }
+
+    public bool IsConnected(int fromX, int fromZ, int toX, int toZ)
+    {
+        if (!TryGetGridCell(fromX, fromZ, out GridCell cell))
+        {
+            return false;
+        }
+
+        int direction = (toX - fromX, toZ - fromZ) switch
+        {
+            (1, 0) => 0,
+            (-1, 0) => 1,
+            (0, 1) => 2,
+            (0, -1) => 3,
+            _ => -1
+        };
+
+        return direction >= 0 && (cell.Connections & (1 << direction)) != 0;
+    }
+
+    private bool ComputeConnection(int fromX, int fromZ, int toX, int toZ, LayerMask layer)
+    {
+        if (!TryGetGridCell(fromX, fromZ, out GridCell from) || !from.IsWalkable)
+        {
+            return false;
+        }
+
+        if (!TryGetGridCell(toX, toZ, out GridCell to) || !to.IsWalkable)
+        {
+            return false;
+        }
+
+        // 낭떠러지
+        if (to.GroundHeight - from.GroundHeight < -MAX_DROP)
+        {
+            return false;
+        }
+
+        // 두 칸 사이를 실제 캡슐로 훑어본다.
+        Vector3 source = ConvertWorldCoord(fromX, fromZ) + Vector3.up * CLEARANCE;
+        Vector3 target = ConvertWorldCoord(toX, toZ) + Vector3.up * CLEARANCE;
+        Vector3 moved = CharacterPhysics.Walk(source, target, _profile.Radius, _profile.Height, _profile.SlopeLimit, _profile.StepHeight, layer, true, out _);
+        Vector3 step = moved - target;
+        step.y = 0.0f;
+
+        return step.sqrMagnitude < CONNECT_THRESHOLD * CONNECT_THRESHOLD;
+    }
+
+    public bool TryGetGridCell(int x, int z, out GridCell cell)
+    {
+        cell = default;
+        if (_cells == null || x < 0 || x >= GRID_SIZE || z < 0 || z >= GRID_SIZE)
+        {
+            return false;
+        }
+
+        cell = _cells[z * GRID_SIZE + x];
+        return true;
     }
 
     public bool TryConvertCellCoord(Vector3 worldPosition, out int x, out int z)
@@ -101,59 +190,6 @@ public class PathGrid : MonoBehaviour
         }
 
         return false;
-    }
-
-    public Vector3 ConvertWorldCoord(int index)
-    {
-        return ConvertWorldCoord(index % GRID_SIZE, index / GRID_SIZE);
-    }
-
-    public Vector3 ConvertWorldCoord(int x, int z)
-    {
-        _ = TryGetGridCell(x, z, out GridCell cell);
-        return Origin + new Vector3((x + 0.5f) * CELL_SIZE, 0.0f, (z + 0.5f) * CELL_SIZE) + Vector3.up * cell.GroundHeight;
-    }
-
-    public bool IsConnected(int fromX, int fromZ, int toX, int toZ)
-    {
-        if (!TryGetGridCell(fromX, fromZ, out GridCell from) || !from.IsWalkable)
-        {
-            return false;
-        }
-
-        if (!TryGetGridCell(toX, toZ, out GridCell to) || !to.IsWalkable)
-        {
-            return false;
-        }
-
-        // 낭떠러지
-        if (to.GroundHeight - from.GroundHeight < -MAX_DROP)
-        {
-            return false;
-        }
-
-        // 두 칸 사이를 실제 캡슐로 훑어본다.
-        Vector3 source = ConvertWorldCoord(fromX, fromZ) + Vector3.up * CLEARANCE;
-        Vector3 target = ConvertWorldCoord(toX, toZ) + Vector3.up * CLEARANCE;
-        LayerMask layer = _profile.GroundLayer | _profile.ObstacleLayer;
-
-        Vector3 moved = CharacterPhysics.Walk(source, target, _profile.Radius, _profile.Height, _profile.SlopeLimit, _profile.StepHeight, layer, true, out _);
-        Vector3 step = moved - target;
-        step.y = 0.0f;
-
-        return step.sqrMagnitude < CONNECT_THRESHOLD * CONNECT_THRESHOLD;
-    }
-
-    public bool TryGetGridCell(int x, int z, out GridCell cell)
-    {
-        cell = default;
-        if (_cells == null || x < 0 || x >= GRID_SIZE || z < 0 || z >= GRID_SIZE)
-        {
-            return false;
-        }
-
-        cell = _cells[z * GRID_SIZE + x];
-        return true;
     }
 
 #if UNITY_EDITOR

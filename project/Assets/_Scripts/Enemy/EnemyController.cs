@@ -102,7 +102,11 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        PathFinder.TryFindPath(_grid, startX, startZ, goalX, goalZ, _path);
+        if (PathFinder.TryFindPath(_grid, startX, startZ, goalX, goalZ, _path))
+        {
+            PathFinder.Smooth(_grid, _path);
+            _waypoint = _path.Count > 1 ? 1 : 0;
+        }
     }
 
 #if UNITY_EDITOR

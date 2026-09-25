@@ -120,4 +120,84 @@ public static class PathFinder
     {
         return z * PathGrid.GRID_SIZE + x;
     }
+
+    public static void Smooth(PathGrid grid, List<int> path)
+    {
+        if (path.Count <= 2)
+        {
+            return;
+        }
+
+        int write = 1;
+        int anchor = path[0];
+        for (int i = 2; i < path.Count; i++)
+        {
+            if (!HasLine(grid, anchor, path[i]))
+            {
+                anchor = path[i - 1];
+                path[write++] = anchor;
+            }
+        }
+
+        path[write++] = path[^1];
+        path.RemoveRange(write, path.Count - write);
+    }
+
+    private static bool HasLine(PathGrid grid, int from, int to)
+    {
+        int size = PathGrid.GRID_SIZE;
+        int x = from % size; // 현재 X 좌표
+        int z = from / size; // 현재 Z 좌표
+        int toX = to % size; // 목표 X 좌표
+        int toZ = to / size; // 목표 Z 좌표
+        int nx = Mathf.Abs(toX - x); // 넘어야 할 X까지 총 개수
+        int nz = Mathf.Abs(toZ - z); // 넘어야 할 Z까지 총 개수
+        int sx = toX > x ? 1 : -1; // 가야할 X 방향(1 = 앞, -1 = 뒤)
+        int sz = toZ > z ? 1 : -1; // 가야할 Z 방향(1 = 앞, -1 = 뒤)
+        for (int ix = 0, iz = 0; ix < nx || iz < nz;)
+        {
+            // 다음 X 경계를 만나는 진행률 = (0.5 + ix) / nx  (출발 0, 도착 1)
+            // 0.5 : 셀 중심에서 출발하므로 첫 경계는 반 칸 거리
+            // + ix : 이후 경계는 한 칸 간격이므로 이미 넘은 경계 수만큼 더함
+            // / nx : 칸 수를 진행률로 변환 (X를 다 넘으면 1을 넘어서 다시 선택되지 않음)
+            // Z도 같은 방식. 두 진행률을 교차 곱셈으로 비교하고, 2를 곱해 0.5를 없애 정수로 계산
+            // decision < 0: X 경계를 먼저 만남 / > 0: Z 경계를 먼저 만남 / == 0: 동시에 만남
+            int decision = (1 + 2 * ix) * nz - (1 + 2 * iz) * nx;
+            if (decision == 0) // 4개 셀이 만나는 꼭짓점을 지날 때: 양옆 경로가 모두 연결되어야 통과
+            {
+                if (!grid.IsConnected(x, z, x + sx, z) || !grid.IsConnected(x + sx, z, x + sx, z + sz))
+                {
+                    return false;
+                }
+                if (!grid.IsConnected(x, z, x, z + sz) || !grid.IsConnected(x, z + sz, x + sx, z + sz))
+                {
+                    return false;
+                }
+                x += sx;
+                z += sz;
+                ix++;
+                iz++;
+            }
+            else if (decision < 0) // 음수이면 X 쪽으로 한 칸 가야할 때
+            {
+                if (!grid.IsConnected(x, z, x + sx, z))
+                {
+                    return false;
+                }
+                x += sx;
+                ix++;
+            }
+            else // 양수이면 Z 쪽으로 한 칸 가야할 때
+            {
+                if (!grid.IsConnected(x, z, x, z + sz))
+                {
+                    return false;
+                }
+                z += sz;
+                iz++;
+            }
+        }
+
+        return true;
+    }
 }
