@@ -7,14 +7,14 @@ namespace PlayerNetcode
     {
         public int Tick;
         public Vector3 Position;
-        public float VelocityY;
+        public float VerticalSpeed;
         public bool IsGrounded;
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref Tick);
             serializer.SerializeValue(ref Position);
-            serializer.SerializeValue(ref VelocityY);
+            serializer.SerializeValue(ref VerticalSpeed);
             serializer.SerializeValue(ref IsGrounded);
         }
     }

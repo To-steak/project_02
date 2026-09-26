@@ -6,15 +6,9 @@ public class PlayerSettingSO : ScriptableObject
     [Header("Movement")]
     public float WalkSpeed;
     public float RunSpeed;
-    
-    [Header("Physics")]
-    public float GravityValue;
     public float JumpPower;
-
-    [Header("Ground Check")]
-    public float GroundCheckRadius;
-    public LayerMask GroundLayer;
-
+    [Header("Profile")]
+    public AgentProfile Profile;
     [Header("Mouse Input")]
     public float RotationSpeed;
     public float PitchSpeed;

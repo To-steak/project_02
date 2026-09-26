@@ -5,81 +5,41 @@ namespace PlayerAPI
 {
     public class PlayerLocomotion : MonoBehaviour
     {
-        public bool IsGrounded { get; private set; }
-
-        [SerializeField] private Transform _groundChecker;
-        [SerializeField] private CharacterController _character;
-
-        private Vector3 _velocity;
-
-        private void Move(Vector3 direction, float speed)
-        {
-            _character.Move((direction * speed + Vector3.up * _velocity.y) * Time.fixedDeltaTime);
-        }
-
-        private void CheckGrounded(float radius, LayerMask layer)
-        {
-            IsGrounded = Physics.CheckSphere(_groundChecker.position, radius, layer);
-
-            if (IsGrounded && _velocity.y < 0f)
-            {
-                _velocity.y = -2f;
-            }
-        }
+        private CharacterState _state;
 
         public void Rotate(float yaw)
         {
             transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         }
 
-        private void ApplyGravity(float gravity)
-        {
-            _velocity.y -= gravity * Time.fixedDeltaTime;
-        }
-
-        public void Jump(float power)
-        {
-            if (!IsGrounded)
-            {
-                return;
-            }
-
-            _velocity.y = power;
-        }
-
         public StatePayload Capture(int tick) => new StatePayload
         {
             Tick = tick,
             Position = transform.position,
-            VelocityY = _velocity.y,
-            IsGrounded = IsGrounded
+            VerticalSpeed = _state.VerticalSpeed,
+            IsGrounded = _state.IsGrounded
         };
 
         public void RollbackState(StatePayload payload)
         {
-            _character.enabled = false;
-
             transform.position = payload.Position;
-            _velocity.y = payload.VelocityY;
-            IsGrounded = payload.IsGrounded;
-
-            _character.enabled = true;
+            _state.VerticalSpeed = payload.VerticalSpeed;
+            _state.IsGrounded = payload.IsGrounded;
         }
 
         public bool Simulate(InputPayload payload, PlayerSettingSO setting)
         {
-            CheckGrounded(setting.GroundCheckRadius, setting.GroundLayer);
+            float time = Time.fixedDeltaTime;
+            Vector2 move = Vector2.ClampMagnitude(payload.Move, 1.0f);
+            float speed = move == Vector2.zero ? 0.0f : (payload.Run ? setting.RunSpeed : setting.WalkSpeed);
+            Vector3 direction = Quaternion.Euler(0.0f, payload.Yaw, 0.0f) * new Vector3(move.x, 0.0f, move.y);
+            bool jump = payload.Jump && _state.IsGrounded;
 
-            bool jumped = payload.Jump && IsGrounded;
-            if (jumped) Jump(setting.JumpPower);
+            _state.Position = transform.position;
+            _state = CharacterMotor.Step(_state, direction * speed * time, jump ? setting.JumpPower : 0.0f, setting.Profile, time);
+            transform.position = _state.Position;
 
-            ApplyGravity(setting.GravityValue);
-
-            float speed = payload.Move == Vector2.zero ? 0f : (payload.Run ? setting.RunSpeed : setting.WalkSpeed);
-            Vector3 direction = Quaternion.Euler(0f, payload.Yaw, 0f) * new Vector3(payload.Move.x, 0f, payload.Move.y);
-            Move(direction, speed);
-
-            return jumped;
+            return jump;
         }
     }
 }
