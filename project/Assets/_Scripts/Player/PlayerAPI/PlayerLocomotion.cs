@@ -5,6 +5,8 @@ namespace PlayerAPI
 {
     public class PlayerLocomotion : MonoBehaviour
     {
+        public CharacterState State => _state;
+
         private CharacterState _state;
 
         public void Rotate(float yaw)
@@ -27,19 +29,17 @@ namespace PlayerAPI
             _state.IsGrounded = payload.IsGrounded;
         }
 
-        public bool Simulate(InputPayload payload, PlayerSettingSO setting)
+        public void Simulate(InputPayload payload, PlayerSettingSO setting)
         {
             float time = Time.fixedDeltaTime;
             Vector2 move = Vector2.ClampMagnitude(payload.Move, 1.0f);
-            float speed = move == Vector2.zero ? 0.0f : (payload.Run ? setting.RunSpeed : setting.WalkSpeed);
+            float moveSpeed = move == Vector2.zero ? 0.0f : (payload.Run ? setting.RunSpeed : setting.WalkSpeed);
             Vector3 direction = Quaternion.Euler(0.0f, payload.Yaw, 0.0f) * new Vector3(move.x, 0.0f, move.y);
-            bool jump = payload.Jump && _state.IsGrounded;
+            float jumpSpeed = payload.Jump ? setting.JumpSpeed : 0.0f;
 
             _state.Position = transform.position;
-            _state = CharacterMotor.Step(_state, direction * speed * time, jump ? setting.JumpPower : 0.0f, setting.Profile, time);
+            _state = CharacterMotor.Step(_state, moveSpeed * time * direction, jumpSpeed, setting.Profile, time);
             transform.position = _state.Position;
-
-            return jump;
         }
     }
 }

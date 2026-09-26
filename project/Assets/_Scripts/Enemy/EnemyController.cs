@@ -68,10 +68,10 @@ public class EnemyController : NetworkBehaviour
                 input = new Vector2(direction.x, direction.z).normalized;
             }
         }
+
         Vector3 move = new Vector3(input.x, 0.0f, input.y) * _settings.WalkSpeed * time;
         _state.Position = transform.position;
         _state = CharacterMotor.Step(_state, move, 0.0f, _settings.Profile, time);
-
         rotation = CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time);
         transform.SetPositionAndRotation(_state.Position, rotation);
     }

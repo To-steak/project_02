@@ -89,7 +89,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     ""name"": ""PlayerAction"",
     ""maps"": [
         {
-            ""name"": ""Battle"",
+            ""name"": ""General"",
             ""id"": ""0198f176-cfba-4d2c-8c43-e821cb24660e"",
             ""actions"": [
                 {
@@ -308,14 +308,14 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         }
     ]
 }");
-        // Battle
-        m_Battle = asset.FindActionMap("Battle", throwIfNotFound: true);
-        m_Battle_Move = m_Battle.FindAction("Move", throwIfNotFound: true);
-        m_Battle_Jump = m_Battle.FindAction("Jump", throwIfNotFound: true);
-        m_Battle_Look = m_Battle.FindAction("Look", throwIfNotFound: true);
-        m_Battle_Run = m_Battle.FindAction("Run", throwIfNotFound: true);
-        m_Battle_Aim = m_Battle.FindAction("Aim", throwIfNotFound: true);
-        m_Battle_Attack = m_Battle.FindAction("Attack", throwIfNotFound: true);
+        // General
+        m_General = asset.FindActionMap("General", throwIfNotFound: true);
+        m_General_Move = m_General.FindAction("Move", throwIfNotFound: true);
+        m_General_Jump = m_General.FindAction("Jump", throwIfNotFound: true);
+        m_General_Look = m_General.FindAction("Look", throwIfNotFound: true);
+        m_General_Run = m_General.FindAction("Run", throwIfNotFound: true);
+        m_General_Aim = m_General.FindAction("Aim", throwIfNotFound: true);
+        m_General_Attack = m_General.FindAction("Attack", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Newaction = m_UI.FindAction("New action", throwIfNotFound: true);
@@ -323,7 +323,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
 
     ~@PlayerAction()
     {
-        UnityEngine.Debug.Assert(!m_Battle.enabled, "This will cause a leak and performance issues, PlayerAction.Battle.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_General.enabled, "This will cause a leak and performance issues, PlayerAction.General.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerAction.UI.Disable() has not been called.");
     }
 
@@ -397,54 +397,54 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Battle
-    private readonly InputActionMap m_Battle;
-    private List<IBattleActions> m_BattleActionsCallbackInterfaces = new List<IBattleActions>();
-    private readonly InputAction m_Battle_Move;
-    private readonly InputAction m_Battle_Jump;
-    private readonly InputAction m_Battle_Look;
-    private readonly InputAction m_Battle_Run;
-    private readonly InputAction m_Battle_Aim;
-    private readonly InputAction m_Battle_Attack;
+    // General
+    private readonly InputActionMap m_General;
+    private List<IGeneralActions> m_GeneralActionsCallbackInterfaces = new List<IGeneralActions>();
+    private readonly InputAction m_General_Move;
+    private readonly InputAction m_General_Jump;
+    private readonly InputAction m_General_Look;
+    private readonly InputAction m_General_Run;
+    private readonly InputAction m_General_Aim;
+    private readonly InputAction m_General_Attack;
     /// <summary>
-    /// Provides access to input actions defined in input action map "Battle".
+    /// Provides access to input actions defined in input action map "General".
     /// </summary>
-    public struct BattleActions
+    public struct GeneralActions
     {
         private @PlayerAction m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public BattleActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
+        public GeneralActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Battle/Move".
+        /// Provides access to the underlying input action "General/Move".
         /// </summary>
-        public InputAction @Move => m_Wrapper.m_Battle_Move;
+        public InputAction @Move => m_Wrapper.m_General_Move;
         /// <summary>
-        /// Provides access to the underlying input action "Battle/Jump".
+        /// Provides access to the underlying input action "General/Jump".
         /// </summary>
-        public InputAction @Jump => m_Wrapper.m_Battle_Jump;
+        public InputAction @Jump => m_Wrapper.m_General_Jump;
         /// <summary>
-        /// Provides access to the underlying input action "Battle/Look".
+        /// Provides access to the underlying input action "General/Look".
         /// </summary>
-        public InputAction @Look => m_Wrapper.m_Battle_Look;
+        public InputAction @Look => m_Wrapper.m_General_Look;
         /// <summary>
-        /// Provides access to the underlying input action "Battle/Run".
+        /// Provides access to the underlying input action "General/Run".
         /// </summary>
-        public InputAction @Run => m_Wrapper.m_Battle_Run;
+        public InputAction @Run => m_Wrapper.m_General_Run;
         /// <summary>
-        /// Provides access to the underlying input action "Battle/Aim".
+        /// Provides access to the underlying input action "General/Aim".
         /// </summary>
-        public InputAction @Aim => m_Wrapper.m_Battle_Aim;
+        public InputAction @Aim => m_Wrapper.m_General_Aim;
         /// <summary>
-        /// Provides access to the underlying input action "Battle/Attack".
+        /// Provides access to the underlying input action "General/Attack".
         /// </summary>
-        public InputAction @Attack => m_Wrapper.m_Battle_Attack;
+        public InputAction @Attack => m_Wrapper.m_General_Attack;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_Battle; }
+        public InputActionMap Get() { return m_Wrapper.m_General; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -452,9 +452,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="BattleActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="GeneralActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(BattleActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(GeneralActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -462,11 +462,11 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="BattleActions" />
-        public void AddCallbacks(IBattleActions instance)
+        /// <seealso cref="GeneralActions" />
+        public void AddCallbacks(IGeneralActions instance)
         {
-            if (instance == null || m_Wrapper.m_BattleActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_BattleActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_GeneralActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GeneralActionsCallbackInterfaces.Add(instance);
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
@@ -493,8 +493,8 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="BattleActions" />
-        private void UnregisterCallbacks(IBattleActions instance)
+        /// <seealso cref="GeneralActions" />
+        private void UnregisterCallbacks(IGeneralActions instance)
         {
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
@@ -517,12 +517,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BattleActions.UnregisterCallbacks(IBattleActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GeneralActions.UnregisterCallbacks(IGeneralActions)" />.
         /// </summary>
-        /// <seealso cref="BattleActions.UnregisterCallbacks(IBattleActions)" />
-        public void RemoveCallbacks(IBattleActions instance)
+        /// <seealso cref="GeneralActions.UnregisterCallbacks(IGeneralActions)" />
+        public void RemoveCallbacks(IGeneralActions instance)
         {
-            if (m_Wrapper.m_BattleActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_GeneralActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -532,21 +532,21 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="BattleActions.AddCallbacks(IBattleActions)" />
-        /// <seealso cref="BattleActions.RemoveCallbacks(IBattleActions)" />
-        /// <seealso cref="BattleActions.UnregisterCallbacks(IBattleActions)" />
-        public void SetCallbacks(IBattleActions instance)
+        /// <seealso cref="GeneralActions.AddCallbacks(IGeneralActions)" />
+        /// <seealso cref="GeneralActions.RemoveCallbacks(IGeneralActions)" />
+        /// <seealso cref="GeneralActions.UnregisterCallbacks(IGeneralActions)" />
+        public void SetCallbacks(IGeneralActions instance)
         {
-            foreach (var item in m_Wrapper.m_BattleActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_GeneralActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_BattleActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_GeneralActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="BattleActions" /> instance referencing this action map.
+    /// Provides a new <see cref="GeneralActions" /> instance referencing this action map.
     /// </summary>
-    public BattleActions @Battle => new BattleActions(this);
+    public GeneralActions @General => new GeneralActions(this);
 
     // UI
     private readonly InputActionMap m_UI;
@@ -657,11 +657,11 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         }
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Battle" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "General" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="BattleActions.AddCallbacks(IBattleActions)" />
-    /// <seealso cref="BattleActions.RemoveCallbacks(IBattleActions)" />
-    public interface IBattleActions
+    /// <seealso cref="GeneralActions.AddCallbacks(IGeneralActions)" />
+    /// <seealso cref="GeneralActions.RemoveCallbacks(IGeneralActions)" />
+    public interface IGeneralActions
     {
         /// <summary>
         /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.

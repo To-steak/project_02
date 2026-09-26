@@ -241,6 +241,10 @@ Transform:
   - {fileID: 965972490}
   - {fileID: 2022381782}
   - {fileID: 219842324}
+  - {fileID: 84922244}
+  - {fileID: 2062114210}
+  - {fileID: 1256682311}
+  - {fileID: 975362693}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &84922243
@@ -275,7 +279,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 66185998}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &84922245
 BoxCollider:
@@ -1713,7 +1717,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 66185998}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &975362694
 BoxCollider:
@@ -2061,7 +2065,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 66185998}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1256682312
 BoxCollider:
@@ -3496,7 +3500,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 66185998}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2062114211
 BoxCollider:
@@ -3590,7 +3594,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Multiplayer.Tools.NetworkSimulator.Runtime::Unity.Multiplayer.Tools.NetworkSimulator.Runtime.NetworkSimulator
   m_PresetAsset: {fileID: 0}
   m_PresetReference:
-    rid: 17358582209839424
+    rid: 17358587573567584
   m_Scenario:
     rid: -2
   m_IsScenarioSettingsFolded: 0
@@ -3600,7 +3604,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 17358582209839424
+    - rid: 17358587573567584
       type: {class: NetworkSimulatorPreset, ns: Unity.Multiplayer.Tools.NetworkSimulator.Runtime, asm: Unity.Multiplayer.Tools.NetworkSimulator.Runtime}
       data:
         <Name>k__BackingField: 'Home Broadband [WIFI, Cable, Console, PC]'
@@ -3725,10 +3729,6 @@ SceneRoots:
   - {fileID: 811690639}
   - {fileID: 66185998}
   - {fileID: 1021257542}
-  - {fileID: 84922244}
-  - {fileID: 2062114210}
-  - {fileID: 1256682311}
-  - {fileID: 975362693}
   - {fileID: 428234405}
   - {fileID: 772023078}
   - {fileID: 1364553552}

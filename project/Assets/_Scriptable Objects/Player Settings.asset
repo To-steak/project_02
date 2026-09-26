@@ -14,13 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSettings
   WalkSpeed: 1
   RunSpeed: 3
-  GravityValue: 20
-  JumpPower: 7
+  JumpSpeed: 7
   Profile: {fileID: 11400000, guid: b73b04e323199b746b64906f6bbe9f63, type: 2}
-  GroundCheckRadius: 0.3
-  GroundLayer:
-    serializedVersion: 2
-    m_Bits: 64
   RotationSpeed: 0.35
   PitchSpeed: 0.35
   MinPitch: -30

@@ -1,6 +1,7 @@
 using GameInterface;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace PlayerNetcode
 {
@@ -21,6 +22,7 @@ namespace PlayerNetcode
             if (IsOwner)
             {
                 _controller.PlayerInput.Initialize(new PlayerAction());
+                _controller.PlayerInput.Active();
                 _controller.PlayerInput.Enable();
                 _controller.PlayerCamera.Initialize(GameServices.Camera);
                 _controller.PlayerVisual.Initialzie(transform.position);
@@ -34,6 +36,7 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
+                _controller.PlayerInput.Inactive();
                 _controller.PlayerInput.Disable();
                 _controller.PlayerCamera.Release();
 
@@ -48,12 +51,16 @@ namespace PlayerNetcode
         {
             if (IsOwner)
             {
-                _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, _controller.SettingSO.PitchSpeed, _controller.SettingSO.MinPitch, _controller.SettingSO.MaxPitch);
+                _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, _controller.PlayerSettings.PitchSpeed, _controller.PlayerSettings.MinPitch, _controller.PlayerSettings.MaxPitch);
                 _controller.Pitch.Value = _controller.PlayerCamera.Pitch;
-                _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, _controller.SettingSO.RotationSpeed);
+                _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, _controller.PlayerSettings.RotationSpeed);
 
                 _controller.PlayerLocomotion.Rotate(_controller.PlayerCamera.Yaw);
                 _controller.PlayerCamera.ApplyAim(_controller.PlayerInput.AimInput);
+
+                var motion = _controller.PlayerLocomotion.State;
+                _controller.PlayerAnimation.SetAirborne(motion.IsGrounded, motion.VerticalSpeed);
+                _controller.PlayerAnimation.SetMoveBlendTree(_controller.PlayerInput.MoveInput, _controller.PlayerInput.RunInput, Time.deltaTime);
             }
             else
             {
@@ -68,8 +75,7 @@ namespace PlayerNetcode
                 InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw);
                 _inputHistory[_tick & BUFFER_MASK] = input;
 
-                if (_controller.PlayerLocomotion.Simulate(input, _controller.SettingSO)) _controller.PlayerAnimation.PlayJump();
-                _controller.PlayerAnimation.SetMoveBlendTree(input.Move, input.Run, Time.fixedDeltaTime);
+                _controller.PlayerLocomotion.Simulate(input, _controller.PlayerSettings);
 
                 StatePayload state = _controller.PlayerLocomotion.Capture(_tick);
                 _stateHistory[_tick & BUFFER_MASK] = state;
@@ -114,7 +120,7 @@ namespace PlayerNetcode
 
                 for (int tick = payload.Tick + 1; tick < _tick; tick++)
                 {
-                    _controller.PlayerLocomotion.Simulate(_inputHistory[tick & BUFFER_MASK], _controller.SettingSO);
+                    _controller.PlayerLocomotion.Simulate(_inputHistory[tick & BUFFER_MASK], _controller.PlayerSettings);
                     _stateHistory[tick & BUFFER_MASK] = _controller.PlayerLocomotion.Capture(tick);
                 }
 

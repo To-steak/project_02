@@ -20,48 +20,54 @@ namespace PlayerAPI
             _action = instance;
         }
 
-        public void Enable()
+        public void Active()
         {
             _action.Enable();
+        }
 
-            _action.Battle.Move.performed += OnMove;
-            _action.Battle.Move.canceled += OnMove;
+        public void Inactive()
+        {
+            _action.Disable();
+        }
 
-            _action.Battle.Look.performed += OnLook;
-            _action.Battle.Look.canceled += OnLook;
+        public void Enable()
+        {
+            _action.General.Move.performed += OnMove;
+            _action.General.Move.canceled += OnMove;
 
-            _action.Battle.Jump.performed += OnJump;
+            _action.General.Look.performed += OnLook;
+            _action.General.Look.canceled += OnLook;
 
-            _action.Battle.Run.performed += OnRun;
-            _action.Battle.Run.canceled += OnRun;
+            _action.General.Jump.performed += OnJump;
 
-            _action.Battle.Aim.performed += OnAim;
-            _action.Battle.Aim.canceled += OnAim;
+            _action.General.Run.performed += OnRun;
+            _action.General.Run.canceled += OnRun;
 
-            _action.Battle.Attack.performed += OnAttack;
-            _action.Battle.Attack.canceled += OnAttack;
+            _action.General.Aim.performed += OnAim;
+            _action.General.Aim.canceled += OnAim;
+
+            _action.General.Attack.performed += OnAttack;
+            _action.General.Attack.canceled += OnAttack;
         }
 
         public void Disable()
         {
-            _action.Disable();
+            _action.General.Move.performed -= OnMove;
+            _action.General.Move.canceled -= OnMove;
 
-            _action.Battle.Move.performed -= OnMove;
-            _action.Battle.Move.canceled -= OnMove;
+            _action.General.Look.performed -= OnLook;
+            _action.General.Look.canceled -= OnLook;
 
-            _action.Battle.Look.performed -= OnLook;
-            _action.Battle.Look.canceled -= OnLook;
+            _action.General.Jump.performed -= OnJump;
 
-            _action.Battle.Jump.performed -= OnJump;
+            _action.General.Run.performed -= OnRun;
+            _action.General.Run.canceled -= OnRun;
 
-            _action.Battle.Run.performed -= OnRun;
-            _action.Battle.Run.canceled -= OnRun;
+            _action.General.Aim.performed -= OnAim;
+            _action.General.Aim.canceled -= OnAim;
 
-            _action.Battle.Aim.performed -= OnAim;
-            _action.Battle.Aim.canceled -= OnAim;
-
-            _action.Battle.Attack.performed -= OnAttack;
-            _action.Battle.Attack.canceled -= OnAttack;
+            _action.General.Attack.performed -= OnAttack;
+            _action.General.Attack.canceled -= OnAttack;
         }
 
         public void Destroy()

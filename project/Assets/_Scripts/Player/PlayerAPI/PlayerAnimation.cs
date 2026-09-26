@@ -9,18 +9,21 @@ namespace PlayerAPI
     public class PlayerAnimation : MonoBehaviour
     {
         [SerializeField] private NetworkAnimator _animator;
-        private readonly int _speed = Animator.StringToHash("Speed");
+        private readonly int _run = Animator.StringToHash("Run");
+        private readonly int _moveX = Animator.StringToHash("MoveX");
+        private readonly int _moveY = Animator.StringToHash("MoveY");
         private readonly int _jump = Animator.StringToHash("Jump");
+        private readonly int _isGrounded = Animator.StringToHash("IsGrounded");
+        private readonly int _verticalSpeed = Animator.StringToHash("VerticalSpeed");
 
-        private const float BLEND_TREE_IDLE = 0.0f;
-        private const float BLEND_TREE_WALK = 1.0f;
-        private const float BLEND_TREE_RUN = 2.0f;
+        private const float BLEND_TREE_WALK = 0.0f;
+        private const float BLEND_TREE_RUN = 1.0f;
         private const float BLEND_TREE_DAMP_TIME = 0.1f;
 
         private const int FACE_LAYER_INDEX = 1;
 
-        [HideInInspector][SerializeField] private List<string> _faceStateNames = new List<string>();
-        [HideInInspector][SerializeField] private int _defaultFaceAnimationIndex = 0;
+        [SerializeField] private List<string> _faceStateNames = new List<string>();
+        [SerializeField] private int _defaultFaceAnimationIndex = 0;
         private HashSet<string> _faceStateNameSet;
 
         private void Awake()
@@ -28,15 +31,22 @@ namespace PlayerAPI
             _faceStateNameSet = new HashSet<string>(_faceStateNames);
         }
 
-        public void SetMoveBlendTree(Vector3 move, bool run, float time)
+        public void SetMoveBlendTree(Vector2 move, bool run, float time)
         {
-            float speed = move == Vector3.zero ? BLEND_TREE_IDLE : (run ? BLEND_TREE_RUN : BLEND_TREE_WALK);
-            _animator.Animator.SetFloat(_speed, speed, BLEND_TREE_DAMP_TIME, time);
+            _animator.Animator.SetFloat(_moveX, move.x, BLEND_TREE_DAMP_TIME, time);
+            _animator.Animator.SetFloat(_moveY, move.y, BLEND_TREE_DAMP_TIME, time);
+            _animator.Animator.SetFloat(_run, run ? BLEND_TREE_RUN : BLEND_TREE_WALK, BLEND_TREE_DAMP_TIME, time);
         }
 
         public void PlayJump()
         {
             _animator.Animator.SetTrigger(_jump);
+        }
+
+        public void SetAirborne(bool grounded, float verticalSpeed)
+        {
+            _animator.Animator.SetBool(_isGrounded, grounded);
+            _animator.Animator.SetFloat(_verticalSpeed, verticalSpeed);
         }
 
         private void OnCallChangeFace(string str)

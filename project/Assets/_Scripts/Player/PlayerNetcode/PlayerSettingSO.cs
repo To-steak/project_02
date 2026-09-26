@@ -6,7 +6,7 @@ public class PlayerSettingSO : ScriptableObject
     [Header("Movement")]
     public float WalkSpeed;
     public float RunSpeed;
-    public float JumpPower;
+    public float JumpSpeed;
     [Header("Profile")]
     public AgentProfile Profile;
     [Header("Mouse Input")]

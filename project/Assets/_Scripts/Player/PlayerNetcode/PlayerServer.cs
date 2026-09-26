@@ -32,7 +32,7 @@ namespace PlayerNetcode
                     break;
                 }
                 _controller.PlayerLocomotion.Rotate(payload.Yaw);
-                _controller.PlayerLocomotion.Simulate(payload, _controller.SettingSO);
+                _controller.PlayerLocomotion.Simulate(payload, _controller.PlayerSettings);
 
                 StatePayload state = _controller.PlayerLocomotion.Capture(payload.Tick);
                 _controller.PlayerClient.StateRPC(state);

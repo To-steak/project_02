@@ -1344,7 +1344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiAimConstraint
-  m_Weight: 1
+  m_Weight: 0.3
   m_Data:
     m_ConstrainedObject: {fileID: 6158348869473720355}
     m_SourceObjects:
@@ -2558,7 +2558,7 @@ MonoBehaviour:
     m_ActionName: 'Battle/Attack[/Mouse/leftButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Player Control Scheme
-  m_DefaultActionMap: Battle
+  m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!114 &6006245556683299649
@@ -2574,7 +2574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
-  SettingSO: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
+  PlayerSettings: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
   PlayerInput: {fileID: 6994583281908749333}
   PlayerAnimation: {fileID: 8484388241333897775}
   PlayerLocomotion: {fileID: 1634119094165126537}
@@ -2582,7 +2582,7 @@ MonoBehaviour:
   PlayerVisual: {fileID: 3124304013075138114}
   PlayerServer: {fileID: 8287365391867684976}
   PlayerClient: {fileID: 7078905302864766859}
-  _netTransform: {fileID: 3691936339058646927}
+  _networkTransform: {fileID: 3691936339058646927}
 --- !u!114 &8287365391867684976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4873,6 +4873,92 @@ Transform:
   m_Children: []
   m_Father: {fileID: 659200172880639134}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6368254010871362411
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 427730484928438642}
+  - component: {fileID: 4743976332642215149}
+  m_Layer: 0
+  m_Name: Head_Aim_Constraint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &427730484928438642
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6368254010871362411}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3957597456606673112}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4743976332642215149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6368254010871362411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiAimConstraint
+  m_Weight: 0.45
+  m_Data:
+    m_ConstrainedObject: {fileID: 1768012085083096941}
+    m_SourceObjects:
+      m_Length: 1
+      m_Item0:
+        transform: {fileID: 7182187722142815896}
+        weight: 1
+      m_Item1:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item2:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item3:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item4:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item5:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item6:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item7:
+        transform: {fileID: 0}
+        weight: 0
+    m_Offset: {x: 0, y: 0, z: 0}
+    m_MinLimit: -180
+    m_MaxLimit: 180
+    m_AimAxis: 3
+    m_UpAxis: 4
+    m_WorldUpType: 4
+    m_WorldUpObject: {fileID: 0}
+    m_WorldUpAxis: 2
+    m_MaintainOffset: 0
+    m_ConstrainedAxes:
+      x: 1
+      y: 1
+      z: 1
 --- !u!1 &6440201029594691978
 GameObject:
   m_ObjectHideFlags: 0
@@ -4889,7 +4975,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &9170039559151497248
 Transform:
   m_ObjectHideFlags: 0
@@ -6253,7 +6339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5952361192852631344
 Transform:
   m_ObjectHideFlags: 0
@@ -6718,7 +6804,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8642405265819044056
 Transform:
   m_ObjectHideFlags: 0
@@ -7378,6 +7464,7 @@ Transform:
   - {fileID: 8642405265819044056}
   - {fileID: 9170039559151497248}
   - {fileID: 7440857437736567160}
+  - {fileID: 427730484928438642}
   - {fileID: 5336821088759257306}
   - {fileID: 8706196773244254708}
   - {fileID: 3991320714053880281}
@@ -8032,7 +8119,7 @@ Animator:
   m_GameObject: {fileID: 9186813641752509766}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: dd6ec75974b69a3409711f8110698bbb, type: 3}
-  m_Controller: {fileID: 9100000, guid: 91a6e06af07b71e46854c8574e9b71ba, type: 2}
+  m_Controller: {fileID: 9100000, guid: eb48b818240e36c43ad91731b79b1d79, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -8208,6 +8295,7 @@ MonoBehaviour:
   - strain
   - surprise
   _defaultFaceAnimationIndex: 3
+  _topToGround: {fileID: 7400024, guid: f320efa63ce12874a9ad50add869c0b5, type: 3}
 --- !u!114 &8456076102521360366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8224,24 +8312,33 @@ MonoBehaviour:
   NetworkAnimatorExpanded: 0
   AuthorityMode: 1
   m_Animator: {fileID: 1668923154245640106}
-  TransitionStateInfoList:
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: 275084835
-    DestinationState: -549114815
-    TransitionDuration: 0.25
-    TriggerNameHash: 125937960
-    TransitionIndex: 0
+  TransitionStateInfoList: []
   AnimatorParameterEntries:
     ParameterEntries:
-    - name: Speed
-      NameHash: -823668238
+    - name: MoveX
+      NameHash: 675470966
       Synchronize: 1
       ParameterType: 1
-    - name: Jump
-      NameHash: 125937960
+    - name: MoveY
+      NameHash: 1598418656
       Synchronize: 1
-      ParameterType: 9
+      ParameterType: 1
+    - name: Run
+      NameHash: 1748754976
+      Synchronize: 1
+      ParameterType: 1
+    - name: IsGrounded
+      NameHash: 507951781
+      Synchronize: 1
+      ParameterType: 4
+    - name: VerticalSpeed
+      NameHash: -1148172834
+      Synchronize: 1
+      ParameterType: 1
+    - name: TimeToLand
+      NameHash: -1797349356
+      Synchronize: 1
+      ParameterType: 1
   AnimatorParametersExpanded: 0
 --- !u!1 &9220857500457348907
 GameObject:
