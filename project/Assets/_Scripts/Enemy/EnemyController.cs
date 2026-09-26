@@ -1,18 +1,23 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Netcode;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : NetworkBehaviour
 {
     [SerializeField] private EnemySettings _settings;
-    [SerializeField] private PathGrid _grid;
+    private PathGrid _grid;
     private float _timer;
     private bool _isGrounded;
     private float _verticalSpeed;
     private int _waypoint;
     private readonly List<int> _path = new();
-
     private const float WANDER_INTERVAL = 1.0f;  // 도착 후 다음 배회까지 대기 시간
     private const float ARRIVE_THRESHOLD = 0.2f; // 도착 판정 거리 (진동 방지)
+
+    public void InjectGrid(PathGrid grid)
+    {
+        _grid = grid;
+    }
 
     private void OnEnable()
     {
@@ -27,6 +32,11 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsSpawned || !IsServer)
+        {
+            return;
+        }
+
         float time = Time.fixedDeltaTime;
         Vector3 position = transform.position;
         Quaternion rotation = transform.rotation;

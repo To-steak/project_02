@@ -34,7 +34,7 @@ namespace PlayerAPI
 
         private void ApplyGravity(float gravity)
         {
-            _velocity.y += gravity * Time.fixedDeltaTime;
+            _velocity.y -= gravity * Time.fixedDeltaTime;
         }
 
         public void Jump(float power)
