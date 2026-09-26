@@ -14,7 +14,7 @@ public static class CharacterMotor
         move.y = 0.0f;
         if (move.sqrMagnitude > MIN_MOVE_SQR)
         {
-            position = CharacterPhysics.Walk(position, position + move, profile.Radius, profile.Height, profile.SlopeLimit, profile.StepHeight, layer, state.IsGrounded, out _);
+            position = CharacterPhysics.Walk(position, position + move, profile.Radius, profile.Height, profile.SlopeLimit, profile.StepHeight, layer, state.IsGrounded);
         }
 
         float vertical = state.VerticalSpeed;

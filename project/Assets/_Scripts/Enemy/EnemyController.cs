@@ -7,8 +7,7 @@ public class EnemyController : NetworkBehaviour
     [SerializeField] private EnemySettings _settings;
     private PathGrid _grid;
     private float _timer;
-    private bool _isGrounded;
-    private float _verticalSpeed;
+    private CharacterState _state;
     private int _waypoint;
     private readonly List<int> _path = new();
     private const float WANDER_INTERVAL = 1.0f;  // 도착 후 다음 배회까지 대기 시간
@@ -19,16 +18,19 @@ public class EnemyController : NetworkBehaviour
         _grid = grid;
     }
 
-    private void OnEnable()
+    protected override void OnNetworkPostSpawn()
     {
         // TODO: Object Pool에서 나오면 초기화
         _path.Clear();
         _waypoint = 0;
-        _isGrounded = false;
-        _verticalSpeed = 0.0f;
+        _state = default;
         _timer = 0.0f;
     }
 
+    public override void OnNetworkDespawn()
+    {
+
+    }
 
     private void FixedUpdate()
     {
@@ -64,38 +66,15 @@ public class EnemyController : NetworkBehaviour
             else
             {
                 input = new Vector2(direction.x, direction.z).normalized;
-                Vector3 move = new Vector3(input.x, 0.0f, input.y) * _settings.WalkSpeed * time;
-                position = CharacterPhysics.Walk(position, position + move, _settings.Profile.Radius, _settings.Profile.Height, _settings.Profile.SlopeLimit, _settings.Profile.StepHeight, layer, _isGrounded, out _);
             }
         }
+        Vector3 move = new Vector3(input.x, 0.0f, input.y) * _settings.WalkSpeed * time;
+        _state.Position = transform.position;
+        _state = CharacterMotor.Step(_state, move, 0.0f, _settings.Profile, time);
 
-        _verticalSpeed = CharacterPhysics.ApplyGravity(_verticalSpeed, _settings.Profile.Gravity, _settings.Profile.MaxFallSpeed, time);
-        Vector3 verticalPosition = position + Vector3.up * _verticalSpeed * time;
-
-        position = CharacterPhysics.Collide(position, verticalPosition, _settings.Profile.Radius, _settings.Profile.Height, layer);
-
-        _isGrounded = CharacterPhysics.IsGrounded(verticalPosition, position, _verticalSpeed);
-        if (_isGrounded) _verticalSpeed = -_settings.Profile.GroundStickSpeed;
-
-        rotation = input != Vector2.zero ? CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time) : rotation;
-
-        transform.SetPositionAndRotation(position, rotation);
+        rotation = CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time);
+        transform.SetPositionAndRotation(_state.Position, rotation);
     }
-
-    // private void Update()
-    // {
-    //     // 애니메이션 로직
-    // }
-
-    // private void OnDisable()
-    // {
-    //     // Object Pool에 반환될 때
-    // }
-
-    // private void OnDestroy()
-    // {
-    //     // 파괴될 때
-    // }
 
     private void Wander()
     {
@@ -175,7 +154,7 @@ public class EnemyController : NetworkBehaviour
 
         if (Application.isPlaying)
         {
-            Gizmos.color = _isGrounded ? Color.yellow : Color.gray;
+            Gizmos.color = _state.IsGrounded ? Color.yellow : Color.gray;
             Gizmos.DrawLine(position, position + Vector3.down * (radius * 0.5f));
         }
     }

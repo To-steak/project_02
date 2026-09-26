@@ -48,9 +48,8 @@ public static class CharacterPhysics
     /// 턱을 올라선 경우에는 그 자리에서 루프를 끝내므로 한 프레임에 한 단씩만 오른다.
     /// 중력은 다루지 않는다.
     /// </remarks>
-    public static Vector3 Walk(Vector3 origin, Vector3 target, float radius, float height, float slopeLimit, float stepHeight, LayerMask layer, bool grounded, out float climbed)
+    public static Vector3 Walk(Vector3 origin, Vector3 target, float radius, float height, float slopeLimit, float stepHeight, LayerMask layer, bool grounded)
     {
-        climbed = 0.0f;
         Vector3 position = origin;
         Vector3 delta = target - origin;
 
@@ -83,7 +82,6 @@ public static class CharacterPhysics
             // 2. 턱: 올라설 자리가 있으면 올라선다.
             if (grounded && TryStep(position, remain, radius, height, slopeLimit, stepHeight, layer, out Vector3 stepped))
             {
-                climbed = stepped.y - position.y;
                 position = stepped;
                 break;
             }
