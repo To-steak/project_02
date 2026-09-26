@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79c25908565b63488ff8994adff9e5d, type: 3}
-  m_Name: Turtle Shell
-  m_EditorClassIdentifier: Enemy::EnemySettings
+  m_Name: Beholder Settings
+  m_EditorClassIdentifier: GameEnemy::EnemySettings
   WalkSpeed: 1
   RunSpeed: 3
   RotationSpeed: 360
-  Profile: {fileID: 11400000, guid: 1ad3790a0d0f4e2449e8c2842dbb0158, type: 2}
+  Profile: {fileID: 11400000, guid: 6fddb864ca06a12498d0c3174b0d0a07, type: 2}

@@ -1,13 +1,13 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1102 &-8867380321127402135
+--- !u!1102 &-9205543170472191161
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_Attack02Angry
+  m_Name: Dizzy
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -20,20 +20,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 609e9ecd091942f0b89834f32fb1d90a, type: 3}
+  m_Motion: {fileID: 7400000, guid: f5318de752e94abe8168f58f4ee66c60, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-8769492094721566132
+--- !u!1102 &-9023130502096042399
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkBWDAngry
+  m_Name: WalkLeft
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -46,20 +46,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 601d986acc95465b80e47e4d4401bbe6, type: 3}
+  m_Motion: {fileID: 7400000, guid: f3218c7d816040de9b9bcfe80d5f77f3, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-8244983916705037764
+--- !u!1102 &-6569120060045671961
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdleBattleAngry
+  m_Name: WalkBWD
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -72,13 +72,91 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: a40b48ebaacc4a16a1f2b2c594d3cea8, type: 3}
+  m_Motion: {fileID: 7400000, guid: 7953a0170772403d9a06d99da5da62b3, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1107 &-7219047093718738581
+--- !u!1102 &-6494614273473212752
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: IdleBattle
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: d7a9297b2394411eb911484794b32687, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-4967910407948143224
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Taunting
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: 7a2c4609e61b43348d3f222904e09986, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-4765211196694333116
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Attack01
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: a5aa3ce397c24155845dba13bc634b36, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1107 &-4432134514630153083
 AnimatorStateMachine:
   serializedVersion: 6
   m_ObjectHideFlags: 1
@@ -88,65 +166,59 @@ AnimatorStateMachine:
   m_Name: Base Layer
   m_ChildStates:
   - serializedVersion: 1
-    m_State: {fileID: 1118476711584404253}
-    m_Position: {x: 100, y: 330, z: 0}
+    m_State: {fileID: -4765211196694333116}
+    m_Position: {x: 428.51044, y: 73.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -8867380321127402135}
-    m_Position: {x: 100, y: 380, z: 0}
+    m_State: {fileID: -204856533535819757}
+    m_Position: {x: 438.51044, y: 83.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 1280981584346385178}
-    m_Position: {x: 100, y: 430, z: 0}
+    m_State: {fileID: -919651777987450227}
+    m_Position: {x: 448.51044, y: 93.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -33679748191570058}
-    m_Position: {x: 100, y: 510, z: 0}
+    m_State: {fileID: 8563739357708436357}
+    m_Position: {x: 458.51044, y: 103.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 1090452420998357057}
-    m_Position: {x: 320, y: 400, z: 0}
+    m_State: {fileID: 8027562323441410692}
+    m_Position: {x: 468.51044, y: 113.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -6940352472713442145}
-    m_Position: {x: 320, y: 330, z: 0}
+    m_State: {fileID: -9205543170472191161}
+    m_Position: {x: 478.51044, y: 123.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -8244983916705037764}
-    m_Position: {x: 600, y: 180, z: 0}
+    m_State: {fileID: 8036275352123760934}
+    m_Position: {x: 488.51044, y: 133.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 4984699579243690534}
-    m_Position: {x: 320, y: 170, z: 0}
+    m_State: {fileID: -6494614273473212752}
+    m_Position: {x: 498.51044, y: 143.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 2213559235361375408}
-    m_Position: {x: 320, y: 220, z: 0}
+    m_State: {fileID: -2767844276761521773}
+    m_Position: {x: 508.51044, y: 153.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -2881512991857724212}
-    m_Position: {x: 600, y: 540, z: 0}
+    m_State: {fileID: -4144514535532825474}
+    m_Position: {x: 518.51044, y: 163.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 332677807319883974}
-    m_Position: {x: 320, y: 460, z: 0}
+    m_State: {fileID: -4348145126743837854}
+    m_Position: {x: 528.51044, y: 173.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -6911494987493593890}
-    m_Position: {x: 70, y: 170, z: 0}
+    m_State: {fileID: 3622902068234028026}
+    m_Position: {x: 538.51044, y: 183.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -6144293236893344644}
-    m_Position: {x: 600, y: 130, z: 0}
+    m_State: {fileID: -4967910407948143224}
+    m_Position: {x: 548.51044, y: 193.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 8333597190246512611}
-    m_Position: {x: 320, y: 270, z: 0}
+    m_State: {fileID: -2074271617421642174}
+    m_Position: {x: 558.51044, y: 203.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 9163087535318769003}
-    m_Position: {x: 600, y: 490, z: 0}
+    m_State: {fileID: -6569120060045671961}
+    m_Position: {x: 568.51044, y: 213.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -2843135997426722835}
-    m_Position: {x: 600, y: 240, z: 0}
+    m_State: {fileID: -4207707242022110990}
+    m_Position: {x: 578.51044, y: 223.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: -8769492094721566132}
-    m_Position: {x: 600, y: 440, z: 0}
+    m_State: {fileID: -9023130502096042399}
+    m_Position: {x: 588.51044, y: 233.62126, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 2167932217336718443}
-    m_Position: {x: 600, y: 290, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 3081185907970967564}
-    m_Position: {x: 600, y: 340, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 4609061987825724740}
-    m_Position: {x: 600, y: 390, z: 0}
+    m_State: {fileID: -2638980800776577146}
+    m_Position: {x: 598.51044, y: 243.62126, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -156,15 +228,15 @@ AnimatorStateMachine:
   m_EntryPosition: {x: 50, y: 120, z: 0}
   m_ExitPosition: {x: 50, y: 70, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
-  m_DefaultState: {fileID: -6911494987493593890}
---- !u!1102 &-6940352472713442145
+  m_DefaultState: {fileID: -2767844276761521773}
+--- !u!1102 &-4348145126743837854
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_GetHitAngry
+  m_Name: SenseSomethingRPT
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -177,20 +249,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: d19a8f0292eb4266b21cd4010159b274, type: 3}
+  m_Motion: {fileID: 7400000, guid: 26ecc7bbdaba43e5b1528fd25d1ba888, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-6911494987493593890
+--- !u!1102 &-4207707242022110990
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_runFWDAngry
+  m_Name: WalkFWD
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -203,20 +275,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 3c4056711c7546cda076bc46f425f005, type: 3}
+  m_Motion: {fileID: 7400000, guid: 38b0b6ad62ca4f8fa72ac537c889c8dc, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-6144293236893344644
+--- !u!1102 &-4144514535532825474
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_SenseSomethingMaintainAngry
+  m_Name: Run
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -229,20 +301,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: cd03d0d02ab543e09bf73d4b5ce861af, type: 3}
+  m_Motion: {fileID: 7400000, guid: cabb129121944e2dbd3866b6deba6b9d, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-2881512991857724212
+--- !u!1102 &-2767844276761521773
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdlePlantToBattleAngry
+  m_Name: IdleNormal
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -255,20 +327,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 72b3a1e9f8414e3684b238716de7631e, type: 3}
+  m_Motion: {fileID: 7400000, guid: 1125a2cce46b489590671831483c9b9f, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-2843135997426722835
+--- !u!1102 &-2638980800776577146
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_VictoryAngry
+  m_Name: WalkRight
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -281,20 +353,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 547f93bf97444b72b7af59c712fe0a83, type: 3}
+  m_Motion: {fileID: 7400000, guid: a7cad4d48bb74c28b10c007d2f1a1a57, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-33679748191570058
+--- !u!1102 &-2074271617421642174
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_DieAngry
+  m_Name: Victory
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -307,7 +379,59 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: f0085118ccc344269042a6158acf7991, type: 3}
+  m_Motion: {fileID: 7400000, guid: 1c2ecb4377f24515b2f4b59872645590, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-919651777987450227
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Attack02ST
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: 0be5f44ec700489faeb0ae9c20edd329, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-204856533535819757
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Attack02RPT
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: b1522de0f5934d5a8f7086ec995cab43, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -319,13 +443,13 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom Animator Controller
+  m_Name: Beholder Animator Controller
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
-    m_StateMachine: {fileID: -7219047093718738581}
+    m_StateMachine: {fileID: -4432134514630153083}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
@@ -335,14 +459,14 @@ AnimatorController:
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
---- !u!1102 &332677807319883974
+--- !u!1102 &3622902068234028026
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdlePlantToBattleSmile
+  m_Name: SenseSomethingST
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -355,20 +479,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: b3f08436da4c4d5da16efd896a6054d0, type: 3}
+  m_Motion: {fileID: 7400000, guid: 610942b5765c4d52839530334e6bc57a, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &1090452420998357057
+--- !u!1102 &8027562323441410692
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_DizzyAngry
+  m_Name: Die
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -381,20 +505,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 794ad7023a804808827dbb70edbd4686, type: 3}
+  m_Motion: {fileID: 7400000, guid: 97c47bfed40c4af58abfab0182f75594, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &1118476711584404253
+--- !u!1102 &8036275352123760934
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_Attack01Angry
+  m_Name: GetHit
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -407,20 +531,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 3afd084ecc3e4f56af5eeadd5792a379, type: 3}
+  m_Motion: {fileID: 7400000, guid: 13049e370384471a857e55bf2ab6c1aa, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &1280981584346385178
+--- !u!1102 &8563739357708436357
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_Attack03Angry
+  m_Name: Attack03
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -433,189 +557,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: b22f9fe863254a81a70d5fefc94ffaf3, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &2167932217336718443
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkFWDAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 210b1278c425407495dc4f93a8ae07e4, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &2213559235361375408
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdlePlant
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 15c2a05631ba497cbf857064f8c13659, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &3081185907970967564
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkLFTAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: ab6f3c8edfa946f1ac462e22d2cbfbee, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &4609061987825724740
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkRGTAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: e44fd719afe94c35b5a409ecab08db70, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &4984699579243690534
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdleNormalAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 0dd1e8c356ef4aa2836fe3fb1aaa9e9c, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &8333597190246512611
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_SenseSomethingStartAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 3d2020afd5114711895034bfc96e7748, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &9163087535318769003
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_TauntingAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 19d339b1707745e0a79453c2ad545162, type: 3}
+  m_Motion: {fileID: 7400000, guid: e9a3d959a28a4f02940e36a70434d669, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

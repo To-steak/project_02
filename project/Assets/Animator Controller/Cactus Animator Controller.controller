@@ -1,13 +1,13 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1102 &-8867380321127402135
+--- !u!1102 &-6814959215689506606
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_Attack02Angry
+  m_Name: Cactus_IdlePlantToBattle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -20,20 +20,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 609e9ecd091942f0b89834f32fb1d90a, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: d00ebea21de94808a69db1557187ad0b, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-8769492094721566132
+--- !u!1102 &-6502237302590635403
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkBWDAngry
+  m_Name: Cactus_Attack02
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -46,20 +46,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 601d986acc95465b80e47e4d4401bbe6, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: e49e58fcb12c43f4a7a539cba4962b5d, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-8244983916705037764
+--- !u!1102 &-6437202736541538216
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdleBattleAngry
+  m_Name: Cactus_GetHit
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -72,99 +72,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: a40b48ebaacc4a16a1f2b2c594d3cea8, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: e424a3fc633c48f6a431e2ba6bb3629d, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1107 &-7219047093718738581
-AnimatorStateMachine:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Base Layer
-  m_ChildStates:
-  - serializedVersion: 1
-    m_State: {fileID: 1118476711584404253}
-    m_Position: {x: 100, y: 330, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -8867380321127402135}
-    m_Position: {x: 100, y: 380, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1280981584346385178}
-    m_Position: {x: 100, y: 430, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -33679748191570058}
-    m_Position: {x: 100, y: 510, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1090452420998357057}
-    m_Position: {x: 320, y: 400, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -6940352472713442145}
-    m_Position: {x: 320, y: 330, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -8244983916705037764}
-    m_Position: {x: 600, y: 180, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 4984699579243690534}
-    m_Position: {x: 320, y: 170, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 2213559235361375408}
-    m_Position: {x: 320, y: 220, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -2881512991857724212}
-    m_Position: {x: 600, y: 540, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 332677807319883974}
-    m_Position: {x: 320, y: 460, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -6911494987493593890}
-    m_Position: {x: 70, y: 170, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -6144293236893344644}
-    m_Position: {x: 600, y: 130, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 8333597190246512611}
-    m_Position: {x: 320, y: 270, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 9163087535318769003}
-    m_Position: {x: 600, y: 490, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -2843135997426722835}
-    m_Position: {x: 600, y: 240, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -8769492094721566132}
-    m_Position: {x: 600, y: 440, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 2167932217336718443}
-    m_Position: {x: 600, y: 290, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 3081185907970967564}
-    m_Position: {x: 600, y: 340, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 4609061987825724740}
-    m_Position: {x: 600, y: 390, z: 0}
-  m_ChildStateMachines: []
-  m_AnyStateTransitions: []
-  m_EntryTransitions: []
-  m_StateMachineTransitions: {}
-  m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 50, y: 20, z: 0}
-  m_EntryPosition: {x: 50, y: 120, z: 0}
-  m_ExitPosition: {x: 50, y: 70, z: 0}
-  m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
-  m_DefaultState: {fileID: -6911494987493593890}
---- !u!1102 &-6940352472713442145
+--- !u!1102 &-4966218973854055315
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_GetHitAngry
+  m_Name: Cactus_WalkBWD
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -177,20 +98,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: d19a8f0292eb4266b21cd4010159b274, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 5ed9dae302a44e85a020abdfda7c6b6d, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-6911494987493593890
+--- !u!1102 &-4152280789428149824
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_runFWDAngry
+  m_Name: Cactus_WalkLFT
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -203,20 +124,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 3c4056711c7546cda076bc46f425f005, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 66983b883cb34562a7e93c1e153e9cd4, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-6144293236893344644
+--- !u!1102 &-3210682769849713529
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_SenseSomethingMaintainAngry
+  m_Name: Cactus_SenseSomethingMaint
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -229,85 +150,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: cd03d0d02ab543e09bf73d4b5ce861af, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &-2881512991857724212
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdlePlantToBattleAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 72b3a1e9f8414e3684b238716de7631e, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &-2843135997426722835
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_VictoryAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 547f93bf97444b72b7af59c712fe0a83, type: 3}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &-33679748191570058
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_DieAngry
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: f0085118ccc344269042a6158acf7991, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: fbef989f230e4016a6ac6db9af92fa6c, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -319,13 +162,13 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom Animator Controller
+  m_Name: Cactus Animator Controller
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
-    m_StateMachine: {fileID: -7219047093718738581}
+    m_StateMachine: {fileID: 3358144844290426996}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
@@ -335,14 +178,14 @@ AnimatorController:
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
---- !u!1102 &332677807319883974
+--- !u!1102 &699957277694788016
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdlePlantToBattleSmile
+  m_Name: Cactus_WalkRGT
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -355,20 +198,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: b3f08436da4c4d5da16efd896a6054d0, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: bad8b6b89024479ba25338c3e6599480, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &1090452420998357057
+--- !u!1102 &1064642674324773665
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_DizzyAngry
+  m_Name: Cactus_WalkFWD
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -381,20 +224,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 794ad7023a804808827dbb70edbd4686, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 9b9279213c434f60bfdd45c1f0e4d752, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &1118476711584404253
+--- !u!1102 &1839291242503217829
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_Attack01Angry
+  m_Name: Cactus_Die
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -407,20 +250,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 3afd084ecc3e4f56af5eeadd5792a379, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 85954cadc1314eb7ba106f3d72458d2e, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &1280981584346385178
+--- !u!1102 &1857202156797783819
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_Attack03Angry
+  m_Name: Cactus_Victory
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -433,20 +276,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: b22f9fe863254a81a70d5fefc94ffaf3, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: c7e724fe6f154f8e925904f3c04c94e9, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &2167932217336718443
+--- !u!1102 &2952931024390096592
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkFWDAngry
+  m_Name: Cactus_Dizzy
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -459,20 +302,93 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 210b1278c425407495dc4f93a8ae07e4, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 605f059c58d14be0a1f82ef4634bcbe3, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &2213559235361375408
+--- !u!1107 &3358144844290426996
+AnimatorStateMachine:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Base Layer
+  m_ChildStates:
+  - serializedVersion: 1
+    m_State: {fileID: 5729794518031055191}
+    m_Position: {x: 367.66962, y: 115.757515, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -6502237302590635403}
+    m_Position: {x: 377.66962, y: 125.757515, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 1839291242503217829}
+    m_Position: {x: 387.66962, y: 135.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 2952931024390096592}
+    m_Position: {x: 397.66962, y: 145.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -6437202736541538216}
+    m_Position: {x: 407.66962, y: 155.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 3989596443943267757}
+    m_Position: {x: 340, y: 170, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 6323451141240135458}
+    m_Position: {x: 570, y: 150, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 4223575231752911797}
+    m_Position: {x: 437.66962, y: 185.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -6814959215689506606}
+    m_Position: {x: 447.66962, y: 195.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 4801586800373644029}
+    m_Position: {x: 457.66962, y: 205.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -3210682769849713529}
+    m_Position: {x: 467.66962, y: 215.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 4063689442196408646}
+    m_Position: {x: 477.66962, y: 225.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 4115682584885523337}
+    m_Position: {x: 487.66962, y: 235.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 1857202156797783819}
+    m_Position: {x: 497.66962, y: 245.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -4966218973854055315}
+    m_Position: {x: 507.66962, y: 255.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 1064642674324773665}
+    m_Position: {x: 517.6696, y: 265.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -4152280789428149824}
+    m_Position: {x: 527.6696, y: 275.7575, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 699957277694788016}
+    m_Position: {x: 537.6696, y: 285.7575, z: 0}
+  m_ChildStateMachines: []
+  m_AnyStateTransitions: []
+  m_EntryTransitions: []
+  m_StateMachineTransitions: {}
+  m_StateMachineBehaviours: []
+  m_AnyStatePosition: {x: 50, y: 20, z: 0}
+  m_EntryPosition: {x: 50, y: 120, z: 0}
+  m_ExitPosition: {x: 50, y: 70, z: 0}
+  m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
+  m_DefaultState: {fileID: 6323451141240135458}
+--- !u!1102 &3989596443943267757
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdlePlant
+  m_Name: Cactus_IdleBattle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -485,20 +401,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 15c2a05631ba497cbf857064f8c13659, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: f0daf145f0a24017a35ced6e06050023, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &3081185907970967564
+--- !u!1102 &4063689442196408646
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkLFTAngry
+  m_Name: Cactus_SenseSomethingStart
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -511,20 +427,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: ab6f3c8edfa946f1ac462e22d2cbfbee, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 63a98712f7b748b0bfc52fd196e19a88, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &4609061987825724740
+--- !u!1102 &4115682584885523337
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_walkRGTAngry
+  m_Name: Cactus_Taunting
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -537,20 +453,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: e44fd719afe94c35b5a409ecab08db70, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: d52f1a6ffaf64fdcb80af3be273cc718, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &4984699579243690534
+--- !u!1102 &4223575231752911797
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_IdleNormalAngry
+  m_Name: Cactus_IdlePlant
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -563,20 +479,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 0dd1e8c356ef4aa2836fe3fb1aaa9e9c, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 11b47f4308ab4ea1a77f45904a1cd0d2, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &8333597190246512611
+--- !u!1102 &4801586800373644029
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_SenseSomethingStartAngry
+  m_Name: Cactus_RunFWD
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -589,20 +505,20 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 3d2020afd5114711895034bfc96e7748, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: 93edfaa62ef343799630a119e6b5b00d, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &9163087535318769003
+--- !u!1102 &5729794518031055191
 AnimatorState:
   serializedVersion: 6
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mushroom_TauntingAngry
+  m_Name: Cactus_Attack01
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -615,7 +531,33 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: 19d339b1707745e0a79453c2ad545162, type: 3}
+  m_Motion: {fileID: 1827226128182048838, guid: c25688f83d5f4ff3bbccaaf074a7da91, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &6323451141240135458
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Cactus_IdleNormal
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 1827226128182048838, guid: 9bf3035ac8a641e99ba5d51178d131ba, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
