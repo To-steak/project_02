@@ -1,5 +1,3 @@
-namespace GameInterface
-{
     public static class GameServices
     {
         public static ICameraService Camera { get; private set; }
@@ -17,4 +15,3 @@ namespace GameInterface
             }
         }
     }
-}

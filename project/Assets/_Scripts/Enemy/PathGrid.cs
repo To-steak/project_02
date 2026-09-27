@@ -135,7 +135,7 @@ public class PathGrid : MonoBehaviour
         // 두 칸 사이를 실제 캡슐로 훑어본다.
         Vector3 source = ConvertWorldCoord(fromX, fromZ) + Vector3.up * CLEARANCE;
         Vector3 target = ConvertWorldCoord(toX, toZ) + Vector3.up * CLEARANCE;
-        Vector3 moved = CharacterPhysics.Walk(source, target, _profile.Radius, _profile.Height, _profile.SlopeLimit, _profile.StepHeight, layer, true, out _);
+        Vector3 moved = CharacterPhysics.Walk(source, target, _profile.Radius, _profile.Height, _profile.SlopeLimit, _profile.StepHeight, layer, true);
         Vector3 step = moved - target;
         step.y = 0.0f;
 

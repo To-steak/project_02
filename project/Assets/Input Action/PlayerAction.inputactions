@@ -3,7 +3,7 @@
     "name": "PlayerAction",
     "maps": [
         {
-            "name": "Battle",
+            "name": "General",
             "id": "0198f176-cfba-4d2c-8c43-e821cb24660e",
             "actions": [
                 {

@@ -1,69 +1,57 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace GameManager
+public class GameManager : MonoBehaviour
 {
-    public class GameManager : MonoBehaviour
+    [SerializeField] private NetworkObject _playerPrefab;
+    [SerializeField] private Transform[] _spawnPoints;
+
+    private int _nextSpawnIndex;
+
+    private void Start()
     {
-        [Header("Spawn")]
-        [SerializeField] private Transform[] _spawnPoints;
+        Application.targetFrameRate = 144;
 
-        private int _nextSpawnIndex;
+        var nm = NetworkManager.Singleton;
+        if (!nm.IsServer) return;
 
-        void Start()
+        // 이미 연결된 클라이언트(호스트 자신 포함)
+        foreach (ulong clientId in nm.ConnectedClientsIds)
+            SpawnPlayer(clientId);
+
+        // 이후 접속해서 씬 동기화를 마친 클라이언트
+        nm.SceneManager.OnSynchronizeComplete += SpawnPlayer;
+    }
+
+    private void OnDestroy()
+    {
+        var nm = NetworkManager.Singleton;
+        if (nm != null && nm.SceneManager != null)
+            nm.SceneManager.OnSynchronizeComplete -= SpawnPlayer;
+    }
+
+    private void SpawnPlayer(ulong clientId)
+    {
+        var nm = NetworkManager.Singleton;
+        if (!nm.ConnectedClients.TryGetValue(clientId, out var client) || client.PlayerObject != null)
+            return;
+
+        GetSpawnPose(out var position, out var rotation);
+        NetworkObject player = Instantiate(_playerPrefab, position, rotation);
+        player.SpawnAsPlayerObject(clientId);
+    }
+
+    private void GetSpawnPose(out Vector3 position, out Quaternion rotation)
+    {
+        if (_spawnPoints == null || _spawnPoints.Length == 0)
         {
-            Application.targetFrameRate = 144;
-
-            NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
-
-#if UNITY_SERVER
-        NetworkManager.Singleton.StartServer();
-#endif
+            position = Vector3.zero;
+            rotation = Quaternion.identity;
+            return;
         }
 
-        void OnDestroy()
-        {
-            if (NetworkManager.Singleton != null)
-            {
-                NetworkManager.Singleton.ConnectionApprovalCallback -= ApprovalCheck;
-            }
-        }
-
-        private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
-        {
-            response.Approved = true;
-            response.CreatePlayerObject = true;
-            response.PlayerPrefabHash = null;
-
-            GetSpawnPose(out var position, out var rotation);
-            response.Position = position;
-            response.Rotation = rotation;
-        }
-
-        private void GetSpawnPose(out Vector3 position, out Quaternion rotation)
-        {
-            if (_spawnPoints == null || _spawnPoints.Length == 0)
-            {
-                position = Vector3.zero;
-                rotation = Quaternion.identity;
-                return;
-            }
-
-            var point = _spawnPoints[_nextSpawnIndex % _spawnPoints.Length];
-            _nextSpawnIndex++;
-
-            position = point.position;
-            rotation = point.rotation;
-        }
-
-        public void ConnectClient()
-        {
-            NetworkManager.Singleton.StartClient();
-        }
-
-        public void OpenServer()
-        {
-            NetworkManager.Singleton.StartServer();
-        }
+        var point = _spawnPoints[_nextSpawnIndex++ % _spawnPoints.Length];
+        position = point.position;
+        rotation = point.rotation;
     }
 }

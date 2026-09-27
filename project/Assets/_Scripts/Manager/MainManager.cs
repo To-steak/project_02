@@ -1,66 +1,73 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-namespace GameManager
+
+public class MainManager : MonoBehaviour
 {
-    public class MainManager : MonoBehaviour
+    [SerializeField] GameObject menuPanel;
+    [SerializeField] GameObject settingsPanel;
+    [SerializeField] GameObject playPanel;
+
+    [SerializeField] Button playButton;
+    [SerializeField] Button settingsButton;
+    [SerializeField] Button exitButton;
+
+    [SerializeField] SettingsManager settingsManager;
+    [SerializeField] ConnectManager connectManager;
+
+    void Awake()
     {
-        [SerializeField] GameObject menuPanel;
-        [SerializeField] GameObject settingsPanel;
+        playButton.onClick.AddListener(OnPlay);
+        settingsButton.onClick.AddListener(OnSettings);
+        exitButton.onClick.AddListener(OnExit);
 
-        [SerializeField] Button playButton;
-        [SerializeField] Button settingsButton;
-        [SerializeField] Button exitButton;
+        settingsManager.OnClose += CloseSettingsPanel;
+        connectManager.OnBack += ClosePlayPanel;
+    }
 
-        [SerializeField] SettingsManager settingsManager;
-        const string SCENE_NAME = "TEST";
+    void OnDestroy()
+    {
+        settingsManager.OnClose -= CloseSettingsPanel;
+        connectManager.OnBack -= ClosePlayPanel;
+    }
 
-        void Awake()
-        {
-            playButton.onClick.AddListener(OnPlay);
-            settingsButton.onClick.AddListener(OnSettings);
-            exitButton.onClick.AddListener(OnExit);
+    void Start()
+    {
+        settingsPanel.SetActive(false);
+        menuPanel.SetActive(true);
+        playPanel.SetActive(false);
+    }
 
-            settingsManager.OnClose += CloseSettingsPanel;
-        }
+    private void OnPlay()
+    {
+        menuPanel.SetActive(false);
+        playPanel.SetActive(true);
+    }
 
-        void OnDestroy()
-        {
-            settingsManager.OnClose -= CloseSettingsPanel;
-        }
+    private void OnSettings()
+    {
+        menuPanel.SetActive(false);
+        settingsPanel.SetActive(true);
+        settingsManager.OpenSettings();
+    }
 
-        void Start()
-        {
-            settingsPanel.SetActive(false);
-            menuPanel.SetActive(true);
-        }
-
-        private void OnPlay()
-        {
-            playButton.interactable = false;
-            SceneManager.LoadScene(SCENE_NAME);
-        }
-
-        private void OnSettings()
-        {
-            menuPanel.SetActive(false);
-            settingsPanel.SetActive(true);
-            settingsManager.OpenSettings();
-        }
-
-        private void OnExit()
-        {
+    private void OnExit()
+    {
 #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
+        UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif
-        }
+    }
 
-        private void CloseSettingsPanel()
-        {
-            settingsPanel.SetActive(false);
-            menuPanel.SetActive(true);
-        }
+    private void CloseSettingsPanel()
+    {
+        settingsPanel.SetActive(false);
+        menuPanel.SetActive(true);
+    }
+
+    private void ClosePlayPanel()
+    {
+        playPanel.SetActive(false);
+        menuPanel.SetActive(true);
     }
 }
