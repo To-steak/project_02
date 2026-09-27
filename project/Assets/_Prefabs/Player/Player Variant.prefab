@@ -2408,6 +2408,7 @@ GameObject:
   - component: {fileID: 1634119094165126537}
   - component: {fileID: 8005297123998042264}
   - component: {fileID: 3124304013075138114}
+  - component: {fileID: 7234265273799312356}
   m_Layer: 7
   m_Name: Player Variant
   m_TagString: Untagged
@@ -2582,6 +2583,7 @@ MonoBehaviour:
   PlayerVisual: {fileID: 3124304013075138114}
   PlayerServer: {fileID: 8287365391867684976}
   PlayerClient: {fileID: 7078905302864766859}
+  PlayerWeapon: {fileID: 7234265273799312356}
   _networkTransform: {fileID: 3691936339058646927}
 --- !u!114 &8287365391867684976
 MonoBehaviour:
@@ -2662,6 +2664,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Player::PlayerAPI.PlayerVisual
   _visual: {fileID: 9031901744525352242}
+--- !u!114 &7234265273799312356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3352041741525735007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41474dc78133bd147a05b30c79bfcfaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GamePlayer::PlayerAPI.PlayerWeapon
+  _data: {fileID: 0}
+  _origin: {fileID: 0}
+  _muzzle: {fileID: 0}
+  _enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &3371726832865955048
 GameObject:
   m_ObjectHideFlags: 0
