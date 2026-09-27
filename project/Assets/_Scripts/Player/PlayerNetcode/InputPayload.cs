@@ -6,18 +6,22 @@ namespace PlayerNetcode
     public struct InputPayload : INetworkSerializable
     {
         public int Tick;
-        public Vector2 Move;
-        public bool Run;
-        public bool Jump;
-        public float Yaw;
+        public Vector2 MoveInput;
+        public bool RunInput;
+        public bool JumpInput;
+        public float YawInput;
+        public bool AttackInput;
+        public bool AttackPressed;
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref Tick);
-            serializer.SerializeValue(ref Move);
-            serializer.SerializeValue(ref Run);
-            serializer.SerializeValue(ref Jump);
-            serializer.SerializeValue(ref Yaw);
+            serializer.SerializeValue(ref MoveInput);
+            serializer.SerializeValue(ref RunInput);
+            serializer.SerializeValue(ref JumpInput);
+            serializer.SerializeValue(ref YawInput);
+            serializer.SerializeValue(ref AttackInput);
+            serializer.SerializeValue(ref AttackPressed);
         }
     }
 }

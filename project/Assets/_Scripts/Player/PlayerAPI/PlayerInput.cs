@@ -14,6 +14,7 @@ namespace PlayerAPI
         public bool AttackInput { get; private set; }
 
         private PlayerAction _action;
+        private bool _attackPressed;
 
         public void Initialize(PlayerAction instance)
         {
@@ -81,13 +82,15 @@ namespace PlayerAPI
             InputPayload payload = new InputPayload
             {
                 Tick = tick,
-                Move = MoveInput,
-                Run = RunInput,
-                Jump = JumpInput,
-                Yaw = yaw
+                MoveInput = MoveInput,
+                RunInput = RunInput,
+                JumpInput = JumpInput,
+                YawInput = yaw,
+                AttackInput = AttackInput
             };
 
             JumpInput = false;
+            _attackPressed = false;
             return payload;
         }
 
@@ -118,7 +121,15 @@ namespace PlayerAPI
 
         private void OnAttack(InputAction.CallbackContext context)
         {
-            AttackInput = context.performed;
+            if (context.performed)
+            {
+                AttackInput = true;
+                _attackPressed = true;
+            }
+            else if (context.canceled)
+            {
+                AttackInput = false;
+            }
         }
     }
 }

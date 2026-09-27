@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8706196773244254708
 Transform:
   m_ObjectHideFlags: 0
@@ -2274,7 +2274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8022614242852115615
 Transform:
   m_ObjectHideFlags: 0
@@ -2443,7 +2443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2724382985
+  GlobalObjectIdHash: 1869363793
   InScenePlacedSourceGlobalObjectIdHash: 1228119792
   DeferredDespawnTick: 0
   Ownership: 1
@@ -3811,7 +3811,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3991320714053880281
 Transform:
   m_ObjectHideFlags: 0
@@ -3974,7 +3974,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2293208674610420221
 Transform:
   m_ObjectHideFlags: 0
@@ -4297,7 +4297,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1712018936503759265
 Transform:
   m_ObjectHideFlags: 0
@@ -4613,7 +4613,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1561157761877215345
 Transform:
   m_ObjectHideFlags: 0
@@ -5061,7 +5061,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1757511485114970890
 Transform:
   m_ObjectHideFlags: 0
@@ -5360,7 +5360,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3286756359043865487
 Transform:
   m_ObjectHideFlags: 0
@@ -5736,7 +5736,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5336821088759257306
 Transform:
   m_ObjectHideFlags: 0
@@ -5854,7 +5854,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1791741841726752635
 Transform:
   m_ObjectHideFlags: 0
@@ -5972,7 +5972,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &887299535234921814
 Transform:
   m_ObjectHideFlags: 0
@@ -7876,7 +7876,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6135455272851955806
 Transform:
   m_ObjectHideFlags: 0
@@ -8295,7 +8295,6 @@ MonoBehaviour:
   - strain
   - surprise
   _defaultFaceAnimationIndex: 3
-  _topToGround: {fileID: 7400024, guid: f320efa63ce12874a9ad50add869c0b5, type: 3}
 --- !u!114 &8456076102521360366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8335,8 +8334,12 @@ MonoBehaviour:
       NameHash: -1148172834
       Synchronize: 1
       ParameterType: 1
-    - name: TimeToLand
-      NameHash: -1797349356
+    - name: IsLanding
+      NameHash: 185343862
+      Synchronize: 1
+      ParameterType: 4
+    - name: LandProgress
+      NameHash: -1357717772
       Synchronize: 1
       ParameterType: 1
   AnimatorParametersExpanded: 0
@@ -8582,7 +8585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9168346059068791604, guid: d325bd5ddf177974e8e92bd5c17db2dd, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

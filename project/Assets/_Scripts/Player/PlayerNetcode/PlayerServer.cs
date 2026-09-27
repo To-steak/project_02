@@ -31,7 +31,7 @@ namespace PlayerNetcode
                 {
                     break;
                 }
-                _controller.PlayerLocomotion.Rotate(payload.Yaw);
+                _controller.PlayerLocomotion.Rotate(payload.YawInput);
                 _controller.PlayerLocomotion.Simulate(payload, _controller.PlayerSettings);
 
                 StatePayload state = _controller.PlayerLocomotion.Capture(payload.Tick);
@@ -58,7 +58,8 @@ namespace PlayerNetcode
             {
                 payload = _lastInput;
                 payload.Tick = tick;
-                payload.Jump = false;
+                payload.JumpInput = false;
+                payload.AttackPressed = false;
             }
 
             _consumedTick = tick;

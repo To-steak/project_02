@@ -32,10 +32,10 @@ namespace PlayerAPI
         public void Simulate(InputPayload payload, PlayerSettingSO setting)
         {
             float time = Time.fixedDeltaTime;
-            Vector2 move = Vector2.ClampMagnitude(payload.Move, 1.0f);
-            float moveSpeed = move == Vector2.zero ? 0.0f : (payload.Run ? setting.RunSpeed : setting.WalkSpeed);
-            Vector3 direction = Quaternion.Euler(0.0f, payload.Yaw, 0.0f) * new Vector3(move.x, 0.0f, move.y);
-            float jumpSpeed = payload.Jump ? setting.JumpSpeed : 0.0f;
+            Vector2 move = Vector2.ClampMagnitude(payload.MoveInput, 1.0f);
+            float moveSpeed = move == Vector2.zero ? 0.0f : (payload.RunInput ? setting.RunSpeed : setting.WalkSpeed);
+            Vector3 direction = Quaternion.Euler(0.0f, payload.YawInput, 0.0f) * new Vector3(move.x, 0.0f, move.y);
+            float jumpSpeed = payload.JumpInput ? setting.JumpSpeed : 0.0f;
 
             _state.Position = transform.position;
             _state = CharacterMotor.Step(_state, moveSpeed * time * direction, jumpSpeed, setting.Profile, time);
