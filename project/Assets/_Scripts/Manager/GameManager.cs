@@ -3,39 +3,42 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Spawn")]
+    [SerializeField] private NetworkObject _playerPrefab;
     [SerializeField] private Transform[] _spawnPoints;
 
     private int _nextSpawnIndex;
 
-    void Start()
+    private void Start()
     {
         Application.targetFrameRate = 144;
 
-        NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
+        var nm = NetworkManager.Singleton;
+        if (!nm.IsServer) return;
 
-#if UNITY_SERVER
-        NetworkManager.Singleton.StartServer();
-#endif
+        // 이미 연결된 클라이언트(호스트 자신 포함)
+        foreach (ulong clientId in nm.ConnectedClientsIds)
+            SpawnPlayer(clientId);
+
+        // 이후 접속해서 씬 동기화를 마친 클라이언트
+        nm.SceneManager.OnSynchronizeComplete += SpawnPlayer;
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.ConnectionApprovalCallback -= ApprovalCheck;
-        }
+        var nm = NetworkManager.Singleton;
+        if (nm != null && nm.SceneManager != null)
+            nm.SceneManager.OnSynchronizeComplete -= SpawnPlayer;
     }
 
-    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+    private void SpawnPlayer(ulong clientId)
     {
-        response.Approved = true;
-        response.CreatePlayerObject = true;
-        response.PlayerPrefabHash = null;
+        var nm = NetworkManager.Singleton;
+        if (!nm.ConnectedClients.TryGetValue(clientId, out var client) || client.PlayerObject != null)
+            return;
 
         GetSpawnPose(out var position, out var rotation);
-        response.Position = position;
-        response.Rotation = rotation;
+        NetworkObject player = Instantiate(_playerPrefab, position, rotation);
+        player.SpawnAsPlayerObject(clientId);
     }
 
     private void GetSpawnPose(out Vector3 position, out Quaternion rotation)
@@ -47,20 +50,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        var point = _spawnPoints[_nextSpawnIndex % _spawnPoints.Length];
-        _nextSpawnIndex++;
-
+        var point = _spawnPoints[_nextSpawnIndex++ % _spawnPoints.Length];
         position = point.position;
         rotation = point.rotation;
-    }
-
-    public void ConnectClient()
-    {
-        NetworkManager.Singleton.StartClient();
-    }
-
-    public void OpenServer()
-    {
-        NetworkManager.Singleton.StartServer();
     }
 }

@@ -1,18 +1,18 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
     [SerializeField] GameObject menuPanel;
     [SerializeField] GameObject settingsPanel;
+    [SerializeField] GameObject playPanel;
 
     [SerializeField] Button playButton;
     [SerializeField] Button settingsButton;
     [SerializeField] Button exitButton;
 
     [SerializeField] SettingsManager settingsManager;
-    const string SCENE_NAME = "TEST";
+    [SerializeField] ConnectManager connectManager;
 
     void Awake()
     {
@@ -21,23 +21,26 @@ public class MainManager : MonoBehaviour
         exitButton.onClick.AddListener(OnExit);
 
         settingsManager.OnClose += CloseSettingsPanel;
+        connectManager.OnBack += ClosePlayPanel;
     }
 
     void OnDestroy()
     {
         settingsManager.OnClose -= CloseSettingsPanel;
+        connectManager.OnBack -= ClosePlayPanel;
     }
 
     void Start()
     {
         settingsPanel.SetActive(false);
         menuPanel.SetActive(true);
+        playPanel.SetActive(false);
     }
 
     private void OnPlay()
     {
-        playButton.interactable = false;
-        SceneManager.LoadScene(SCENE_NAME);
+        menuPanel.SetActive(false);
+        playPanel.SetActive(true);
     }
 
     private void OnSettings()
@@ -59,6 +62,12 @@ public class MainManager : MonoBehaviour
     private void CloseSettingsPanel()
     {
         settingsPanel.SetActive(false);
+        menuPanel.SetActive(true);
+    }
+
+    private void ClosePlayPanel()
+    {
+        playPanel.SetActive(false);
         menuPanel.SetActive(true);
     }
 }
