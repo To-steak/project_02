@@ -6,7 +6,7 @@ public static class CharacterMotor
     private const float MIN_MOVE_SQR = MIN_MOVE * MIN_MOVE;
     private const float CEILING_EPSILON = 0.001f;
 
-    public static CharacterState Step(CharacterState state, Vector3 move, float jumpSpeed, AgentProfile profile, float time)
+    public static CharacterState Step(CharacterState state, Vector3 move, float jumpSpeed, CharacterProfile profile, float time)
     {
         LayerMask layer = profile.GroundLayer | profile.ObstacleLayer;
         Vector3 position = state.Position;

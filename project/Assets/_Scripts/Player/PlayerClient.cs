@@ -51,8 +51,10 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, _controller.PlayerSettings.PitchSpeed, _controller.PlayerSettings.MinPitch, _controller.PlayerSettings.MaxPitch);
-            _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, _controller.PlayerSettings.RotationSpeed);
+            float sensitivity = InputService.MouseSensitivity;
+            var s = _controller.PlayerSettings;
+            _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, s.PitchSpeed * sensitivity, s.MinPitch, s.MaxPitch);
+            _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, s.RotationSpeed * sensitivity);
 
             _controller.PlayerLocomotion.Rotate(_controller.PlayerCamera.Yaw);
             _controller.PlayerCamera.ApplyAim(_controller.PlayerInput.AimInput);
