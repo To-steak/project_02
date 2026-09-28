@@ -26,7 +26,7 @@ public class PlayerLocomotion : MonoBehaviour
         _state.IsGrounded = payload.IsGrounded;
     }
 
-    public void Simulate(InputPayload payload, PlayerSettingSO setting)
+    public void Simulate(InputPayload payload, PlayerSettings setting)
     {
         float time = Time.fixedDeltaTime;
         Vector2 move = Vector2.ClampMagnitude(payload.MoveInput, 1.0f);

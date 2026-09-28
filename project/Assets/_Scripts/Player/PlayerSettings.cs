@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PlayerSettings", menuName = "Scriptable Objects/PlayerSettings")]
-public class PlayerSettingSO : ScriptableObject
+public class PlayerSettings : ScriptableObject
 {
     [Header("Movement")]
     public float WalkSpeed;

@@ -4,7 +4,7 @@ using Unity.Netcode.Components;
 
 public class PlayerController : NetworkBehaviour
 {
-    [SerializeField] internal PlayerSettingSO PlayerSettings;
+    [SerializeField] internal PlayerSettings PlayerSettings;
     [SerializeField] internal PlayerInput PlayerInput;
     [SerializeField] internal PlayerAnimation PlayerAnimation;
     [SerializeField] internal PlayerLocomotion PlayerLocomotion;
