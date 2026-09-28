@@ -202,7 +202,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1583493931}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.21875
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2976,7 +2976,7 @@ GameObject:
   - component: {fileID: 266239312}
   - component: {fileID: 266239311}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4128,7 +4128,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &480917084
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4533,7 +4533,7 @@ GameObject:
   - component: {fileID: 522896880}
   - component: {fileID: 522896879}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5481,6 +5481,7 @@ GameObject:
   - component: {fileID: 614361818}
   - component: {fileID: 614361820}
   - component: {fileID: 614361819}
+  - component: {fileID: 614361821}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -5527,7 +5528,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Settings
+  m_text: settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
   m_sharedMaterial: {fileID: -5961520121953651276, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
@@ -5607,6 +5608,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 614361817}
   m_CullTransparentMesh: 1
+--- !u!114 &614361821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614361817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:d17d7aad50c507f43843d207dc60882e
+    m_TableEntryReference:
+      m_KeyId: 4600648232960
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 614361819}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &615617358
 GameObject:
   m_ObjectHideFlags: 0
@@ -5730,7 +5771,7 @@ GameObject:
   - component: {fileID: 617874838}
   - component: {fileID: 617874837}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7786,7 +7827,7 @@ GameObject:
   - component: {fileID: 829309453}
   - component: {fileID: 829309452}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8984,7 +9025,7 @@ GameObject:
   - component: {fileID: 958678382}
   - component: {fileID: 958678381}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9820,7 +9861,7 @@ GameObject:
   - component: {fileID: 994600291}
   - component: {fileID: 994600290}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9956,6 +9997,7 @@ GameObject:
   - component: {fileID: 995003277}
   - component: {fileID: 995003279}
   - component: {fileID: 995003278}
+  - component: {fileID: 995003280}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -10002,7 +10044,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Exit
+  m_text: exit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
   m_sharedMaterial: {fileID: -5961520121953651276, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
@@ -10082,6 +10124,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 995003276}
   m_CullTransparentMesh: 1
+--- !u!114 &995003280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995003276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:d17d7aad50c507f43843d207dc60882e
+    m_TableEntryReference:
+      m_KeyId: 4600648232961
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 995003278}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &1018113840
 GameObject:
   m_ObjectHideFlags: 0
@@ -10351,7 +10433,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Keyboard
+  m_text: 'keyboard
 
 '
   m_isRightToLeft: 0
@@ -11492,6 +11574,7 @@ GameObject:
   - component: {fileID: 1147294707}
   - component: {fileID: 1147294709}
   - component: {fileID: 1147294708}
+  - component: {fileID: 1147294710}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -11538,7 +11621,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Play
+  m_text: play
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
   m_sharedMaterial: {fileID: -5961520121953651276, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
@@ -11618,6 +11701,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1147294706}
   m_CullTransparentMesh: 1
+--- !u!114 &1147294710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1147294706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eb0353ae6e5124bb35b17aff880f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Components.LocalizeStringEvent
+  m_StringReference:
+    m_TableReference:
+      m_TableCollectionName: GUID:d17d7aad50c507f43843d207dc60882e
+    m_TableEntryReference:
+      m_KeyId: 4600644038656
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  m_FormatArguments: []
+  m_UpdateString:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1147294708}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &1165931303
 GameObject:
   m_ObjectHideFlags: 0
@@ -12211,7 +12334,7 @@ GameObject:
   - component: {fileID: 1218866752}
   - component: {fileID: 1218866751}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12680,7 +12803,7 @@ GameObject:
   - component: {fileID: 1326964493}
   - component: {fileID: 1326964492}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13207,7 +13330,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1358354829
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14525,7 +14648,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Graphics
+  m_text: graphics
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
   m_sharedMaterial: {fileID: -5961520121953651276, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
@@ -15379,7 +15502,7 @@ GameObject:
   - component: {fileID: 1556178345}
   - component: {fileID: 1556178344}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15537,7 +15660,7 @@ RectTransform:
   m_Father: {fileID: 2018483155}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.21875}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -15597,7 +15720,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1585678512
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16739,7 +16862,7 @@ GameObject:
   - component: {fileID: 1783375223}
   - component: {fileID: 1783375222}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Text (TMP) - no local
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18985,7 +19108,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Audio
+  m_text: audio
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
   m_sharedMaterial: {fileID: -5961520121953651276, guid: c296cd9ee6fdca44b9f6fffa07a36da3, type: 2}
