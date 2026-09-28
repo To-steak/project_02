@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainManager : MonoBehaviour
+public class MainMenuManager : MonoBehaviour
 {
     [SerializeField] GameObject menuPanel;
     [SerializeField] GameObject settingsPanel;
@@ -13,8 +13,6 @@ public class MainManager : MonoBehaviour
 
     [SerializeField] SettingsManager settingsManager;
     [SerializeField] ConnectManager connectManager;
-
-    [SerializeField] string gameSceneName = "TEST";
 
     void Awake()
     {
@@ -80,7 +78,7 @@ public class MainManager : MonoBehaviour
         nm.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>().SetConnectionData("127.0.0.1", 7777, "0.0.0.0");
 
         if (nm.StartServer())
-            nm.SceneManager.LoadScene(gameSceneName, UnityEngine.SceneManagement.LoadSceneMode.Single);
+            nm.SceneManager.LoadScene("WAITING ROOM", UnityEngine.SceneManagement.LoadSceneMode.Single);
         else
             Debug.LogError("failed");
     }

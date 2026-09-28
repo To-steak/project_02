@@ -14,8 +14,8 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] Button save;
     [SerializeField] Button back;
     [SerializeField] Button reset;
-
     [SerializeField] AudioMixer mixer;
+    
     const string MASTER = "MasterVolume";
     const string MUSIC = "MusicVolume";
     const string SFX = "SFXVolume";

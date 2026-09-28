@@ -6,10 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Scenes/MAIN.unity
+    path: Assets/_Scenes/MAIN MENU.unity
     guid: f0a17ed3c1ed25145a8276760324af4c
   - enabled: 1
-    path: Assets/_Scenes/TEST.unity
+    path: Assets/_Scenes/WAITING ROOM.unity
+    guid: 8a77a6fe0da30e44aafff798e3ffea57
+  - enabled: 1
+    path: Assets/_Scenes/TUTORIAL WORLD.unity
+    guid: d25d84705d1663d41be9d4ee7e0ff9e6
+  - enabled: 1
+    path: Assets/_Scenes/TEST WORLD.unity
     guid: 363f4969759662c4d8dc1e5e7e2dc39f
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: cd86d512f19c92947ab722905dfdbbf4, type: 2}

@@ -36,11 +36,6 @@ public class PlayerAnimation : MonoBehaviour
         _animator.Animator.SetFloat(_run, run ? BLEND_TREE_RUN : BLEND_TREE_WALK, BLEND_TREE_DAMP_TIME, time);
     }
 
-    public void PlayJump()
-    {
-        _animator.Animator.SetTrigger(_jump);
-    }
-
     public void SetAirborne(bool grounded, float verticalSpeed)
     {
         _animator.Animator.SetBool(_isGrounded, grounded);
