@@ -19,7 +19,7 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            _controller.PlayerInput.Initialize(new PlayerAction());
+            _controller.PlayerInput.Initialize(InputService.Actions);
             _controller.PlayerInput.Active();
             _controller.PlayerInput.Enable();
             _controller.PlayerCamera.Initialize(GameServices.Camera);
@@ -44,8 +44,6 @@ public class PlayerClient : NetworkBehaviour
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            _controller.PlayerInput.Destroy();
         }
     }
 

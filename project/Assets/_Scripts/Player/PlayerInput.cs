@@ -68,12 +68,6 @@ public class PlayerInput : MonoBehaviour
         _action.General.Attack.canceled -= OnAttack;
     }
 
-    public void Destroy()
-    {
-        _action?.Dispose();
-        _action = null;
-    }
-
     public InputPayload Capture(int tick, float yaw, float pitch)
     {
         InputPayload payload = new InputPayload

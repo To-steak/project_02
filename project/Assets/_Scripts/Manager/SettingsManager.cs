@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
@@ -85,7 +86,8 @@ public class SettingsManager : MonoBehaviour
     public void OnReset()
     {
         _currentSettings = new GameSettings();
-
+        ApplyPreview();
+        
         foreach (var tab in tabs)
         {
             if (tab != null)
@@ -94,7 +96,6 @@ public class SettingsManager : MonoBehaviour
             }
         }
 
-        ApplyPreview();
         RefreshSaveButton();
     }
 
@@ -140,6 +141,7 @@ public class SettingsManager : MonoBehaviour
         SetMixerVolume(SFX, _currentSettings.SFXVolume);
 
         SetMouseSensitivity(_currentSettings.MouseSensitivity);
+        SetKeyboardBinding(_currentSettings.KeyBinding);
     }
 
     private void SetMixerVolume(string param, float linear)
@@ -165,6 +167,19 @@ public class SettingsManager : MonoBehaviour
         sensitivity = Mathf.Clamp(sensitivity, MIN_SENSITIVITY, MAX_SENSITIVITY);
         playerSettings.RotationSpeed = sensitivity;
         playerSettings.PitchSpeed = sensitivity;
+    }
+
+    private void SetKeyboardBinding(string json)
+    {
+        var asset = InputService.Actions.asset;
+        if (string.IsNullOrEmpty(json))
+        {
+            asset.RemoveAllBindingOverrides();
+        }
+        else
+        {
+            asset.LoadBindingOverridesFromJson(json);
+        }
     }
 
     public void OnSettingsChanged()
