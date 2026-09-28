@@ -4,32 +4,32 @@ using UnityEngine;
 
 public class KeyboardTAB : SettingsTAB
 {
-    [SerializeField] Slider mouseSensitivitySlider;
-    [SerializeField] TMP_Text mouseSensitivityLabel;
+    [SerializeField] private Slider _mouseSensitivitySlider;
+    [SerializeField] private TMP_Text _mouseSensitivityLabel;
 
-    const int MIN_MOUSE_SENSITIVITY = 1;
-    const int MAX_MOUSE_SENSITIVITY = 100;
-    const float SENSITIVITY_SCALE = 100f;
+    private const int MIN_MOUSE_SENSITIVITY = 1;
+    private const int MAX_MOUSE_SENSITIVITY = 100;
+    private const float SENSITIVITY_SCALE = 100f;
 
     protected override void OnBind()
     {
-        SetupSlider(mouseSensitivitySlider, MIN_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY);
-        
-        mouseSensitivitySlider.onValueChanged.AddListener(OnMouseSensitivityChanged);
+        SetupSlider(_mouseSensitivitySlider, MIN_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY);
+
+        _mouseSensitivitySlider.onValueChanged.AddListener(OnMouseSensitivityChanged);
     }
 
     public override void Refresh()
     {
         float display = Mathf.Round(CurrentSettings.MouseSensitivity * SENSITIVITY_SCALE);
         display = Mathf.Clamp(display, MIN_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY);
-        mouseSensitivitySlider.SetValueWithoutNotify(display);
-        UpdateLabel(mouseSensitivityLabel, display);
+        _mouseSensitivitySlider.SetValueWithoutNotify(display);
+        UpdateLabel(_mouseSensitivityLabel, display);
     }
 
     private void OnMouseSensitivityChanged(float value)
     {
-        CurrentSettings.MouseSensitivity = value;
-        UpdateLabel(mouseSensitivityLabel, value);
+        CurrentSettings.MouseSensitivity = value / SENSITIVITY_SCALE;
+        UpdateLabel(_mouseSensitivityLabel, value);
         NotifyChanged();
     }
 }

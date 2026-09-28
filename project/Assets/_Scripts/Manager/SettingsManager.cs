@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
+    [SerializeField] PlayerSettings playerSettings;
+
     [SerializeField] Button[] header;
     [SerializeField] GameObject[] body;
     [SerializeField] SettingsTAB[] tabs;
@@ -25,6 +27,9 @@ public class SettingsManager : MonoBehaviour
     public event Action OnClose;
 
     const int DEFAULT_TAB_INDEX = 0;
+
+    const float MIN_SENSITIVITY = 0.01f;
+    const float MAX_SENSITIVITY = 1f;
 
     void Awake()
     {
@@ -49,6 +54,7 @@ public class SettingsManager : MonoBehaviour
         reset.onClick.AddListener(OnReset);
 
         ApplyDisplay();
+        ApplyPreview();
         RefreshSaveButton();
     }
 
@@ -72,7 +78,7 @@ public class SettingsManager : MonoBehaviour
     public void OnBack()
     {
         _currentSettings = _savedSettings.Clone();
-        // ApplyPreview();
+        ApplyPreview();
         OnClose?.Invoke();
     }
 
@@ -88,6 +94,7 @@ public class SettingsManager : MonoBehaviour
             }
         }
 
+        ApplyPreview();
         RefreshSaveButton();
     }
 
@@ -131,6 +138,8 @@ public class SettingsManager : MonoBehaviour
         SetMixerVolume(MASTER, _currentSettings.MasterVolume);
         SetMixerVolume(MUSIC, _currentSettings.MusicVolume);
         SetMixerVolume(SFX, _currentSettings.SFXVolume);
+
+        SetMouseSensitivity(_currentSettings.MouseSensitivity);
     }
 
     private void SetMixerVolume(string param, float linear)
@@ -146,10 +155,21 @@ public class SettingsManager : MonoBehaviour
         mixer.SetFloat(param, db);
     }
 
+    private void SetMouseSensitivity(float sensitivity)
+    {
+        if (playerSettings == null)
+        {
+            return;
+        }
+
+        sensitivity = Mathf.Clamp(sensitivity, MIN_SENSITIVITY, MAX_SENSITIVITY);
+        playerSettings.RotationSpeed = sensitivity;
+        playerSettings.PitchSpeed = sensitivity;
+    }
+
     public void OnSettingsChanged()
     {
-        // TODO: AudioMixer 연결 후 ApplyAudio 호출 복구
-        // ApplyPreview();
+        ApplyPreview();
         RefreshSaveButton();
     }
 

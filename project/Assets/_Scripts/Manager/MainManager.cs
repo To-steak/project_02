@@ -14,6 +14,8 @@ public class MainManager : MonoBehaviour
     [SerializeField] SettingsManager settingsManager;
     [SerializeField] ConnectManager connectManager;
 
+    [SerializeField] string gameSceneName = "TEST";
+
     void Awake()
     {
         playButton.onClick.AddListener(OnPlay);
@@ -70,4 +72,24 @@ public class MainManager : MonoBehaviour
         playPanel.SetActive(false);
         menuPanel.SetActive(true);
     }
+
+#if UNITY_EDITOR
+    public void OpenServer()
+    {
+        var nm = Unity.Netcode.NetworkManager.Singleton;
+        nm.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>().SetConnectionData("127.0.0.1", 7777, "0.0.0.0");
+
+        if (nm.StartServer())
+            nm.SceneManager.LoadScene(gameSceneName, UnityEngine.SceneManagement.LoadSceneMode.Single);
+        else
+            Debug.LogError("failed");
+    }
+
+    public void ConnectClient()
+    {
+        var nm = Unity.Netcode.NetworkManager.Singleton;
+        nm.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>().SetConnectionData("127.0.0.1", 7777);
+        nm.StartClient();
+    }
+#endif
 }
