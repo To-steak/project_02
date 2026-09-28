@@ -11,6 +11,12 @@ public class ConnectionService : MonoBehaviour, IConnectionService
 
     private void Awake()
     {
+        if (GameServices.Connection != null)
+        {
+            Destroy(this);
+            return;
+        }
+
         _networkManager = GetComponent<NetworkManager>();
         GameServices.Register(this);
     }
@@ -49,6 +55,11 @@ public class ConnectionService : MonoBehaviour, IConnectionService
 
     public void Connect(string address)
     {
+        if (_networkManager.IsClient)
+        {
+            return;
+        }
+        
         StateChanged?.Invoke(ConnectState.Connecting);
 
         _networkManager.GetComponent<UnityTransport>().SetConnectionData(address, NetworkDefaults.Port);

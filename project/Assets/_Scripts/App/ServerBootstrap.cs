@@ -3,7 +3,7 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ServerManager : MonoBehaviour
+public class ServerBootstrap : MonoBehaviour
 {
     [SerializeField] private string _firstScene = "WAITING ROOM";
 
