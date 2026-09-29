@@ -16,10 +16,23 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private NetworkTransform _networkTransform;
 
     internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    internal readonly NetworkVariable<int> EquippedWeapon = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     internal PlayerEvent Event = new();
+
+    public override void OnNetworkSpawn()
+    {
+        EquippedWeapon.OnValueChanged += (_, id) => PlayerWeapon.Equip(id, IsClient);
+        PlayerWeapon.Equip(EquippedWeapon.Value, IsClient);
+
+        if (IsServer)
+        {
+            EquippedWeapon.Value = 0;
+        }
+    }
 
     protected override void OnNetworkPostSpawn()
     {
+        Debug.Assert(!IsHost, $"{name}: 호스트 모드는 지원하지 않음. 클라이언트 예측과 서버 판정이 함께 돌아 이중으로 이동한다.", this);
         PlayerServer.enabled = IsServer;
         PlayerClient.enabled = IsClient;
 

@@ -4,11 +4,13 @@ public static class GameServices
     public static IConnectionService Connection { get; private set; }
     public static ISettingsService Settings { get; private set; }
     public static IWorldSelectionService WorldSelection { get; private set; }
+    public static IProjectileService Projectiles { get; private set; }
 
     public static void Register(ICameraService service) => Camera = service;
     public static void Register(IConnectionService service) => Connection = service;
     public static void Register(ISettingsService service) => Settings = service;
     public static void Register(IWorldSelectionService service) => WorldSelection = service;
+    public static void Register(IProjectileService service) => Projectiles = service;
 
     public static void Unregister(ICameraService service)
     {
@@ -28,5 +30,13 @@ public static class GameServices
     public static void Unregister(IWorldSelectionService service)
     {
         if (ReferenceEquals(WorldSelection, service)) WorldSelection = null;
+    }
+
+    public static void Unregister(IProjectileService service)
+    {
+        if (ReferenceEquals(Projectiles, service))
+        {
+            Projectiles = null;
+        }
     }
 }

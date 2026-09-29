@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6661628544956497828}
   - component: {fileID: 512412075594513134}
   - component: {fileID: 3064955788787610919}
+  - component: {fileID: 911355537793263018}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -148,3 +149,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameManager::ServerBootstrap
   _firstScene: WAITING ROOM
+--- !u!114 &911355537793263018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5074560981049940373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fec2abe8901ded14e8ce81e2a131af5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: App::ProjectileService
+  _hitLayer:
+    serializedVersion: 2
+    m_Bits: 320

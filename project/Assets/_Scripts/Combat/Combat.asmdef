@@ -1,8 +1,8 @@
 {
-    "name": "Weapon",
+    "name": "Combat",
     "rootNamespace": "",
     "references": [
-        "GUID:ae0314c828fde5e49b06836077711d82"
+        "GUID:1491147abca9d7d4bb7105af628b223e"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

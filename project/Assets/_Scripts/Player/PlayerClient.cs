@@ -75,7 +75,8 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw, _controller.PlayerCamera.Pitch);
+            Vector3 aimPoint = GameServices.Camera.GetAimPoint();
+            InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw, _controller.PlayerCamera.Pitch, aimPoint);
             _inputHistory[_tick & BUFFER_MASK] = input;
 
             _controller.Simulate(input);
@@ -133,7 +134,19 @@ public class PlayerClient : NetworkBehaviour
             Debug.LogWarning($"reconcile at tick {payload.Tick}, error {Vector3.Distance(predicted.Position, payload.Position):F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
         }
     }
+    
+    [Rpc(SendTo.ClientsAndHost)]
+    public void FireRPC(Vector3 origin, Vector3 direction)
+    {
+        if (IsOwner)
+        {
+            return;
+        }
 
+        // TODO: Object Pool에서 총알 꺼내서 origin에서 direction 방향으로 날리기
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     private int DEBUG_RECONCILE;
     private void OnGUI()
     {
@@ -154,4 +167,5 @@ public class PlayerClient : NetworkBehaviour
         GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
         GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
     }
+#endif
 }

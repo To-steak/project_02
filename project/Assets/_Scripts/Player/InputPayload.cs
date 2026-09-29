@@ -12,6 +12,7 @@ public struct InputPayload : INetworkSerializable
     public bool AttackInput;
     public bool AttackPressed;
     public bool AimInput;
+    public Vector3 AimPoint;
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
@@ -24,5 +25,6 @@ public struct InputPayload : INetworkSerializable
         serializer.SerializeValue(ref AttackInput);
         serializer.SerializeValue(ref AttackPressed);
         serializer.SerializeValue(ref AimInput);
+        serializer.SerializeValue(ref AimPoint);
     }
 }
