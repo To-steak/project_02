@@ -1400,21 +1400,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameEnemy::EnemySpawner
   ShowTopMostFoldoutHeaderGroup: 1
-  MonsterType: 9
-  _enemyPrefab:
-  - {fileID: -4292037464364534852, guid: 944b3b7af9b8f86408afa22ec45ec744, type: 3}
-  - {fileID: 6221295241310576652, guid: a51c6d3c42931204a967e1ad86ec706b, type: 3}
-  - {fileID: 2201360300141818964, guid: 7da5d44d11afef2458d66ff888a187ea, type: 3}
-  - {fileID: 6321914146398361546, guid: fc5a88b4e77266f4a83734aa259c9a4c, type: 3}
-  - {fileID: 5550176075953297423, guid: 3ceb660191490ed48bee32a3fd448aea, type: 3}
-  - {fileID: -1871561929074005645, guid: 2c0d601230b9fd34985f06bcd3f81ee6, type: 3}
-  - {fileID: 4753627946337363234, guid: 122964ac12d725141a8b72218958cc60, type: 3}
-  - {fileID: 4953475301968656889, guid: 3c3399e262333064cbe5584f05b1e260, type: 3}
-  - {fileID: 4012727020795160895, guid: d5b4b682cfe259245a1d278ecdf0e0d9, type: 3}
-  - {fileID: 314561733017718086, guid: 1a1fb5f50e0373e4abbb43301756973b, type: 3}
+  _enemyPrefab: {fileID: 314561733017718086, guid: 1a1fb5f50e0373e4abbb43301756973b, type: 3}
   _grid: {fileID: 1907855191}
-  _spawnPositions:
-  - {fileID: 1021257542}
+  _spawnPositions: {fileID: 1021257542}
 --- !u!4 &629454425
 Transform:
   m_ObjectHideFlags: 0

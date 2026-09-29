@@ -29,9 +29,13 @@ public class EnemyController : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
-
+        // TODO: Object Pool에 반납할 때
     }
 
+    /// <remarks>
+    /// 경로가 막혀도 포기하지 않고 계속 웨이포인트를 향해 걷는다.
+    /// 벽 앞에서 멈춰 있는 적이 보이면 정체 감지 후 Wander()를 다시 부르도록 할 것.
+    /// </remarks>
     private void FixedUpdate()
     {
         if (!IsSpawned || !IsServer)
@@ -42,7 +46,6 @@ public class EnemyController : NetworkBehaviour
         float time = Time.fixedDeltaTime;
         Vector3 position = transform.position;
         Quaternion rotation = transform.rotation;
-        LayerMask layer = _settings.Profile.GroundLayer | _settings.Profile.ObstacleLayer;
 
         if (_waypoint >= _path.Count)
         {
