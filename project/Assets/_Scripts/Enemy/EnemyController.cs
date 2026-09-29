@@ -15,6 +15,7 @@ public class EnemyController : NetworkBehaviour
 
     public void InjectGrid(PathGrid grid)
     {
+        Debug.Assert(grid.Profile == _settings.Profile, $"{name}: 그리드 프로필과 적 프로필이 다름", this);
         _grid = grid;
     }
 

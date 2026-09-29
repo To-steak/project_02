@@ -132,6 +132,7 @@ public static class PathFinder
         int anchor = path[0];
         for (int i = 2; i < path.Count; i++)
         {
+            // if (!HasLine(grid, anchor, path[i]) || !grid.CanWalkStraight(anchor, path[i]))
             if (!HasLine(grid, anchor, path[i]))
             {
                 anchor = path[i - 1];

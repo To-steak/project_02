@@ -12,5 +12,15 @@ public class WaitingRoomView : MonoBehaviour
         _testWorld.onClick.AddListener(() => Request(WorldId.Test));
     }
 
-    private static void Request(WorldId world) => GameServices.WorldSelection?.RequestWorld(world);
+    private void Request(WorldId world)
+    {
+        var service = GameServices.WorldSelection;
+        if (service == null)
+        {
+            Debug.LogWarning($"[{nameof(WaitingRoomView)}] {nameof(IWorldSelectionService)}가 아직 등록되지 않았습니다.", this);
+            return;
+        }
+
+        service.RequestWorld(world);
+    }
 }

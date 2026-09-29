@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PathGrid : MonoBehaviour
 {
+    public CharacterProfile Profile => _profile;
     [SerializeField] private CharacterProfile _profile; // 적마다 Profile을 만들고 각각 구워둔다.
 
     public const float CELL_SIZE = 1.0f;
@@ -192,6 +193,24 @@ public class PathGrid : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// 경로 탐색 시 PathFinder가 실제로 그 경로를 Walk로 결어본다.
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <returns></returns>
+    // public bool CanWalkStraight(int from, int to)
+    // {
+    //     LayerMask layer = _profile.GroundLayer | _profile.ObstacleLayer;
+    //     Vector3 source = ConvertWorldCoord(from) + Vector3.up * CLEARANCE;
+    //     Vector3 target = ConvertWorldCoord(to) + Vector3.up * CLEARANCE;
+    //     Vector3 moved = CharacterPhysics.Walk(source, target, _profile.Radius, _profile.Height, _profile.SlopeLimit, _profile.StepHeight, layer, true);
+        
+    //     Vector3 miss = moved - target;
+    //     miss.y = 0.0f;
+    //     return miss.sqrMagnitude < CONNECT_THRESHOLD * CONNECT_THRESHOLD;
+    // }
+    
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
