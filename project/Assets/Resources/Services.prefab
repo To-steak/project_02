@@ -163,4 +163,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: App::ProjectileService
   _hitLayer:
     serializedVersion: 2
-    m_Bits: 320
+    m_Bits: 832

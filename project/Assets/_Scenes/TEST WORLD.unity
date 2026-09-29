@@ -1278,7 +1278,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Manager.CameraManager
   layer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 832
   cmCamera: {fileID: 1364553551}
 --- !u!4 &350335676
 Transform:
@@ -1734,7 +1734,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &629454424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1751,6 +1751,7 @@ MonoBehaviour:
   _enemyPrefab: {fileID: 314561733017718086, guid: 1a1fb5f50e0373e4abbb43301756973b, type: 3}
   _grid: {fileID: 1907855191}
   _spawnPosition: {fileID: 1021257542}
+  _spawnOnStart: 1
 --- !u!4 &629454425
 Transform:
   m_ObjectHideFlags: 0
@@ -3129,7 +3130,7 @@ GameObject:
   - component: {fileID: 1363507679}
   - component: {fileID: 1363507683}
   - component: {fileID: 1363507684}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4632,7 +4633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1907855191
 MonoBehaviour:
   m_ObjectHideFlags: 0

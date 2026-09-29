@@ -5,6 +5,8 @@ using Unity.Netcode;
 public class EnemyController : NetworkBehaviour
 {
     [SerializeField] private EnemySettings _settings;
+    [SerializeField] private Health _health;
+
     private PathGrid _grid;
     private float _timer;
     private CharacterState _state;
@@ -26,11 +28,20 @@ public class EnemyController : NetworkBehaviour
         _waypoint = 0;
         _state = default;
         _timer = 0.0f;
+
+        if (IsServer)
+        {
+            _health.Died += OnDied;
+        }
     }
 
     public override void OnNetworkDespawn()
     {
         // TODO: Object Pool에 반납할 때
+        if (IsServer)
+        {
+            _health.Died -= OnDied;
+        }
     }
 
     /// <remarks>
@@ -100,6 +111,12 @@ public class EnemyController : NetworkBehaviour
             PathFinder.Smooth(_grid, _path);
             _waypoint = _path.Count > 1 ? 1 : 0;
         }
+    }
+
+    private void OnDied(Health health, ulong[] contributors)
+    {
+        // TODO: 기여자들에게 경험치와 재화를 1/n로 분배
+        NetworkObject.Despawn(); // 풀을 붙이면 파괴 대신 반납
     }
 
 #if UNITY_EDITOR

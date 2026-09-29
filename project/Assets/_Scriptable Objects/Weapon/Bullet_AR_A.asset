@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1d49fdc50448634d9d14a14f0c6b321, type: 3}
-  m_Name: BulletData
-  m_EditorClassIdentifier: Weapon::BulletData
+  m_Name: Bullet_AR_A
+  m_EditorClassIdentifier: GameWeapon::BulletData
   Damage: 1
-  Velocity: 1
+  Velocity: 10
   Lifespan: 2
