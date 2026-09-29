@@ -25,14 +25,14 @@ public static class CharacterMotor
 
         vertical = CharacterPhysics.ApplyGravity(vertical, profile.Gravity, profile.MaxFallSpeed, time);
         Vector3 target = position + Vector3.up * vertical * time;
-        position = CharacterPhysics.Collide(position, target, profile.Radius, profile.Height, layer);
+        position = CharacterPhysics.MoveVertical(position, target, profile.Radius, profile.Height, profile.SlopeLimit, layer, out bool landed);
         if (vertical > 0.0f && position.y < target.y - CEILING_EPSILON)
         {
             vertical = 0.0f;
         }
 
-        bool isGround = CharacterPhysics.IsGrounded(target, position, vertical);
-        if (isGround)
+        bool isGrounded = landed;
+        if (isGrounded)
         {
             vertical = -profile.GroundStickSpeed;
         }
@@ -41,7 +41,7 @@ public static class CharacterMotor
         {
             Position = position,
             VerticalSpeed = vertical,
-            IsGrounded = isGround
+            IsGrounded = isGrounded
         };
     }
 }

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2685531695374781869}
   - component: {fileID: 767574477411851931}
   - component: {fileID: 2479808288231464250}
-  - component: {fileID: 6829638546392429463}
   - component: {fileID: 6661628544956497828}
   - component: {fileID: 512412075594513134}
   - component: {fileID: 3064955788787610919}
@@ -111,40 +110,6 @@ MonoBehaviour:
     PacketDelayMS: 0
     PacketJitterMS: 0
     PacketDropRate: 0
---- !u!114 &6829638546392429463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5074560981049940373}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98d9db9626104da59357651088226725, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Multiplayer.Tools.NetworkSimulator.Runtime::Unity.Multiplayer.Tools.NetworkSimulator.Runtime.NetworkSimulator
-  m_PresetAsset: {fileID: 0}
-  m_PresetReference:
-    rid: 17358637125861778
-  m_Scenario:
-    rid: -2
-  m_IsScenarioSettingsFolded: 0
-  AutoRunScenario: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 17358637125861778
-      type: {class: NetworkSimulatorPreset, ns: Unity.Multiplayer.Tools.NetworkSimulator.Runtime, asm: Unity.Multiplayer.Tools.NetworkSimulator.Runtime}
-      data:
-        <Name>k__BackingField: 'Home Broadband [WIFI, Cable, Console, PC]'
-        <Description>k__BackingField: Typical of desktop and console platforms (and
-          generally speaking most mobile players too).
-        <PacketDelayMs>k__BackingField: 32
-        <PacketJitterMs>k__BackingField: 12
-        <PacketLossInterval>k__BackingField: 0
-        <PacketLossPercent>k__BackingField: 2
 --- !u!114 &6661628544956497828
 MonoBehaviour:
   m_ObjectHideFlags: 0

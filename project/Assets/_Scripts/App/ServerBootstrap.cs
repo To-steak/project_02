@@ -9,25 +9,31 @@ public class ServerBootstrap : MonoBehaviour
 
     private void Start()
     {
-        if (!Application.isBatchMode) return;
+        if (!Application.isBatchMode)
+        {
+            return;
+        }
 
         if (!OpenServer())
-            Application.Quit(1);   // 실패하면 종료 코드로 알려서 재시작 스크립트가 잡을 수 있게
+        {
+            Application.Quit(1);   // 실패하면 종료 코드로 알려서 재시작 스크립트가 잡을 수 있게            
+        }
     }
 
     [ContextMenu("Open Server")]
     public bool OpenServer()
     {
-        NetworkManager nm = NetworkManager.Singleton;
-        nm.GetComponent<UnityTransport>().SetConnectionData("127.0.0.1", NetworkDefaults.Port, "0.0.0.0");
+        NetworkManager networkManager = NetworkManager.Singleton;
+        networkManager.GetComponent<UnityTransport>().SetConnectionData("127.0.0.1", NetworkDefaults.Port, "0.0.0.0");
 
-        if (!nm.StartServer())
+        if (!networkManager.StartServer())
         {
-            Debug.LogError($"[Server] failed to start on port {NetworkDefaults.Port}");
+            Debug.LogError($"[{nameof(ServerBootstrap)}] failed to start on port {NetworkDefaults.Port}", this);
             return false;
         }
 
-        nm.SceneManager.LoadScene(_firstScene, LoadSceneMode.Single);
+        Application.targetFrameRate = (int)networkManager.NetworkConfig.TickRate;
+        networkManager.SceneManager.LoadScene(_firstScene, LoadSceneMode.Single);
         return true;
     }
 }

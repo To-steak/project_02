@@ -29,6 +29,11 @@ public class SettingsService : MonoBehaviour, ISettingsService
 
     private void Start()
     {
+        if (Application.isBatchMode)
+        {
+            return;
+        }
+        
         // AudioMixer.SetFloat은 Awake에서 호출하면 무시되는 경우가 있어서 Start에서 적용한다.
         ApplyDisplay(_saved);
         Preview(_saved);
