@@ -31,6 +31,8 @@ public class GameSettings
     /// current = saved 로 대입하면 같은 참조를 가리킴.
     /// Back(취소)가 동작하지 않음.
     /// 그래서 복사본을 만들어 씀.
+    /// 모든 필드가 값 타입이나 string이라 얕은 복사로 충분하다.
+    /// 배열이나 리스트가 추가되면 깊은 복사로 바꿔야 한다.
     /// </summary>
     /// <returns>복사본</returns>
     public GameSettings Clone() => (GameSettings)MemberwiseClone();

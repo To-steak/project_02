@@ -10,7 +10,7 @@ using UnityEngine;
 /// 일반적인 호출 순서는 다음과 같다.
 /// 1. Walk
 /// 2. ApplyGravity
-/// 3. Collide
+/// 3. MoveVertical
 /// 4. Rotate
 /// 
 /// 위치는 모두 캡슐의 발밑 기준이다(<see cref="GetCapsule"/> 참고).

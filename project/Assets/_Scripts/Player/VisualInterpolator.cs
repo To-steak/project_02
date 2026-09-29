@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// <see cref="Record"/>는 FixedUpdate에서, <see cref="Interpolate"/>는 Update에서 호출한다.
+/// 보간 비율을 Time.fixedTime 기준으로 계산하기 때문에 시뮬레이션 루프가 바뀌면 함께 바꿔야 한다.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class VisualInterpolator<T>
 {
     public T Current => _current;
