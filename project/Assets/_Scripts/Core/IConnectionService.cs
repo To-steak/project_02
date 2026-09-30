@@ -2,7 +2,7 @@ using System;
 
 public enum ConnectState
 {
-    Idle, Connecting, Connected, Failed
+    Idle, Connecting, Connected, Failed, Disconnected
 }
 
 public interface IConnectionService

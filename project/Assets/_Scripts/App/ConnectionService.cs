@@ -2,6 +2,7 @@ using System;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ConnectionService : MonoBehaviour, IConnectionService
 {
@@ -29,13 +30,24 @@ public class ConnectionService : MonoBehaviour, IConnectionService
 
     private void OnConnected(ulong id)
     {
-        Unsubscribe();
+        _networkManager.OnClientConnectedCallback -= OnConnected;
         StateChanged?.Invoke(ConnectState.Connected);
     }
 
     private void OnDisconnected(ulong id)
     {
-        ConnectionFail();
+        Unsubscribe();
+
+        bool isConnected = _networkManager.IsConnectedClient;
+        if (isConnected)
+        {
+            StateChanged?.Invoke(ConnectState.Disconnected);
+            SceneManager.LoadScene("MAIN MENU");
+        }
+        else
+        {
+            StateChanged?.Invoke(ConnectState.Failed);
+        }
     }
 
     private void Unsubscribe()
@@ -59,7 +71,7 @@ public class ConnectionService : MonoBehaviour, IConnectionService
         {
             return;
         }
-        
+
         StateChanged?.Invoke(ConnectState.Connecting);
 
         _networkManager.GetComponent<UnityTransport>().SetConnectionData(address, NetworkDefaults.Port);
@@ -70,5 +82,13 @@ public class ConnectionService : MonoBehaviour, IConnectionService
         {
             ConnectionFail();
         }
+    }
+
+    public void Disconnect()
+    {
+        Unsubscribe();
+
+        _networkManager.Shutdown();
+        SceneManager.LoadScene("MAIN MENU");
     }
 }
