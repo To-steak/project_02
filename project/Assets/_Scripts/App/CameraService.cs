@@ -1,7 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-public class CameraManager : MonoBehaviour, ICameraService
+public class CameraService : MonoBehaviour, ICameraService
 {
     [SerializeField] private LayerMask layer;
     [SerializeField] private CinemachineCamera cmCamera;

@@ -34,9 +34,6 @@ public static class GameServices
 
     public static void Unregister(IProjectileService service)
     {
-        if (ReferenceEquals(Projectiles, service))
-        {
-            Projectiles = null;
-        }
+        if (ReferenceEquals(Projectiles, service)) Projectiles = null;
     }
 }
