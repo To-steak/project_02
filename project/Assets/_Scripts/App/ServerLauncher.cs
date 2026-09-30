@@ -3,7 +3,7 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ServerBootstrap : MonoBehaviour
+public class ServerLauncher : MonoBehaviour
 {
     [SerializeField] private string _firstScene = "WAITING ROOM";
 
@@ -28,7 +28,7 @@ public class ServerBootstrap : MonoBehaviour
 
         if (!networkManager.StartServer())
         {
-            Debug.LogError($"[{nameof(ServerBootstrap)}] failed to start on port {NetworkDefaults.Port}", this);
+            Debug.LogError($"[{nameof(ServerLauncher)}] failed to start on port {NetworkDefaults.Port}", this);
             return false;
         }
 
