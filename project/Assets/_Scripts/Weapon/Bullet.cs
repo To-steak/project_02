@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour
     private const float MIN_DISTANCE = 0.001f; // 1mm
     private const float MIN_DISTANCE_SQR = MIN_DISTANCE * MIN_DISTANCE;
 
-    public Bullet Initialize(IObjectPool<Bullet> pool)
+    public Bullet Inject(IObjectPool<Bullet> pool)
     {
         _pool = pool;
 

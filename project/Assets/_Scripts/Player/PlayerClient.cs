@@ -125,8 +125,9 @@ public class PlayerClient : NetworkBehaviour
 
         if (Vector3.Distance(predicted.Position, payload.Position) >= THRESHOLD)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             DEBUG_RECONCILE++;
-
+#endif
             _controller.PlayerLocomotion.RollbackState(payload);
 
             for (int tick = payload.Tick + 1; tick < _tick; tick++)

@@ -18,7 +18,7 @@ public class BulletVisualService : MonoBehaviour, IBulletVisualService
         }
 
         _pool = new ObjectPool<Bullet>(
-            createFunc: () => Instantiate(_prefab, transform).Initialize(_pool),
+            createFunc: () => Instantiate(_prefab, transform).Inject(_pool),
             actionOnGet: bullet => bullet.gameObject.SetActive(true),
             actionOnRelease: bullet => bullet.gameObject.SetActive(false),
             actionOnDestroy: bullet => Destroy(bullet.gameObject),

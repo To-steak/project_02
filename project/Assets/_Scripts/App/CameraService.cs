@@ -13,6 +13,12 @@ public class CameraService : MonoBehaviour, ICameraService
 
     private void Awake()
     {
+        if (GameServices.Camera != null)
+        {
+            Destroy(this);
+            return;
+        }
+        
         GameServices.Register(this);
 
         cmCamera.Lens.NearClipPlane = 0.3f;
