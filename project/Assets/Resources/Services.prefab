@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 512412075594513134}
   - component: {fileID: 911355537793263018}
   - component: {fileID: 4168847697913324961}
+  - component: {fileID: -8884462579517597477}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -59,7 +60,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: aa7a638c4f58fea4b9a29a8fc1d4e28c, type: 2}
     TickRate: 50
     ClientConnectionBufferTimeout: 10
-    ConnectionApproval: 0
+    ConnectionApproval: 1
     ConnectionData: 
     EnableTimeResync: 0
     TimeResyncInterval: 30
@@ -166,3 +167,15 @@ MonoBehaviour:
   _prefab: {fileID: -7662102943279235780, guid: 6b71f42634b918941b96a8140292007a, type: 3}
   _defaultCapacity: 64
   _maxSize: 256
+--- !u!114 &-8884462579517597477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5074560981049940373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3646f13d9b6dea4ebb23ea069fbcac7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: App::SessionService

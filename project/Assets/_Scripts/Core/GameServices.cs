@@ -6,6 +6,7 @@ public static class GameServices
     public static IWorldSelectionService WorldSelection { get; private set; }
     public static IProjectileService Projectiles { get; private set; }
     public static IBulletVisualService BulletVisual { get; private set; }
+    public static ISessionService Session { get; private set; }
 
     public static void Register(ICameraService service) => Camera = service;
     public static void Register(IConnectionService service) => Connection = service;
@@ -13,6 +14,7 @@ public static class GameServices
     public static void Register(IWorldSelectionService service) => WorldSelection = service;
     public static void Register(IProjectileService service) => Projectiles = service;
     public static void Register(IBulletVisualService service) => BulletVisual = service;
+    public static void Register(ISessionService service) => Session = service;
 
     public static void Unregister(ICameraService service)
     {
@@ -42,5 +44,10 @@ public static class GameServices
     public static void Unregister(IBulletVisualService service)
     {
         if (ReferenceEquals(BulletVisual, service)) BulletVisual = null;
+    }
+
+    public static void Unregister(ISessionService service)
+    {
+        if (ReferenceEquals(Session, service)) Session = null;
     }
 }

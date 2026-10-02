@@ -8,5 +8,6 @@ public enum ConnectState
 public interface IConnectionService
 {
     event Action<ConnectState> StateChanged;
-    void Connect(string address);
+    void Connect(string address, string nickname);
+    ConnectReject FailReason { get; }
 }

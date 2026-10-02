@@ -1,6 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 using Unity.Netcode.Components;
+using Unity.Collections;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -17,6 +18,7 @@ public class PlayerController : NetworkBehaviour
 
     internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     internal readonly NetworkVariable<int> EquippedWeapon = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    internal readonly NetworkVariable<FixedString64Bytes> Nickname = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     internal PlayerEvent Event = new();
 
     public override void OnNetworkSpawn()
@@ -27,6 +29,7 @@ public class PlayerController : NetworkBehaviour
         if (IsServer)
         {
             EquippedWeapon.Value = 0;
+            Nickname.Value = new FixedString64Bytes(GameServices.Session?.GetNickname(OwnerClientId) ?? $"Player#{OwnerClientId}");
         }
     }
 
