@@ -15,6 +15,8 @@ public class SessionService : MonoBehaviour, ISessionService
     private readonly Dictionary<ulong, PlayerProfile> _session = new();
     private readonly Dictionary<ulong, string> _userIds = new();
 
+    public event Action<ulong, int> ExpChanged;
+
     private IProfileStore Store => _store ??= new JsonProfileStore(Path.Combine(Application.persistentDataPath, PROFILE_FILE));
 
     private void Awake()
@@ -176,7 +178,7 @@ public class SessionService : MonoBehaviour, ISessionService
             return;
         }
 
-        bool changed = false;
+        var changed = new List<(ulong clientId, int exp)>();
         foreach (ulong clientId in clientIds)
         {
             if (!_userIds.TryGetValue(clientId, out string userId) || !Store.TryGet(userId, out var profile))
@@ -188,12 +190,28 @@ public class SessionService : MonoBehaviour, ISessionService
             profile.Exp += exp;
             profile.Gold += gold;
 
-            changed = true;
+            changed.Add((clientId, profile.Exp));
         }
 
-        if (changed)
+        if (changed.Count == 0)
         {
-            Store.Save();
+            return;
         }
+
+        Store.Save();
+        foreach (var (clientId, total) in changed)
+        {
+            ExpChanged?.Invoke(clientId, total);
+        }
+    }
+
+    public int GetExp(ulong clientId)
+    {
+        if (_userIds.TryGetValue(clientId, out string userId) && Store.TryGet(userId, out var profile))
+        {
+            return profile.Exp;
+        }
+
+        return 0;
     }
 }

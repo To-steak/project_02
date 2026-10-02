@@ -20,3 +20,8 @@ MonoBehaviour:
   PitchSpeed: 1
   MinPitch: -30
   MaxPitch: 40
+  LevelTable: {fileID: 11400000, guid: c961a6c3d4caea94f910d5f2beca8524, type: 2}
+  RunCost: 10
+  JumpCost: 15
+  RegenMp: 5
+  RecoveryRatio: 1

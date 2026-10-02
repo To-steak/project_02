@@ -2409,6 +2409,7 @@ GameObject:
   - component: {fileID: 8005297123998042264}
   - component: {fileID: 3124304013075138114}
   - component: {fileID: 7234265273799312356}
+  - component: {fileID: 2456796616233262538}
   m_Layer: 7
   m_Name: Player Variant
   m_TagString: Untagged
@@ -2584,6 +2585,7 @@ MonoBehaviour:
   PlayerServer: {fileID: 8287365391867684976}
   PlayerClient: {fileID: 7078905302864766859}
   PlayerWeapon: {fileID: 7234265273799312356}
+  Health: {fileID: 2456796616233262538}
   _networkTransform: {fileID: 3691936339058646927}
 --- !u!114 &8287365391867684976
 MonoBehaviour:
@@ -2682,6 +2684,20 @@ MonoBehaviour:
   _rigBuilder: {fileID: 5194364054784885374}
   _rightHandIK: {fileID: 8984948248652391563}
   _leftHandIK: {fileID: 1719501134210586405}
+--- !u!114 &2456796616233262538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3352041741525735007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3786cf2453789934ea9e09a64c2276d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Combat::Health
+  ShowTopMostFoldoutHeaderGroup: 1
+  _defaultMax: 100
 --- !u!1 &3371726832865955048
 GameObject:
   m_ObjectHideFlags: 0

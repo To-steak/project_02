@@ -14,11 +14,14 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] internal PlayerServer PlayerServer;
     [SerializeField] internal PlayerClient PlayerClient;
     [SerializeField] internal PlayerWeapon PlayerWeapon;
+    [SerializeField] internal Health Health;
     [SerializeField] private NetworkTransform _networkTransform;
 
     internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     internal readonly NetworkVariable<int> EquippedWeapon = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     internal readonly NetworkVariable<FixedString64Bytes> Nickname = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    internal readonly NetworkVariable<int> Level = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    internal PlayerLevelTable.Row Stats => PlayerSettings.LevelTable.Get(Level.Value);
     internal PlayerEvent Event = new();
 
     public override void OnNetworkSpawn()
@@ -30,6 +33,12 @@ public class PlayerController : NetworkBehaviour
         {
             EquippedWeapon.Value = 0;
             Nickname.Value = new FixedString64Bytes(GameServices.Session?.GetNickname(OwnerClientId) ?? $"Player#{OwnerClientId}");
+            Level.Value = PlayerSettings.LevelTable.GetLevel(GameServices.Session?.GetExp(OwnerClientId) ?? 0);
+
+            if (GameServices.Session != null)
+            {
+                GameServices.Session.ExpChanged += OnExpChanged;
+            }
         }
     }
 
@@ -40,12 +49,44 @@ public class PlayerController : NetworkBehaviour
         PlayerClient.enabled = IsClient;
 
         _networkTransform.enabled = !(IsOwner && !IsServer);
+
+        if (IsServer)
+        {
+            Health.SetMax(Stats.MaxHp, true);
+        }
+
+        PlayerLocomotion.ResetMp(Stats.MaxMp);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsServer && GameServices.Session != null)
+        {
+            GameServices.Session.ExpChanged -= OnExpChanged;
+        }
     }
 
     public void Simulate(in InputPayload input)
     {
         PlayerLocomotion.Rotate(input.YawInput);
-        PlayerLocomotion.Simulate(input, PlayerSettings);
+        PlayerLocomotion.Simulate(input, PlayerSettings, Stats.MaxMp);
+    }
+
+    private void OnExpChanged(ulong clientId, int exp)
+    {
+        if (clientId != OwnerClientId)
+        {
+            return;
+        }
+
+        int level = PlayerSettings.LevelTable.GetLevel(exp);
+        if (level == Level.Value)
+        {
+            return;
+        }
+
+        Level.Value = level;
+        Health.SetMax(Stats.MaxHp, true);
     }
 
 #if UNITY_EDITOR
