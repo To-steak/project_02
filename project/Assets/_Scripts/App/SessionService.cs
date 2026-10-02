@@ -13,6 +13,7 @@ public class SessionService : MonoBehaviour, ISessionService
     private NetworkManager _networkManager;
     private IProfileStore _store;
     private readonly Dictionary<ulong, PlayerProfile> _session = new();
+    private readonly Dictionary<ulong, string> _userIds = new();
 
     private IProfileStore Store => _store ??= new JsonProfileStore(Path.Combine(Application.persistentDataPath, PROFILE_FILE));
 
@@ -153,6 +154,7 @@ public class SessionService : MonoBehaviour, ISessionService
     private void Accept(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response, PlayerProfile profile)
     {
         _session[request.ClientNetworkId] = profile;
+        _userIds[request.ClientNetworkId] = profile.UserId;
         response.Approved = true;
     }
 
@@ -165,5 +167,33 @@ public class SessionService : MonoBehaviour, ISessionService
     private void OnClientDisconnected(ulong clientId)
     {
         _session.Remove(clientId);
+    }
+
+    public void AddReward(IReadOnlyList<ulong> clientIds, int exp, int gold)
+    {
+        if (_networkManager == null || !_networkManager.IsServer || (exp <= 0 && gold <= 0))
+        {
+            return;
+        }
+
+        bool changed = false;
+        foreach (ulong clientId in clientIds)
+        {
+            if (!_userIds.TryGetValue(clientId, out string userId) || !Store.TryGet(userId, out var profile))
+            {
+                Debug.LogError($"{nameof(SessionService)} no profile for client {clientId}");
+                continue;
+            }
+
+            profile.Exp += exp;
+            profile.Gold += gold;
+
+            changed = true;
+        }
+
+        if (changed)
+        {
+            Store.Save();
+        }
     }
 }

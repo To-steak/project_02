@@ -16,3 +16,5 @@ MonoBehaviour:
   RunSpeed: 3
   RotationSpeed: 360
   Profile: {fileID: 11400000, guid: 1ad3790a0d0f4e2449e8c2842dbb0158, type: 2}
+  RewardExp: 10
+  RewardGold: 30
