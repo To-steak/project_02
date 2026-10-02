@@ -70,7 +70,4 @@ public class MainMenuView : MonoBehaviour
         playPanel.SetActive(false);
         menuPanel.SetActive(true);
     }
-
-    [ContextMenu("Connect Local Client")]
-    private void ConnectClient() => GameServices.Connection.Connect("127.0.0.1");
 }

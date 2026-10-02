@@ -91,4 +91,7 @@ public class ConnectionService : MonoBehaviour, IConnectionService
         _networkManager.Shutdown();
         SceneManager.LoadScene("MAIN MENU");
     }
+
+    [ContextMenu("Connect Local Client")]
+    private void ConnectClient() => GameServices.Connection.Connect("127.0.0.1");
 }

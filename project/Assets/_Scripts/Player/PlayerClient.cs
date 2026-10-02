@@ -5,6 +5,7 @@ public class PlayerClient : NetworkBehaviour
 {
     [SerializeField] private PlayerController _controller;
     private int _tick = 0;
+    private int _nextFireTick;
 
     private const int BUFFER_SIZE = 1024;
     private const int BUFFER_MASK = BUFFER_SIZE - 1;
@@ -80,7 +81,10 @@ public class PlayerClient : NetworkBehaviour
             _inputHistory[_tick & BUFFER_MASK] = input;
 
             _controller.Simulate(input);
-
+            if (_controller.PlayerWeapon.TryFire(input, ref _nextFireTick))
+            {
+                SpawnBulletVisual(aimPoint);
+            }
             StatePayload state = _controller.PlayerLocomotion.Capture(_tick);
             _stateHistory[_tick & BUFFER_MASK] = state;
 
@@ -134,16 +138,34 @@ public class PlayerClient : NetworkBehaviour
             Debug.LogWarning($"reconcile at tick {payload.Tick}, error {Vector3.Distance(predicted.Position, payload.Position):F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
         }
     }
-    
+
     [Rpc(SendTo.ClientsAndHost)]
-    public void FireRPC(Vector3 origin, Vector3 direction)
+    public void FireRPC(Vector3 aimPoint)
     {
         if (IsOwner)
         {
             return;
         }
 
-        // TODO: Object Pool에서 총알 꺼내서 origin에서 direction 방향으로 날리기
+        SpawnBulletVisual(aimPoint);
+    }
+
+    private void SpawnBulletVisual(Vector3 aimPoint)
+    {
+        if (!_controller.PlayerWeapon.HasWeapon)
+        {
+            return;
+        }
+
+        BulletData bulletData = _controller.PlayerWeapon.Data.Bullet;
+        if (bulletData == null)
+        {
+            return;
+        }
+
+        Vector3 from = _controller.PlayerWeapon.Muzzle;
+        Vector3 to = Vector3.MoveTowards(from, aimPoint, bulletData.Velocity * bulletData.Lifespan);
+        GameServices.BulletVisual.Fire(from, to, bulletData.Velocity);
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

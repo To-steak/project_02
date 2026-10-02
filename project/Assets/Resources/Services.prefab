@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6661628544956497828}
   - component: {fileID: 512412075594513134}
   - component: {fileID: 911355537793263018}
+  - component: {fileID: 4168847697913324961}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -150,3 +151,18 @@ MonoBehaviour:
   _hitLayer:
     serializedVersion: 2
     m_Bits: 832
+--- !u!114 &4168847697913324961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5074560981049940373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 631904bb2cfd0f94081dfb53b147f27b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: App::BulletVisualService
+  _prefab: {fileID: -7662102943279235780, guid: 6b71f42634b918941b96a8140292007a, type: 3}
+  _defaultCapacity: 64
+  _maxSize: 256

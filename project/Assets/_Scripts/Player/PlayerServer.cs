@@ -107,13 +107,13 @@ public class PlayerServer : NetworkBehaviour
         {
             return;
         }
-        
+
         BulletData bullet = weapon.Data.Bullet;
         Vector3 origin = weapon.Origin;
         Vector3 direction = (input.AimPoint - origin).normalized;
         int damage = Mathf.RoundToInt(bullet.Damage * weapon.Data.WeaponCoefficient);
 
         GameServices.Projectiles.Spawn(origin, direction * bullet.Velocity, bullet.Lifespan, damage, OwnerClientId);
-        _controller.PlayerClient.FireRPC(origin, direction);
+        _controller.PlayerClient.FireRPC(input.AimPoint);
     }
 }
