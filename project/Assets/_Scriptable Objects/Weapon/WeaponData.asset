@@ -15,5 +15,5 @@ MonoBehaviour:
   DisplayName: Default Name
   WeaponCoefficient: 1
   RapidFire: 1
-  BulletPrefab: {fileID: 0}
-  VFXPrefab: {fileID: 0}
+  Bullet: {fileID: 11400000, guid: 024559caf0956554ca75bc21f041c7fa, type: 2}
+  Prefab: {fileID: 1447260616732509512, guid: d325bd5ddf177974e8e92bd5c17db2dd, type: 3}

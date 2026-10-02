@@ -16,7 +16,7 @@ MonoBehaviour:
   RunSpeed: 3
   JumpSpeed: 5
   Profile: {fileID: 11400000, guid: b73b04e323199b746b64906f6bbe9f63, type: 2}
-  RotationSpeed: 0.35
-  PitchSpeed: 0.35
+  RotationSpeed: 1
+  PitchSpeed: 1
   MinPitch: -30
   MaxPitch: 40

@@ -5,6 +5,8 @@ using Unity.Netcode;
 public class EnemyController : NetworkBehaviour
 {
     [SerializeField] private EnemySettings _settings;
+    [SerializeField] private Health _health;
+
     private PathGrid _grid;
     private float _timer;
     private CharacterState _state;
@@ -15,6 +17,7 @@ public class EnemyController : NetworkBehaviour
 
     public void InjectGrid(PathGrid grid)
     {
+        Debug.Assert(grid.Profile == _settings.Profile, $"{name}: 그리드 프로필과 적 프로필이 다름", this);
         _grid = grid;
     }
 
@@ -25,13 +28,26 @@ public class EnemyController : NetworkBehaviour
         _waypoint = 0;
         _state = default;
         _timer = 0.0f;
+
+        if (IsServer)
+        {
+            _health.Died += OnDied;
+        }
     }
 
     public override void OnNetworkDespawn()
     {
-
+        // TODO: Object Pool에 반납할 때
+        if (IsServer)
+        {
+            _health.Died -= OnDied;
+        }
     }
 
+    /// <remarks>
+    /// 경로가 막혀도 포기하지 않고 계속 웨이포인트를 향해 걷는다.
+    /// 벽 앞에서 멈춰 있는 적이 보이면 정체 감지 후 Wander()를 다시 부르도록 할 것.
+    /// </remarks>
     private void FixedUpdate()
     {
         if (!IsSpawned || !IsServer)
@@ -42,7 +58,6 @@ public class EnemyController : NetworkBehaviour
         float time = Time.fixedDeltaTime;
         Vector3 position = transform.position;
         Quaternion rotation = transform.rotation;
-        LayerMask layer = _settings.Profile.GroundLayer | _settings.Profile.ObstacleLayer;
 
         if (_waypoint >= _path.Count)
         {
@@ -96,6 +111,12 @@ public class EnemyController : NetworkBehaviour
             PathFinder.Smooth(_grid, _path);
             _waypoint = _path.Count > 1 ? 1 : 0;
         }
+    }
+
+    private void OnDied(Health health, ulong[] contributors)
+    {
+        // TODO: 기여자들에게 경험치와 재화를 1/n로 분배
+        NetworkObject.Despawn(); // 풀을 붙이면 파괴 대신 반납
     }
 
 #if UNITY_EDITOR

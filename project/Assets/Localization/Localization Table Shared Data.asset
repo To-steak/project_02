@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Localization Table Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Localization Table
+  m_TableCollectionNameGuidString: cae85e112b6158f4ca4f0a7ed8a4ea71
+  m_Entries:
+  - m_Id: 1902699933696
+    m_Key: play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1902725099520
+    m_Key: settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1902729293824
+    m_Key: exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1902729293825
+    m_Key: graphics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1902733488128
+    m_Key: audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1902733488129
+    m_Key: keyboard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1902733488130
+    m_Key: language
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 2472487244115476504
+  references:
+    version: 2
+    RefIds:
+    - rid: 2472487244115476504
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1790930836716

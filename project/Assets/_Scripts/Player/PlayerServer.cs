@@ -10,6 +10,7 @@ public class PlayerServer : NetworkBehaviour
     private int _latestTick = -1;
     private const int BUFFER_SIZE = 64;
     private const int BUFFER_MASK = BUFFER_SIZE - 1;
+    private int _nextFireTick;
 
     private void Awake()
     {
@@ -29,6 +30,8 @@ public class PlayerServer : NetworkBehaviour
                 break;
             }
             _controller.Simulate(input);
+            HandleFire(input);
+
             _controller.Pitch.Value = input.PitchInput;
             StatePayload state = _controller.PlayerLocomotion.Capture(input.Tick);
             _controller.PlayerClient.StateRPC(state);
@@ -95,5 +98,22 @@ public class PlayerServer : NetworkBehaviour
 
         _consumedTick = tick - 1;
         _latestTick = tick - 1;
+    }
+
+    private void HandleFire(in InputPayload input)
+    {
+        PlayerWeapon weapon = _controller.PlayerWeapon;
+        if (!weapon.TryFire(input, ref _nextFireTick))
+        {
+            return;
+        }
+
+        BulletData bullet = weapon.Data.Bullet;
+        Vector3 origin = weapon.Origin;
+        Vector3 direction = (input.AimPoint - origin).normalized;
+        int damage = Mathf.RoundToInt(bullet.Damage * weapon.Data.WeaponCoefficient);
+
+        GameServices.Projectiles.Spawn(origin, direction * bullet.Velocity, bullet.Lifespan, damage, OwnerClientId);
+        _controller.PlayerClient.FireRPC(input.AimPoint);
     }
 }

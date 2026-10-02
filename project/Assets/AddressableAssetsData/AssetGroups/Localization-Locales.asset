@@ -15,14 +15,14 @@ MonoBehaviour:
   m_GroupName: Localization-Locales
   m_GUID: bdceab4cf078c6f4c8cdc758ef1bece6
   m_SerializeEntries:
-  - m_GUID: 6e478270aa2c10842ad30e4a5a1e911f
-    m_Address: English (United States) (en-US)
+  - m_GUID: 706ca83303c91524ebf4cb09bc8d0eed
+    m_Address: Korean (South Korea) (ko-KR)
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bccc9b6f396268944811368b72551e83
-    m_Address: Korean (South Korea) (ko-KR)
+  - m_GUID: ae9ceab483844d749b41b32181212064
+    m_Address: English (United States) (en-US)
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale

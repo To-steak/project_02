@@ -8,7 +8,7 @@ public class PlayerSettings : ScriptableObject
     public float RunSpeed;
     public float JumpSpeed;
     [Header("Profile")]
-    public AgentProfile Profile;
+    public CharacterProfile Profile;
     [Header("Mouse Input")]
     public float RotationSpeed;
     public float PitchSpeed;

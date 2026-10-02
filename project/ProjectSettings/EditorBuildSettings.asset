@@ -6,14 +6,20 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Scenes/MAIN.unity
+    path: Assets/_Scenes/MAIN MENU.unity
     guid: f0a17ed3c1ed25145a8276760324af4c
   - enabled: 1
-    path: Assets/_Scenes/TEST.unity
+    path: Assets/_Scenes/WAITING ROOM.unity
+    guid: 8a77a6fe0da30e44aafff798e3ffea57
+  - enabled: 1
+    path: Assets/_Scenes/TUTORIAL WORLD.unity
+    guid: d25d84705d1663d41be9d4ee7e0ff9e6
+  - enabled: 1
+    path: Assets/_Scenes/TEST WORLD.unity
     guid: 363f4969759662c4d8dc1e5e7e2dc39f
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: cd86d512f19c92947ab722905dfdbbf4, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: e2b0d5494cc7d3b429ca5817e0c36df1, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-    com.unity.localization.settings: {fileID: 11400000, guid: 7c0a24c1ca548cf49a70eaa82c46367c, type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: d402e3cc56fb59c40ae3f52fbac77df4, type: 2}
   m_UseUCBPForAssetBundles: 0

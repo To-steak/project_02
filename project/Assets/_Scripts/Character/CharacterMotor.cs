@@ -6,7 +6,7 @@ public static class CharacterMotor
     private const float MIN_MOVE_SQR = MIN_MOVE * MIN_MOVE;
     private const float CEILING_EPSILON = 0.001f;
 
-    public static CharacterState Step(CharacterState state, Vector3 move, float jumpSpeed, AgentProfile profile, float time)
+    public static CharacterState Step(CharacterState state, Vector3 move, float jumpSpeed, CharacterProfile profile, float time)
     {
         LayerMask layer = profile.GroundLayer | profile.ObstacleLayer;
         Vector3 position = state.Position;
@@ -25,14 +25,14 @@ public static class CharacterMotor
 
         vertical = CharacterPhysics.ApplyGravity(vertical, profile.Gravity, profile.MaxFallSpeed, time);
         Vector3 target = position + Vector3.up * vertical * time;
-        position = CharacterPhysics.Collide(position, target, profile.Radius, profile.Height, layer);
+        position = CharacterPhysics.MoveVertical(position, target, profile.Radius, profile.Height, profile.SlopeLimit, layer, out bool landed);
         if (vertical > 0.0f && position.y < target.y - CEILING_EPSILON)
         {
             vertical = 0.0f;
         }
 
-        bool isGround = CharacterPhysics.IsGrounded(target, position, vertical);
-        if (isGround)
+        bool isGrounded = landed;
+        if (isGrounded)
         {
             vertical = -profile.GroundStickSpeed;
         }
@@ -41,7 +41,7 @@ public static class CharacterMotor
         {
             Position = position,
             VerticalSpeed = vertical,
-            IsGrounded = isGround
+            IsGrounded = isGrounded
         };
     }
 }

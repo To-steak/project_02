@@ -8,5 +8,5 @@ public class EnemySettings : ScriptableObject
     public float RunSpeed = 3.0f;
     public float RotationSpeed = 360.0f;
     [Header("Profile")]
-    public AgentProfile Profile;
+    public CharacterProfile Profile;
 }

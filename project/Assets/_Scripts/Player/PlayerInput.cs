@@ -68,7 +68,7 @@ public class PlayerInput : MonoBehaviour
         _action.General.Attack.canceled -= OnAttack;
     }
 
-    public InputPayload Capture(int tick, float yaw, float pitch)
+    public InputPayload Capture(int tick, float yaw, float pitch, Vector3 aimPoint)
     {
         InputPayload payload = new InputPayload
         {
@@ -80,7 +80,8 @@ public class PlayerInput : MonoBehaviour
             PitchInput = pitch,
             AttackInput = AttackInput,
             AttackPressed = _attackPressed,
-            AimInput = AimInput
+            AimInput = AimInput,
+            AimPoint = aimPoint
         };
 
         JumpInput = false;

@@ -10,9 +10,8 @@ using UnityEngine;
 /// 일반적인 호출 순서는 다음과 같다.
 /// 1. Walk
 /// 2. ApplyGravity
-/// 3. Collide
-/// 4. IsGrounded
-/// 5. Rotate
+/// 3. MoveVertical
+/// 4. Rotate
 /// 
 /// 위치는 모두 캡슐의 발밑 기준이다(<see cref="GetCapsule"/> 참고).
 /// 물리 질의는 <c>CapsuleCast</c>로 수행한다.
@@ -31,7 +30,6 @@ public static class CharacterPhysics
     /// <summary>
     /// 목표 지점까지 캡슐을 걸어서 이동시킨다.
     /// 부딪힌 면을 경사면-턱-벽으로 분류해 오를 수 있으면 오르고 아니면 미끄러진다.
-    /// 경사와 계단을 무시하고 전부 벽으로 취급하려면 <see cref="Collide"/>를 쓸 것.
     /// </summary>
     /// <param name="origin">현재 위치</param>
     /// <param name="target">가려는 위치</param>
@@ -41,7 +39,6 @@ public static class CharacterPhysics
     /// <param name="stepHeight">그냥 올라설 수 있는 턱의 최대 높이</param>
     /// <param name="layer">충돌로 판정할 레이어</param>
     /// <param name="grounded">접지 여부</param>
-    /// <param name="climbed">턱을 올라선 높이</param>
     /// <returns>실제로 도달한 위치</returns>
     /// <remarks>
     /// 미끄러짐은 최대 <c>MAX_SLIDE_COUNT</c>회까지만 계산하며 반복이 모자라면 남은 이동량이 버려진다.
@@ -100,44 +97,29 @@ public static class CharacterPhysics
     }
 
     /// <summary>
-    /// 수직 속도에 중력을 누적하고 최대 낙하 속도로 제한한다.
-    /// 위로 향하는 속도(점프)는 제한하지 않는다.
-    /// </summary>
-    /// <param name="velocity">현재 수직 속도(seconds)</param>
-    /// <param name="gravity">중력 가속도</param>
-    /// <param name="maxSpeed">최대 낙하 속도</param>
-    /// <param name="time">경과 시간</param>
-    /// <returns>갱신된 수직 속도</returns>
-    /// <remarks>
-    /// 속도가 양수이면 위, 음수이면 아래로 향한다.
-    /// 중력가속도는 음수로 넣으면 안 된다.
-    /// </remarks>
-    public static float ApplyGravity(float velocity, float gravity, float maxSpeed, float time)
-    {
-        return Mathf.Max(velocity - gravity * time, -maxSpeed);
-    }
-
-    /// <summary>
-    /// 목표 지점까지 캡슐을 이동시키되 막히면 벽면을 따라 미끄러진다.
-    /// 충돌면의 수평 성분만 사용하므로 경사면도 벽처럼 취급해 밀어낸다.
-    /// 경사를 올라야 하거나 턱을 넘어야 한다면 <see cref="Walk"/>를 쓸 것.
+    /// 수직 이동. 
+    /// 중력이나 점프로 움직이면서 부딪힌 면을 처리한다.
+    /// 걸을 수 있는 면에 아래로 닿으면 멈추고 착지로 본다.
+    /// 가파른 면이나 천장은 실제 법선을 따라 미끄러진다.
     /// </summary>
     /// <param name="source">현재 위치</param>
     /// <param name="target">가려는 위치</param>
     /// <param name="radius">캡슐 반지름</param>
     /// <param name="height">캡슐 전체 높이</param>
+    /// <param name="slopeLimit">최대 설 수 있는 각도</param>
     /// <param name="layer">충돌로 판정할 레이어</param>
-    /// <returns>벽에서 <c>SKIN</c>만큼 떨어진 실제로 도달한 위치</returns>
+    /// <param name="landed">걸을 수 있는 면에 닿았는지</param>
+    /// <returns>실제 도달한 위치</returns>
     /// <remarks>
-    /// 미끄러짐은 최대 <c>MAX_SLIDE_COUNT</c>회까지만 계산한다.
-    /// 좁은 구석처럼 반복이 부족한 상황에서는 남은 이동량이 버려져 실제보다 덜 움직인다.
-    /// 이미 벽에 파묻힌 상태는 밀어내지 않으므로 스폰 위치나 텔레포트 지점은 호출자가 확인해야 한다.
+    /// 가파른 면에서 수평 법선만 쓰면 아래 방향 이동이 그대로 남아 면에 붙어 서게 된다.
+    /// 그래서 <see cref="Walk"/>의 벽 처리와 달리 법선 전체를 쓴다.
     /// </remarks>
-    public static Vector3 Collide(Vector3 source, Vector3 target, float radius, float height, LayerMask layer)
+    public static Vector3 MoveVertical(Vector3 source, Vector3 target, float radius, float height, float slopeLimit, LayerMask layer, out bool landed)
     {
+        landed = false;
+
         Vector3 position = source;
         Vector3 delta = target - source;
-
         for (int i = 0; i < MAX_SLIDE_COUNT; i++)
         {
             float distance = delta.magnitude;
@@ -157,16 +139,34 @@ public static class CharacterPhysics
             position += direction * moved;
 
             Vector3 remain = delta - direction * moved;
-            Vector3 normal = new Vector3(hit.normal.x, 0.0f, hit.normal.z);
-            if (normal.sqrMagnitude < MIN_NORMAL_SQR)
+            if (IsWalkable(hit.normal, slopeLimit))
             {
+                landed = direction.y < 0.0f;
                 break;
             }
 
-            delta = Vector3.ProjectOnPlane(remain, normal.normalized);
+            delta = Vector3.ProjectOnPlane(remain, hit.normal);
         }
 
         return position;
+    }
+    
+    /// <summary>
+    /// 수직 속도에 중력을 누적하고 최대 낙하 속도로 제한한다.
+    /// 위로 향하는 속도(점프)는 제한하지 않는다.
+    /// </summary>
+    /// <param name="velocity">현재 수직 속도(m/seconds)</param>
+    /// <param name="gravity">중력 가속도</param>
+    /// <param name="maxSpeed">최대 낙하 속도</param>
+    /// <param name="time">경과 시간</param>
+    /// <returns>갱신된 수직 속도</returns>
+    /// <remarks>
+    /// 속도가 양수이면 위, 음수이면 아래로 향한다.
+    /// 중력가속도는 음수로 넣으면 안 된다.
+    /// </remarks>
+    public static float ApplyGravity(float velocity, float gravity, float maxSpeed, float time)
+    {
+        return Mathf.Max(velocity - gravity * time, -maxSpeed);
     }
 
     /// <summary>
@@ -179,22 +179,6 @@ public static class CharacterPhysics
     public static bool IsWalkable(Vector3 normal, float slopeLimit)
     {
         return Vector3.Angle(normal, Vector3.up) <= slopeLimit;
-    }
-
-    /// <summary>
-    /// 접지 여부를 판정한다.
-    /// </summary>
-    /// <param name="target">낙하 후 가려던 위치</param>
-    /// <param name="resolved">충돌을 반영해 실제로 도달한 위치</param>
-    /// <param name="velocity">수직 속도</param>
-    /// <returns>땅에 닿아 있으면 true.</returns>
-    /// <remarks>
-    /// 수직 속도가 0 이상이면 접지로 보지 않는다.
-    /// 접지 상태에서도 속도를 완전히 0으로 두지 말고 작은 음수를 유지해야 한다.
-    /// </remarks>
-    public static bool IsGrounded(Vector3 target, Vector3 resolved, float velocity)
-    {
-        return velocity <= 0.0f && resolved.y > target.y;
     }
 
     /// <summary>

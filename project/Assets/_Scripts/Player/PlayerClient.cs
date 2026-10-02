@@ -5,6 +5,7 @@ public class PlayerClient : NetworkBehaviour
 {
     [SerializeField] private PlayerController _controller;
     private int _tick = 0;
+    private int _nextFireTick;
 
     private const int BUFFER_SIZE = 1024;
     private const int BUFFER_MASK = BUFFER_SIZE - 1;
@@ -51,8 +52,10 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, _controller.PlayerSettings.PitchSpeed, _controller.PlayerSettings.MinPitch, _controller.PlayerSettings.MaxPitch);
-            _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, _controller.PlayerSettings.RotationSpeed);
+            float sensitivity = InputService.MouseSensitivity;
+            var s = _controller.PlayerSettings;
+            _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, s.PitchSpeed * sensitivity, s.MinPitch, s.MaxPitch);
+            _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, s.RotationSpeed * sensitivity);
 
             _controller.PlayerLocomotion.Rotate(_controller.PlayerCamera.Yaw);
             _controller.PlayerCamera.ApplyAim(_controller.PlayerInput.AimInput);
@@ -73,11 +76,15 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw, _controller.PlayerCamera.Pitch);
+            Vector3 aimPoint = GameServices.Camera.GetAimPoint();
+            InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw, _controller.PlayerCamera.Pitch, aimPoint);
             _inputHistory[_tick & BUFFER_MASK] = input;
 
             _controller.Simulate(input);
-
+            if (_controller.PlayerWeapon.TryFire(input, ref _nextFireTick))
+            {
+                SpawnBulletVisual(aimPoint);
+            }
             StatePayload state = _controller.PlayerLocomotion.Capture(_tick);
             _stateHistory[_tick & BUFFER_MASK] = state;
 
@@ -118,8 +125,9 @@ public class PlayerClient : NetworkBehaviour
 
         if (Vector3.Distance(predicted.Position, payload.Position) >= THRESHOLD)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             DEBUG_RECONCILE++;
-
+#endif
             _controller.PlayerLocomotion.RollbackState(payload);
 
             for (int tick = payload.Tick + 1; tick < _tick; tick++)
@@ -132,6 +140,36 @@ public class PlayerClient : NetworkBehaviour
         }
     }
 
+    [Rpc(SendTo.ClientsAndHost)]
+    public void FireRPC(Vector3 aimPoint)
+    {
+        if (IsOwner)
+        {
+            return;
+        }
+
+        SpawnBulletVisual(aimPoint);
+    }
+
+    private void SpawnBulletVisual(Vector3 aimPoint)
+    {
+        if (!_controller.PlayerWeapon.HasWeapon)
+        {
+            return;
+        }
+
+        BulletData bulletData = _controller.PlayerWeapon.Data.Bullet;
+        if (bulletData == null)
+        {
+            return;
+        }
+
+        Vector3 from = _controller.PlayerWeapon.Muzzle;
+        Vector3 to = Vector3.MoveTowards(from, aimPoint, bulletData.Velocity * bulletData.Lifespan);
+        GameServices.BulletVisual.Fire(from, to, bulletData.Velocity);
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     private int DEBUG_RECONCILE;
     private void OnGUI()
     {
@@ -152,4 +190,5 @@ public class PlayerClient : NetworkBehaviour
         GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
         GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
     }
+#endif
 }

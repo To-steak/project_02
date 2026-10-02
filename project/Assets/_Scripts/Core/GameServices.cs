@@ -1,0 +1,53 @@
+public static class GameServices
+{
+    public static ICameraService Camera { get; private set; }
+    public static IConnectionService Connection { get; private set; }
+    public static ISettingsService Settings { get; private set; }
+    public static IWorldSelectionService WorldSelection { get; private set; }
+    public static IProjectileService Projectiles { get; private set; }
+    public static IBulletVisualService BulletVisual { get; private set; }
+    public static ISessionService Session { get; private set; }
+
+    public static void Register(ICameraService service) => Camera = service;
+    public static void Register(IConnectionService service) => Connection = service;
+    public static void Register(ISettingsService service) => Settings = service;
+    public static void Register(IWorldSelectionService service) => WorldSelection = service;
+    public static void Register(IProjectileService service) => Projectiles = service;
+    public static void Register(IBulletVisualService service) => BulletVisual = service;
+    public static void Register(ISessionService service) => Session = service;
+
+    public static void Unregister(ICameraService service)
+    {
+        if (ReferenceEquals(Camera, service)) Camera = null;
+    }
+
+    public static void Unregister(IConnectionService service)
+    {
+        if (ReferenceEquals(Connection, service)) Connection = null;
+    }
+
+    public static void Unregister(ISettingsService service)
+    {
+        if (ReferenceEquals(Settings, service)) Settings = null;
+    }
+
+    public static void Unregister(IWorldSelectionService service)
+    {
+        if (ReferenceEquals(WorldSelection, service)) WorldSelection = null;
+    }
+
+    public static void Unregister(IProjectileService service)
+    {
+        if (ReferenceEquals(Projectiles, service)) Projectiles = null;
+    }
+
+    public static void Unregister(IBulletVisualService service)
+    {
+        if (ReferenceEquals(BulletVisual, service)) BulletVisual = null;
+    }
+
+    public static void Unregister(ISessionService service)
+    {
+        if (ReferenceEquals(Session, service)) Session = null;
+    }
+}
