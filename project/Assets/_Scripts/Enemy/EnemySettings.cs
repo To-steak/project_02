@@ -9,4 +9,7 @@ public class EnemySettings : ScriptableObject
     public float RotationSpeed = 360.0f;
     [Header("Profile")]
     public CharacterProfile Profile;
+    [Header("Reward")]
+    [Min(0)] public int RewardExp;
+    [Min(0)] public int RewardGold;
 }

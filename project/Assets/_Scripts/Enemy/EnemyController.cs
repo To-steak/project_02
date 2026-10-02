@@ -44,10 +44,6 @@ public class EnemyController : NetworkBehaviour
         }
     }
 
-    /// <remarks>
-    /// 경로가 막혀도 포기하지 않고 계속 웨이포인트를 향해 걷는다.
-    /// 벽 앞에서 멈춰 있는 적이 보이면 정체 감지 후 Wander()를 다시 부르도록 할 것.
-    /// </remarks>
     private void FixedUpdate()
     {
         if (!IsSpawned || !IsServer)
@@ -84,7 +80,7 @@ public class EnemyController : NetworkBehaviour
             }
         }
 
-        Vector3 move = new Vector3(input.x, 0.0f, input.y) * _settings.WalkSpeed * time;
+        Vector3 move = _settings.WalkSpeed * time * new Vector3(input.x, 0.0f, input.y);
         _state.Position = transform.position;
         _state = CharacterMotor.Step(_state, move, 0.0f, _settings.Profile, time);
         rotation = CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time);
@@ -115,7 +111,14 @@ public class EnemyController : NetworkBehaviour
 
     private void OnDied(Health health, ulong[] contributors)
     {
-        // TODO: 기여자들에게 경험치와 재화를 1/n로 분배
+        int count = contributors.Length;
+        if (count > 0)
+        {
+            int exp = _settings.RewardExp / count;
+            int gold = _settings.RewardGold / count;
+            GameServices.Session?.AddReward(contributors, exp, gold);
+        }
+
         NetworkObject.Despawn(); // 풀을 붙이면 파괴 대신 반납
     }
 
@@ -185,7 +188,7 @@ public class EnemyController : NetworkBehaviour
         Vector3 previous = center + new Vector3(radius, 0f, 0f);
         for (int i = 1; i <= segments; i++)
         {
-            float angle = (i / (float)segments) * Mathf.PI * 2f;
+            float angle = i / (float)segments * Mathf.PI * 2f;
             Vector3 next = center + new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
             Gizmos.DrawLine(previous, next);
             previous = next;

@@ -9,7 +9,8 @@ public class PlayerClient : NetworkBehaviour
 
     private const int BUFFER_SIZE = 1024;
     private const int BUFFER_MASK = BUFFER_SIZE - 1;
-    private const float THRESHOLD = 0.1f;
+    private const float RECONCILE_THRESHOLD = 0.1f;
+    private const float MP_THRESHOLD = 0.5f;
 
     private readonly InputPayload[] _inputHistory = new InputPayload[BUFFER_SIZE];
     private readonly StatePayload[] _stateHistory = new StatePayload[BUFFER_SIZE];
@@ -62,7 +63,8 @@ public class PlayerClient : NetworkBehaviour
 
             var motion = _controller.PlayerLocomotion.State;
             _controller.PlayerAnimation.SetAirborne(motion.IsGrounded, motion.VerticalSpeed);
-            _controller.PlayerAnimation.SetMoveBlendTree(_controller.PlayerInput.MoveInput, _controller.PlayerInput.RunInput, Time.deltaTime);
+            // _controller.PlayerAnimation.SetMoveBlendTree(_controller.PlayerInput.MoveInput, _controller.PlayerInput.RunInput, Time.deltaTime);
+            _controller.PlayerAnimation.SetMoveBlendTree(_controller.PlayerInput.MoveInput, _controller.PlayerLocomotion.IsRunning, Time.deltaTime);
         }
         else
         {
@@ -123,7 +125,9 @@ public class PlayerClient : NetworkBehaviour
             return;
         }
 
-        if (Vector3.Distance(predicted.Position, payload.Position) >= THRESHOLD)
+        bool positionMiss = Vector3.Distance(predicted.Position, payload.Position) >= RECONCILE_THRESHOLD;
+        bool mpMiss = Mathf.Abs(predicted.Mp - payload.Mp) >= MP_THRESHOLD || predicted.IsExhausted != payload.IsExhausted;
+        if (positionMiss || mpMiss)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DEBUG_RECONCILE++;
