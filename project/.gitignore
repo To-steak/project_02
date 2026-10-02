@@ -110,5 +110,5 @@ InitTestScene*.unity*
 /[Aa]ssets/[Pp]urchased Assets.meta
 
 # OAuth
-/[Aa]ssets/[Ll]ocalization/
-/[Aa]ssets/[Ll]ocalization.meta
+/[Aa]ssets/[Ll]ocalization/[Oo]Auth/
+/[Aa]ssets/[Ll]ocalization/[Oo]Auth.meta
