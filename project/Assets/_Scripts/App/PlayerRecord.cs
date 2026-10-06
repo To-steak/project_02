@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public class PlayerProfile
+public class PlayerRecord
 {
     public string UserId;    // 이 사용자를 알아보는 키 (클라이언트 PlayerPrefs의 GUID)
     public string Nickname;  // 첫 접속 때 정한 닉네임

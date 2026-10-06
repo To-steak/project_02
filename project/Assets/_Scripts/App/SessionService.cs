@@ -12,7 +12,7 @@ public class SessionService : MonoBehaviour, ISessionService
 
     private NetworkManager _networkManager;
     private IProfileStore _store;
-    private readonly Dictionary<ulong, PlayerProfile> _session = new();
+    private readonly Dictionary<ulong, PlayerRecord> _session = new();
     private readonly Dictionary<ulong, string> _userIds = new();
 
     public event Action<ulong, int> ExpChanged;
@@ -67,7 +67,7 @@ public class SessionService : MonoBehaviour, ISessionService
             return;
         }
 
-        if (Store.TryGet(payload.UserId, out PlayerProfile profile))
+        if (Store.TryGet(payload.UserId, out PlayerRecord profile))
         {
             Accept(request, response, profile);
             return;
@@ -91,7 +91,7 @@ public class SessionService : MonoBehaviour, ISessionService
             return;
         }
 
-        profile = new PlayerProfile
+        profile = new PlayerRecord
         {
             UserId = payload.UserId,
             Nickname = nickname
@@ -153,7 +153,7 @@ public class SessionService : MonoBehaviour, ISessionService
         return false;
     }
 
-    private void Accept(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response, PlayerProfile profile)
+    private void Accept(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response, PlayerRecord profile)
     {
         _session[request.ClientNetworkId] = profile;
         _userIds[request.ClientNetworkId] = profile.UserId;
