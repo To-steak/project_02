@@ -17,7 +17,7 @@ public class SessionService : MonoBehaviour, ISessionService
 
     public event Action<ulong, int> ExpChanged;
 
-    private IProfileStore Store => _store ??= new JsonProfileStore(Path.Combine(Application.persistentDataPath, PROFILE_FILE));
+    private IProfileStore Store => _store ??= new PlayerRecordStore(Path.Combine(Application.persistentDataPath, PROFILE_FILE));
 
     private void Awake()
     {

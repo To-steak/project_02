@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class JsonProfileStore : IProfileStore
+public class PlayerRecordStore : IProfileStore
 {
     [Serializable]
     private class ProfileFile
@@ -13,7 +13,7 @@ public class JsonProfileStore : IProfileStore
     private readonly string _path;
     private readonly Dictionary<string, PlayerRecord> _profiles = new();
 
-    public JsonProfileStore(string path)
+    public PlayerRecordStore(string path)
     {
         _path = path;
         Load();
@@ -42,6 +42,7 @@ public class JsonProfileStore : IProfileStore
         _profiles[profile.UserId] = profile;
         Save();
     }
+
     public void Save()
     {
         ProfileFile file = new ProfileFile();
