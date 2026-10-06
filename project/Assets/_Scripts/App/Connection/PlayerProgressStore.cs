@@ -4,14 +4,14 @@ using System.Collections.Generic;
 public class PlayerProgressStore : IPlayerProgressStore
 {
     [Serializable]
-    private class ProfileFile
+    private class ProgressFile
     {
         public int Version = 1;
-        public List<PlayerProgress> Profiles = new();
+        public List<PlayerProgress> Progresses = new();
     }
 
     private readonly string _path;
-    private readonly Dictionary<string, PlayerProgress> _profiles = new();
+    private readonly Dictionary<string, PlayerProgress> _progresses = new();
 
     public PlayerProgressStore(string path)
     {
@@ -19,16 +19,16 @@ public class PlayerProgressStore : IPlayerProgressStore
         Load();
     }
 
-    public bool TryGet(string userId, out PlayerProgress profile)
+    public bool TryGet(string userId, out PlayerProgress progress)
     {
-        return _profiles.TryGetValue(userId, out profile);
+        return _progresses.TryGetValue(userId, out progress);
     }
 
     public bool IsNicknameTaken(string nickname)
     {
-        foreach (PlayerProgress profile in _profiles.Values)
+        foreach (PlayerProgress progress in _progresses.Values)
         {
-            if (string.Equals(profile.Nickname, nickname, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(progress.Nickname, nickname, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -37,31 +37,31 @@ public class PlayerProgressStore : IPlayerProgressStore
         return false;
     }
 
-    public void Add(PlayerProgress profile)
+    public void Add(PlayerProgress progress)
     {
-        _profiles[profile.UserId] = profile;
+        _progresses[progress.UserId] = progress;
         Save();
     }
 
     public void Save()
     {
-        ProfileFile file = new ProfileFile();
-        file.Profiles.AddRange(_profiles.Values);
+        ProgressFile file = new ProgressFile();
+        file.Progresses.AddRange(_progresses.Values);
         JsonFile.TrySave(_path, file);
     }
 
     private void Load()
     {
-        if (!JsonFile.TryLoad(_path, out ProfileFile file) || file.Profiles == null)
+        if (!JsonFile.TryLoad(_path, out ProgressFile file) || file.Progresses == null)
         {
             return;
         }
 
-        foreach (PlayerProgress profile in file.Profiles)
+        foreach (PlayerProgress progress in file.Progresses)
         {
-            if (!string.IsNullOrEmpty(profile.UserId))
+            if (!string.IsNullOrEmpty(progress.UserId))
             {
-                _profiles[profile.UserId] = profile;
+                _progresses[progress.UserId] = progress;
             }
         }
     }
