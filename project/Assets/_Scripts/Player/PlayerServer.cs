@@ -108,12 +108,14 @@ public class PlayerServer : NetworkBehaviour
             return;
         }
 
-        BulletData bullet = weapon.Data.Bullet;
+        WeaponData data = weapon.Data;
+        BulletData bullet = data.Bullet;
         Vector3 origin = weapon.Origin;
         Vector3 direction = (input.AimPoint - origin).normalized;
-        int damage = Mathf.RoundToInt(bullet.Damage * weapon.Data.WeaponCoefficient);
+        int damage = Mathf.RoundToInt(bullet.Damage * data.WeaponCoefficient);
+        bool isCritical = Random.value < data.CriticalChance;
 
-        GameServices.Projectiles.Spawn(origin, direction * bullet.Velocity, bullet.Lifespan, damage, OwnerClientId);
+        GameServices.Projectiles.Spawn(new Projectile(origin, direction * bullet.Velocity, bullet.Lifespan, damage, OwnerClientId, isCritical));
         _controller.PlayerClient.FireRPC(input.AimPoint);
     }
 }

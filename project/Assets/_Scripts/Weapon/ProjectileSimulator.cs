@@ -14,16 +14,9 @@ public class ProjectileSimulator
         _hitLayer = hitLayer;
     }
 
-    public void Spawn(Vector3 origin, Vector3 velocity, float lifespan, int damage, ulong owner)
+    public void Spawn(in Projectile projectile)
     {
-        _projectiles.Add(new Projectile
-        {
-            Position = origin,
-            Velocity = velocity,
-            Lifespan = lifespan,
-            Damage = damage,
-            Owner = owner
-        });
+        _projectiles.Add(projectile);
     }
 
     public void Tick(float dt)
@@ -37,7 +30,7 @@ public class ProjectileSimulator
             {
                 if (hit.collider.TryGetComponent(out IDamageable target))
                 {
-                    target.ApplyDamage(projectile.Damage, projectile.Owner);
+                    target.ApplyDamage(DamageInfo.FromPlayer(projectile.Damage, projectile.Owner, projectile.Origin, projectile.IsCritical));
                 }
 
                 _projectiles.RemoveAt(i);
