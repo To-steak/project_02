@@ -8,16 +8,16 @@ using UnityEngine;
 public class SessionService : MonoBehaviour, ISessionService
 {
     private const int MAX_PAYLOAD = 256;
-    private const string PROFILE_FILE = "profiles.json";
+    private const string PROGRESS_FILE = "progress.json";
 
     private NetworkManager _networkManager;
-    private IProfileStore _store;
+    private IPlayerProgressStore _store;
     private readonly Dictionary<ulong, PlayerRecord> _session = new();
     private readonly Dictionary<ulong, string> _userIds = new();
 
     public event Action<ulong, int> ExpChanged;
 
-    private IProfileStore Store => _store ??= new PlayerRecordStore(Path.Combine(Application.persistentDataPath, PROFILE_FILE));
+    private IPlayerProgressStore Store => _store ??= new PlayerProgressStore(Path.Combine(Application.persistentDataPath, PROGRESS_FILE));
 
     private void Awake()
     {

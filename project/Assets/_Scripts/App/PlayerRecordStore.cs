@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class PlayerRecordStore : IProfileStore
+public class PlayerProgressStore : IPlayerProgressStore
 {
     [Serializable]
     private class ProfileFile
@@ -13,7 +13,7 @@ public class PlayerRecordStore : IProfileStore
     private readonly string _path;
     private readonly Dictionary<string, PlayerRecord> _profiles = new();
 
-    public PlayerRecordStore(string path)
+    public PlayerProgressStore(string path)
     {
         _path = path;
         Load();
