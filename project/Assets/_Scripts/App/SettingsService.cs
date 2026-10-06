@@ -23,7 +23,7 @@ public class SettingsService : MonoBehaviour, ISettingsService
             return;
         }
 
-        _saved = SettingsIO.Load();
+        _saved = SettingsStore.Load();
         GameServices.Register(this);
     }
 
@@ -57,7 +57,7 @@ public class SettingsService : MonoBehaviour, ISettingsService
     public void Save(GameSettings settings)
     {
         _saved = settings.Clone();
-        SettingsIO.Save(_saved);
+        SettingsStore.Save(_saved);
 
         ApplyDisplay(_saved);
         Preview(_saved);
