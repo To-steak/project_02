@@ -15,7 +15,23 @@ public class EnemyController : NetworkBehaviour
     private const float WANDER_INTERVAL = 1.0f;  // 도착 후 다음 배회까지 대기 시간
     private const float ARRIVE_THRESHOLD = 0.2f; // 도착 판정 거리 (진동 방지)
     private readonly List<ulong> _contributors = new();
-
+    private static readonly IEnemyState[] _states =
+    {
+        new GeneralState(),
+        new NoticeState(),
+        new BattleState(),
+        new AttackState(),
+        new GroggyState(),
+        new DefendState(),
+        new DieState()
+    };
+    private readonly NetworkVariable<EnemyStateId> _netStateId = new();
+    internal EnemyStateId CurrentStateId { get; private set; }
+    internal float StateTime;
+    internal ulong? TargetClientId;
+    internal Vector2 MoveInput;
+    internal float MoveSpeed;
+    internal EnemySettings Settings => _settings;
     public void InjectGrid(PathGrid grid)
     {
         Debug.Assert(grid.Profile == _settings.Profile, $"{name}: 그리드 프로필과 적 프로필이 다름", this);
@@ -33,6 +49,12 @@ public class EnemyController : NetworkBehaviour
 
         if (IsServer)
         {
+            TargetClientId = null;
+            CurrentStateId = EnemyStateId.General;
+            StateTime = 0.0f;
+            _netStateId.Value = EnemyStateId.General;
+            _states[(int)EnemyStateId.General].Enter(this);
+
             _health.Damaged += OnDamaged;
             _health.Died += OnDied;
         }
@@ -50,15 +72,24 @@ public class EnemyController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!IsSpawned || !IsServer)
-        {
-            return;
-        }
+        if (!IsSpawned || !IsServer) return;
 
         float time = Time.fixedDeltaTime;
-        Vector3 position = transform.position;
-        Quaternion rotation = transform.rotation;
+        StateTime += time;
 
+        MoveInput = Vector2.zero;
+        MoveSpeed = 0.0f;
+        _states[(int)CurrentStateId].Tick(this, time); // 상태가 MoveInput, MoveSpeed를 정함
+
+        Vector3 move = MoveSpeed * time * new Vector3(MoveInput.x, 0.0f, MoveInput.y);
+        _state.Position = transform.position;
+        _state = CharacterMotor.Step(_state, move, 0.0f, _settings.Profile, time);
+        Quaternion rotation = CharacterPhysics.Rotate(transform.rotation, MoveInput, _settings.RotationSpeed, time);
+        transform.SetPositionAndRotation(_state.Position, rotation);
+    }
+
+    internal Vector2 WanderInput(float time)
+    {
         if (_waypoint >= _path.Count)
         {
             _timer += time;
@@ -69,10 +100,9 @@ public class EnemyController : NetworkBehaviour
             }
         }
 
-        Vector2 input = Vector2.zero;
         if (_waypoint < _path.Count)
         {
-            Vector3 direction = _grid.ConvertWorldCoord(_path[_waypoint]) - position;
+            Vector3 direction = _grid.ConvertWorldCoord(_path[_waypoint]) - transform.position;
             direction.y = 0.0f;
             if (direction.sqrMagnitude < ARRIVE_THRESHOLD * ARRIVE_THRESHOLD)
             {
@@ -80,15 +110,11 @@ public class EnemyController : NetworkBehaviour
             }
             else
             {
-                input = new Vector2(direction.x, direction.z).normalized;
+                return new Vector2(direction.x, direction.z).normalized;
             }
         }
 
-        Vector3 move = _settings.WalkSpeed * time * new Vector3(input.x, 0.0f, input.y);
-        _state.Position = transform.position;
-        _state = CharacterMotor.Step(_state, move, 0.0f, _settings.Profile, time);
-        rotation = CharacterPhysics.Rotate(rotation, input, _settings.RotationSpeed, time);
-        transform.SetPositionAndRotation(_state.Position, rotation);
+        return Vector2.zero;
     }
 
     private void Wander()
@@ -119,6 +145,9 @@ public class EnemyController : NetworkBehaviour
         {
             _contributors.Add(info.AttackerId);
         }
+
+        if (health.IsDead) return;              // 1. Die는 Died 이벤트에서
+        if (CurrentStateId == EnemyStateId.Defend) return; // 2. 피해만 감소, 경직 없음
     }
 
     private void OnDied(Health health)
@@ -132,6 +161,31 @@ public class EnemyController : NetworkBehaviour
         }
 
         NetworkObject.Despawn();
+    }
+
+    internal void ChangeState(EnemyStateId nextStateId)
+    {
+        _states[(int)CurrentStateId].Exit(this);
+        CurrentStateId = nextStateId;
+        StateTime = 0.0f;
+        _netStateId.Value = nextStateId;
+        _states[(int)nextStateId].Enter(this);
+    }
+
+    internal bool TryGetTarget(out Transform target, out Health health)
+    {
+        target = null;
+        health = null;
+
+        if (!TargetClientId.HasValue || !NetworkManager.ConnectedClients.TryGetValue(TargetClientId.Value, out var client) || client.PlayerObject == null)
+        {
+            return false;
+        }
+
+        target = client.PlayerObject.transform;
+        _ = client.PlayerObject.TryGetComponent(out health);
+
+        return health != null && !health.IsDead;
     }
 
 #if UNITY_EDITOR
