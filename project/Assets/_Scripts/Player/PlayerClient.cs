@@ -25,7 +25,7 @@ public class PlayerClient : NetworkBehaviour
             _controller.PlayerInput.Active();
             _controller.PlayerInput.Enable();
             _controller.PlayerCamera.Initialize(GameServices.Camera);
-            _controller.PlayerVisual.Initialzie(transform.position);
+            _controller.PlayerVisual.Initialize(transform.position);
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

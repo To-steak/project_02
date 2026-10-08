@@ -25,10 +25,7 @@ public static class JsonFile
             Debug.LogError($"{nameof(JsonFile)} save failed ({path}): {e.Message}");
             try
             {
-                if (File.Exists(path))
-                {
-                    File.Delete(temp);
-                }
+                File.Delete(temp);
             }
             catch { }
             return false;

@@ -10,7 +10,7 @@ public class ConnectPresenter : IDisposable
     public ConnectPresenter(IConnectView view, IConnectionService service)
     {
         _view = view;
-        _service = service ?? throw new InvalidOperationException($"{nameof(IConnectionService)}가 등록되지 않았습니다.");
+        _service = service;
 
         _view.ConnectRequested += OnConnectRequested;
         _view.BackRequested += OnBackRequested;

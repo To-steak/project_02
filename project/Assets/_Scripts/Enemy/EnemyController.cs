@@ -14,6 +14,7 @@ public class EnemyController : NetworkBehaviour
     private readonly List<int> _path = new();
     private const float WANDER_INTERVAL = 1.0f;  // 도착 후 다음 배회까지 대기 시간
     private const float ARRIVE_THRESHOLD = 0.2f; // 도착 판정 거리 (진동 방지)
+    private readonly List<ulong> _contributors = new();
 
     public void InjectGrid(PathGrid grid)
     {
@@ -28,9 +29,11 @@ public class EnemyController : NetworkBehaviour
         _waypoint = 0;
         _state = default;
         _timer = 0.0f;
+        _contributors.Clear();
 
         if (IsServer)
         {
+            _health.Damaged += OnDamaged;
             _health.Died += OnDied;
         }
     }
@@ -40,6 +43,7 @@ public class EnemyController : NetworkBehaviour
         // TODO: Object Pool에 반납할 때
         if (IsServer)
         {
+            _health.Damaged -= OnDamaged;
             _health.Died -= OnDied;
         }
     }
@@ -109,17 +113,25 @@ public class EnemyController : NetworkBehaviour
         }
     }
 
-    private void OnDied(Health health, ulong[] contributors)
+    private void OnDamaged(Health health, in DamageInfo info, int previous)
     {
-        int count = contributors.Length;
+        if (info.Source == DamageSource.Player && !_contributors.Contains(info.AttackerId))
+        {
+            _contributors.Add(info.AttackerId);
+        }
+    }
+
+    private void OnDied(Health health)
+    {
+        int count = _contributors.Count;
         if (count > 0)
         {
             int exp = _settings.RewardExp / count;
             int gold = _settings.RewardGold / count;
-            GameServices.Session?.AddReward(contributors, exp, gold);
+            GameServices.Session?.AddReward(_contributors, exp, gold);
         }
 
-        NetworkObject.Despawn(); // 풀을 붙이면 파괴 대신 반납
+        NetworkObject.Despawn();
     }
 
 #if UNITY_EDITOR

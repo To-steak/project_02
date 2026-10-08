@@ -9,7 +9,7 @@ public class PlayerVisual : MonoBehaviour
 
     private const float SNAP_DISTANCE = 1f;
 
-    public void Initialzie(Vector3 position)
+    public void Initialize(Vector3 position)
     {
         _position.Reset(position);
     }

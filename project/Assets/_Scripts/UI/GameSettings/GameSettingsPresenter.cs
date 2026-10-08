@@ -13,7 +13,7 @@ public class GameSettingsPresenter : IDisposable
     public GameSettingsPresenter(IGameSettingsView view, IGameSettingsService service)
     {
         _view = view;
-        _service = service ?? throw new InvalidOperationException($"{nameof(IGameSettingsService)}가 등록되지 않았습니다.");
+        _service = service;
 
         _view.SaveRequested += OnSave;
         _view.ResetRequested += OnReset;
