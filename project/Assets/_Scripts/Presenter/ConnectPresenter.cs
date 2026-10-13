@@ -63,10 +63,6 @@ public class ConnectPresenter : IDisposable
 
     public void Dispose()
     {
-        // 앱 종료 중에는 서비스가 먼저 파괴될 수 있다.
-        if (ConnectionService.Instance != null)
-        {
-            ConnectionService.Instance.StateChanged -= OnStateChanged;
-        }
+        ConnectionService.Instance.StateChanged -= OnStateChanged;
     }
 }

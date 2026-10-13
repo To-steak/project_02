@@ -44,7 +44,6 @@ public class GameSettingsPresenter
         UpdateSaveButton();
     }
 
-    /// <summary>저장하지 않은 변경을 버리고 저장된 설정으로 미리보기를 되돌린다.</summary>
     public void Cancel()
     {
         Current = GameSettingsService.Instance.Saved;

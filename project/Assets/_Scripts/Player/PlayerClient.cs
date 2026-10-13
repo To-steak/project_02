@@ -170,7 +170,7 @@ public class PlayerClient : NetworkBehaviour
 
         Vector3 from = _controller.PlayerWeapon.Muzzle;
         Vector3 to = Vector3.MoveTowards(from, aimPoint, bulletData.Velocity * bulletData.Lifespan);
-        BulletVisualService.Instance.Fire(from, to, bulletData.Velocity);
+        BulletPoolService.Instance.Fire(from, to, bulletData.Velocity);
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
