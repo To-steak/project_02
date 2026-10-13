@@ -5886,7 +5886,7 @@ MonoBehaviour:
   - {fileID: 1314545244}
   - {fileID: 345511736}
   - {fileID: 1496162920}
-  sections:
+  tabs:
   - {fileID: 1358354833}
   - {fileID: 480917088}
   - {fileID: 678557709}

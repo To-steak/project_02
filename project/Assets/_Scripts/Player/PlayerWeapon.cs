@@ -38,11 +38,6 @@ public class PlayerWeapon : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="createView"></param>
     public void Equip(int id, bool createView)
     {
         if (_view != null)

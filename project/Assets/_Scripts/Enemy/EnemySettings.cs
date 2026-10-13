@@ -12,4 +12,8 @@ public class EnemySettings : ScriptableObject
     [Header("Reward")]
     [Min(0)] public int RewardExp;
     [Min(0)] public int RewardGold;
+    [Header("Range")]
+    public float PerceptionRange = 5.0f;
+    public float BattleRange = 10.0f;
+    public float AttackRange = 1.5f;
 }

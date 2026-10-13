@@ -24,7 +24,7 @@ public class PlayerClient : NetworkBehaviour
             _controller.PlayerInput.Initialize(InputService.Actions);
             _controller.PlayerInput.Active();
             _controller.PlayerInput.Enable();
-            _controller.PlayerCamera.Initialize(GameServices.Camera);
+            _controller.PlayerCamera.Initialize();
             _controller.PlayerVisual.Initialize(transform.position);
 
             Cursor.lockState = CursorLockMode.Locked;
@@ -78,7 +78,7 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Vector3 aimPoint = GameServices.Camera.GetAimPoint();
+            Vector3 aimPoint = CameraService.Instance.GetAimPoint();
             InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw, _controller.PlayerCamera.Pitch, aimPoint);
             _inputHistory[_tick & BUFFER_MASK] = input;
 
@@ -170,7 +170,7 @@ public class PlayerClient : NetworkBehaviour
 
         Vector3 from = _controller.PlayerWeapon.Muzzle;
         Vector3 to = Vector3.MoveTowards(from, aimPoint, bulletData.Velocity * bulletData.Lifespan);
-        GameServices.BulletVisual.Fire(from, to, bulletData.Velocity);
+        BulletVisualService.Instance.Fire(from, to, bulletData.Velocity);
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

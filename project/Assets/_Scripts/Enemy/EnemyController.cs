@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.Netcode;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class EnemyController : NetworkBehaviour
 {
@@ -157,7 +160,8 @@ public class EnemyController : NetworkBehaviour
         {
             int exp = _settings.RewardExp / count;
             int gold = _settings.RewardGold / count;
-            GameServices.Session?.AddReward(_contributors, exp, gold);
+            
+            SessionService.Instance.AddReward(_contributors, exp, gold);
         }
 
         NetworkObject.Despawn();
@@ -188,12 +192,50 @@ public class EnemyController : NetworkBehaviour
         return health != null && !health.IsDead;
     }
 
+    internal bool TryFindClosestPlayer(float range, out ulong clientId)
+    {
+        clientId = default;
+        float best = range * range;
+        bool found = false;
+
+        foreach (var client in NetworkManager.ConnectedClientsList)
+        {
+            var player = client.PlayerObject;
+            if (player == null || !player.TryGetComponent(out Health health) || health.IsDead)
+            {
+                continue;
+            }
+
+            Vector3 offset = player.transform.position - transform.position;
+            offset.y = 0.0f;
+            float sqr = offset.sqrMagnitude;
+            if (sqr <= best)
+            {
+                best = sqr;
+                clientId = client.ClientId;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
+        Handles.Label(transform.position + Vector3.up * 2.0f, $"{CurrentStateId}  target:{TargetClientId?.ToString() ?? "-"}");
+
         if (_settings != null)
         {
             DrawCapsule();
+        }
+
+        if (_settings != null)
+        {
+            DrawCapsule();
+            DrawRange(_settings.BattleRange, new Color(0.2f, 0.4f, 1.0f));
+            DrawRange(_settings.PerceptionRange, new Color(1.0f, 0.85f, 0.2f));
+            DrawRange(_settings.AttackRange, new Color(1.0f, 0.25f, 0.25f));
         }
 
         if (_grid == null || _waypoint >= _path.Count)
@@ -259,6 +301,17 @@ public class EnemyController : NetworkBehaviour
             Gizmos.DrawLine(previous, next);
             previous = next;
         }
+    }
+
+    private void DrawRange(float radius, Color color)
+    {
+        Vector3 center = transform.position + Vector3.up * 0.02f;
+
+        Handles.color = new Color(color.r, color.g, color.b, 0.08f);
+        Handles.DrawSolidDisc(center, Vector3.up, radius);
+
+        Handles.color = color;
+        Handles.DrawWireDisc(center, Vector3.up, radius);
     }
 #endif
 }

@@ -115,7 +115,7 @@ public class PlayerServer : NetworkBehaviour
         int damage = Mathf.RoundToInt(bullet.Damage * data.WeaponCoefficient);
         bool isCritical = Random.value < data.CriticalChance;
 
-        GameServices.Projectiles.Spawn(new Projectile(origin, direction * bullet.Velocity, bullet.Lifespan, damage, OwnerClientId, isCritical));
+        ProjectileService.Instance.Spawn(new Projectile(origin, direction * bullet.Velocity, bullet.Lifespan, damage, OwnerClientId, isCritical));
         _controller.PlayerClient.FireRPC(input.AimPoint);
     }
 }

@@ -22,7 +22,6 @@ public class PlayerController : NetworkBehaviour
     internal readonly NetworkVariable<FixedString64Bytes> Nickname = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     internal readonly NetworkVariable<int> Level = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     internal PlayerLevelTable.Row Stats => PlayerSettings.LevelTable.Get(Level.Value);
-    internal PlayerEvent Event = new();
 
     public override void OnNetworkSpawn()
     {
@@ -32,13 +31,9 @@ public class PlayerController : NetworkBehaviour
         if (IsServer)
         {
             EquippedWeapon.Value = 0;
-            Nickname.Value = new FixedString64Bytes(GameServices.Session?.GetNickname(OwnerClientId) ?? $"Player#{OwnerClientId}");
-            Level.Value = PlayerSettings.LevelTable.GetLevel(GameServices.Session?.GetExp(OwnerClientId) ?? 0);
-
-            if (GameServices.Session != null)
-            {
-                GameServices.Session.ExpChanged += OnExpChanged;
-            }
+            Nickname.Value = new FixedString64Bytes(SessionService.Instance.GetNickname(OwnerClientId) ?? $"Player#{OwnerClientId}");
+            Level.Value = PlayerSettings.LevelTable.GetLevel(SessionService.Instance.GetExp(OwnerClientId));
+            SessionService.Instance.ExpChanged += OnExpChanged;
         }
     }
 
@@ -60,9 +55,9 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
-        if (IsServer && GameServices.Session != null)
+        if (IsServer && SessionService.Instance != null)
         {
-            GameServices.Session.ExpChanged -= OnExpChanged;
+            SessionService.Instance.ExpChanged -= OnExpChanged;
         }
     }
 
