@@ -14,7 +14,7 @@ namespace Project02.Player
         [SerializeField] internal PlayerCamera PlayerCamera;
         [SerializeField] internal PlayerVisual PlayerVisual;
         [SerializeField] internal PlayerServer PlayerServer;
-        [SerializeField] internal PlayerOwner PlayerOwner;     // PlayerClient 대신
+        [SerializeField] internal PlayerOwner PlayerOwner;
         [SerializeField] internal PlayerRemote PlayerRemote;
         [SerializeField] internal PlayerWeapon PlayerWeapon;
         [SerializeField] internal Health Health;
@@ -28,7 +28,7 @@ namespace Project02.Player
 
         public override void OnNetworkSpawn()
         {
-            EquippedWeapon.OnValueChanged += (_, id) => PlayerWeapon.Equip(id, IsClient);
+            EquippedWeapon.OnValueChanged += OnEquippedWeaponChanged;
             PlayerWeapon.Equip(EquippedWeapon.Value, IsClient);
 
             if (IsServer)
@@ -43,9 +43,8 @@ namespace Project02.Player
         protected override void OnNetworkPostSpawn()
         {
             PlayerServer.enabled = IsServer;
-
+            
             _networkTransform.enabled = !(IsOwner && !IsServer);
-
             if (IsServer)
             {
                 Health.SetMax(Stats.MaxHp, true);
@@ -56,10 +55,17 @@ namespace Project02.Player
 
         public override void OnNetworkDespawn()
         {
+            EquippedWeapon.OnValueChanged -= OnEquippedWeaponChanged;
             if (IsServer && SessionService.Instance != null)
             {
                 SessionService.Instance.ExpChanged -= OnExpChanged;
             }
+        }
+
+        public bool Step(in InputPayload input, out Shot shot)
+        {
+            Simulate(input);
+            return PlayerWeapon.TryFire(input, PlayerLocomotion.IsRunning, OwnerClientId, out shot);
         }
 
         public void Simulate(in InputPayload input)
@@ -83,6 +89,11 @@ namespace Project02.Player
 
             Level.Value = level;
             Health.SetMax(Stats.MaxHp, true);
+        }
+
+        private void OnEquippedWeaponChanged(int previous, int current)
+        {
+            PlayerWeapon.Equip(current, IsClient);
         }
 
 #if UNITY_EDITOR

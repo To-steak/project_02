@@ -64,18 +64,19 @@ namespace Project02.Player
 
         private void FixedUpdate()
         {
-            Vector3 aimPoint = _controller.PlayerCamera.GetAimPoint();
-            InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw, _controller.PlayerCamera.Pitch, aimPoint);
-            _inputHistory[_tick & BUFFER_SIZE - 1] = input;
-
-            _controller.Simulate(input);
-
+            PlayerCamera camera = _controller.PlayerCamera;
             PlayerWeapon weapon = _controller.PlayerWeapon;
-            if (weapon.TryFire(input, _controller.PlayerLocomotion.IsRunning, OwnerClientId, out Shot shot))
+
+            Vector3 aimPoint = camera.AimPoint;
+            InputPayload input = _controller.PlayerInput.Capture(_tick, camera.Yaw, camera.Pitch, aimPoint);
+            _inputHistory[_tick & BUFFER_SIZE - 1] = input;
+            
+            if (_controller.Step(input, out Shot shot))
             {
-                weapon.SpawnBulletVisual(aimPoint, shot.Spread);
-                _controller.PlayerCamera.AddRecoil(weapon.RollRecoil(shot.Stance));
-                weapon.PlayFeedback(shot.Stance);
+                WeaponView view = weapon.View;
+                view.SpawnBullet(aimPoint, shot.Spread);
+                view.Shake(shot.Stance);
+                camera.AddRecoil(view.RollRecoil(shot.Stance));
             }
 
             _stateHistory[_tick & BUFFER_SIZE - 1] = _controller.PlayerLocomotion.Capture(_tick);
@@ -119,7 +120,9 @@ namespace Project02.Player
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DEBUG_RECONCILE++;
+            Debug.LogWarning($"reconcile at tick {payload.Tick}, error {Vector3.Distance(predicted.Position, payload.Position):F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
 #endif
+
             _controller.PlayerLocomotion.RollbackState(payload);
 
             for (int tick = payload.Tick + 1; tick < _tick; tick++)
@@ -127,8 +130,6 @@ namespace Project02.Player
                 _controller.Simulate(_inputHistory[tick & BUFFER_SIZE - 1]);
                 _stateHistory[tick & BUFFER_SIZE - 1] = _controller.PlayerLocomotion.Capture(tick);
             }
-
-            Debug.LogWarning($"reconcile at tick {payload.Tick}, error {Vector3.Distance(predicted.Position, payload.Position):F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

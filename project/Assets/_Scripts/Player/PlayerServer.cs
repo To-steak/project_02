@@ -30,8 +30,11 @@ namespace Project02.Player
                 {
                     break;
                 }
-                _controller.Simulate(input);
-                HandleFire(input);
+
+                if (_controller.Step(input, out Shot shot))
+                {
+                    Fire(input, shot);
+                }
 
                 _controller.Pitch.Value = input.PitchInput;
                 StatePayload state = _controller.PlayerLocomotion.Capture(input.Tick);
@@ -101,17 +104,12 @@ namespace Project02.Player
             _latestTick = tick - 1;
         }
 
-        // Simulate 직후에 호출해야 IsRunning이 이번 틱 값이다. (클라이언트 예측과 같은 순서)
-        private void HandleFire(in InputPayload input)
+        private void Fire(in InputPayload input, in Shot shot)
         {
             PlayerWeapon weapon = _controller.PlayerWeapon;
-            if (!weapon.TryFire(input, _controller.PlayerLocomotion.IsRunning, OwnerClientId, out var shot))
-            {
-                return;
-            }
-
             SOWeapon data = weapon.Data;
             SOBullet bullet = data.Bullet;
+
             Vector3 origin = weapon.Origin;
             Vector3 direction = PlayerWeapon.GetDirection(origin, input.AimPoint, shot.Spread);
             float damage = bullet.Damage * data.WeaponCoefficient;

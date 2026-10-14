@@ -42,7 +42,7 @@ namespace Project02.Player
                 return;
             }
 
-            _controller.PlayerWeapon.SpawnBulletVisual(aimPoint, spread);
+            _controller.PlayerWeapon.View.SpawnBullet(aimPoint, spread);
         }
     }
 }

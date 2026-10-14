@@ -25,6 +25,7 @@ namespace Project02.Player
 
     public class PlayerWeapon : MonoBehaviour
     {
+        public WeaponView View => _view;
         public SOWeapon Data => _data;
         public Vector3 Muzzle => _view != null ? _view.Muzzle : Origin;
         public Vector3 Origin => _origin.position;
@@ -42,7 +43,6 @@ namespace Project02.Player
 
         private SOWeapon _data;
         private WeaponView _view;
-
         private int _nextFireTick;
         private int _lastFireTick;
         private float _bloom;
@@ -81,23 +81,6 @@ namespace Project02.Player
             return look * Quaternion.Euler(-spread.y, spread.x, 0.0f) * Vector3.forward;
         }
 
-        public Vector2 RollRecoil(FireStance stance)
-        {
-            float multiplier = stance == FireStance.Ads ? _data.AdsRecoilMultiplier : 1.0f;
-            return new Vector2(Random.Range(-_data.RecoilHorizontal, _data.RecoilHorizontal), _data.RecoilVertical) * multiplier;
-        }
-
-        public void PlayFeedback(FireStance stance)
-        {
-            if (_view == null)
-            {
-                return;
-            }
-
-            float multiplier = stance == FireStance.Ads ? _data.AdsRecoilMultiplier : 1.0f;
-            _view.Shake(multiplier, _data.ShakeRandom);
-        }
-
         public void Equip(int id, bool createView)
         {
             if (_view != null)
@@ -115,6 +98,7 @@ namespace Project02.Player
             if (hasView)
             {
                 _view = Instantiate(_data.Prefab, _socket);
+                _view.Initialize(_data);
                 _rightHandIK.data.target = _view.RightGrip;
                 _leftHandIK.data.target = _view.LeftGrip;
             }
@@ -183,25 +167,6 @@ namespace Project02.Player
             x *= 0x846CA68Bu;
             x ^= x >> 16;
             return x;
-        }
-
-        public void SpawnBulletVisual(Vector3 aimPoint, Vector2 spread)
-        {
-            if (!HasWeapon)
-            {
-                return;
-            }
-
-            SOBullet bullet = _data.Bullet;
-            if (bullet == null)
-            {
-                return;
-            }
-
-            Vector3 from = Muzzle;
-            Vector3 direction = GetDirection(from, aimPoint, spread);
-            float distance = Mathf.Min(Vector3.Distance(from, aimPoint), _data.Range);
-            ProjectileVisualService.Instance.Fire(from, from + direction * distance, bullet.Velocity);
         }
     }
 }

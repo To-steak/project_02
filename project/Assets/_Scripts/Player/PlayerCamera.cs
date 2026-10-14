@@ -1,18 +1,12 @@
-using Unity.Cinemachine;
-using UnityEngine;
-
 namespace Project02.Player
 {
     using Unity.Cinemachine;
     using UnityEngine;
 
-    /// <summary>소유자 전용. 시점 회전, 반동, 조준 줌, 조준점.</summary>
     public class PlayerCamera : MonoBehaviour
     {
         public float Pitch { get; private set; }
         public float Yaw { get; private set; }
-
-        /// <summary>이번 프레임 ApplyAim에서 구한 조준점.</summary>
         public Vector3 AimPoint { get; private set; }
 
         [Tooltip("프리팹에서 비활성으로 둘 것. Tracking Target은 PlayerVisual의 LookPos")]
@@ -21,8 +15,6 @@ namespace Project02.Player
         private SOPlayer _settings;
         private CinemachineThirdPersonFollow _follow;
         private Camera _camera;
-
-        // 조준하지 않을 때의 값 (프리팹의 시네머신 설정)
         private float _fov;
         private float _cameraDistance;
         private float _verticalArmLength;
