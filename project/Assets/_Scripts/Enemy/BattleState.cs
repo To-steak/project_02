@@ -14,7 +14,7 @@ public class BattleState : IEnemyState
 
     public void Tick(EnemyController enemy, float dt)
     {
-        EnemySettings settings = enemy.Settings;
+        SOEnemy settings = enemy.Settings;
 
         if (!enemy.TryGetTarget(out Transform target, out _))
         {

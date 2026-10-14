@@ -1,38 +1,63 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
     public float Pitch { get; private set; }
     public float Yaw { get; private set; }
+    public Vector3 AimPoint { get; private set; }
 
     [SerializeField] private Transform _lookPos;
     [SerializeField] private Transform _aimTarget;
+    [SerializeField] private CinemachineCamera _cmCamera;
 
     private const float AIM_TARGET_DISTANCE = 2f;
 
-    private bool _aim;
+    private PlayerSettings _settings;
+    private CinemachineThirdPersonFollow _follow;
+    private Camera _camera;
+    private float _fov;
+    private float _cameraDistance;
+    private float _verticalArmLength;
+    private Vector3 _shoulderOffset;
+    private float _adsBlend;
+    private Vector2 _recoil;
 
-    /// <summary>소유자 전용. 전역 카메라가 이 플레이어를 따라가게 한다.</summary>
-    public void Initialize()
+    public void Initialize(PlayerSettings settings)
     {
-        CameraService.Instance.SetTarget(_lookPos);
+        _settings = settings;
+        _follow = _cmCamera.GetComponent<CinemachineThirdPersonFollow>();
+        _camera = Camera.main;
+
+        _fov = _cmCamera.Lens.FieldOfView;
+        _cameraDistance = _follow.CameraDistance;
+        _verticalArmLength = _follow.VerticalArmLength;
+        _shoulderOffset = _follow.ShoulderOffset;
+
+        _cmCamera.gameObject.SetActive(true);
     }
 
-    /// <summary>소유자 전용. 디스폰 시 카메라 추적을 해제한다.</summary>
     public void Release()
     {
-        // 씬 종료나 앱 종료 중에는 CameraService가 먼저 파괴될 수 있다.
-        CameraService.Instance?.ReleaseTarget();
+        _cmCamera.gameObject.SetActive(false);
     }
 
-    public void RotatePitch(float lookY, float speed, float min, float max)
+    public void Look(Vector2 lookInput, float sensitivity, float deltaTime)
     {
-        ApplyPitch(Mathf.Clamp(Pitch - lookY * speed, min, max));
+        float t = 1.0f - Mathf.Exp(-_settings.RecoilSpeed * deltaTime);
+        Vector2 kick = _recoil * t;
+        _recoil -= kick;
+
+        float yaw = lookInput.x * _settings.RotationSpeed * sensitivity + kick.x;
+        float pitch = lookInput.y * _settings.PitchSpeed * sensitivity + kick.y;
+
+        Yaw = Mathf.Repeat(Yaw + yaw, 360f);
+        ApplyPitch(Mathf.Clamp(Pitch - pitch, _settings.MinPitch, _settings.MaxPitch));
     }
 
-    public void RotateYaw(float lookX, float speed)
+    public void AddRecoil(Vector2 kick)
     {
-        Yaw = Mathf.Repeat(Yaw + lookX * speed, 360f);
+        _recoil += kick;
     }
 
     public void ApplyAimTarget(float pitch)
@@ -49,30 +74,28 @@ public class PlayerCamera : MonoBehaviour
         _lookPos.localRotation = Quaternion.Euler(pitch, 0.0f, 0.0f);
     }
 
-    /// <summary>소유자 전용, 매 프레임.</summary>
-    public void ApplyAim(bool aim)
+    public void ApplyAim(bool aim, float zoom, float deltaTime)
     {
-        if (aim != _aim)
+        _adsBlend = Mathf.MoveTowards(_adsBlend, aim ? 1.0f : 0.0f, _settings.AdsSpeed * deltaTime);
+
+        _cmCamera.Lens.FieldOfView = Mathf.Lerp(_fov, _fov / Mathf.Max(1.0f, zoom), _adsBlend);
+        _follow.CameraDistance = Mathf.Lerp(_cameraDistance, _settings.AdsCameraDistance, _adsBlend);
+        _follow.VerticalArmLength = Mathf.Lerp(_verticalArmLength, _settings.AdsVerticalArmLength, _adsBlend);
+        _follow.ShoulderOffset = Vector3.Lerp(_shoulderOffset, _settings.AdsShoulderOffset, _adsBlend);
+
+        AimPoint = GetAimPoint();
+        _aimTarget.position = AimPoint;
+    }
+
+    public Vector3 GetAimPoint()
+    {
+        Transform view = _camera.transform;
+        if (Physics.Raycast(view.position, view.forward, out RaycastHit hit, _settings.AimDistance, _settings.AimLayer, QueryTriggerInteraction.Ignore))
         {
-            _aim = aim;
-            if (aim)
-            {
-                CameraService.Instance.SetAim();
-            }
-            else
-            {
-                CameraService.Instance.ReleaseAim();
-            }
+            return hit.point;
         }
 
-        if (aim)
-        {
-            _aimTarget.position = CameraService.Instance.GetAimPoint();
-        }
-        else
-        {
-            ApplyAimTarget(Pitch);
-        }
+        return view.position + view.forward * _settings.AimDistance;
     }
 
 #if UNITY_EDITOR
@@ -83,6 +106,11 @@ public class PlayerCamera : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(_lookPos.position, _aimTarget.position);
         Gizmos.DrawWireSphere(_aimTarget.position, 0.05f);
+
+        if (_camera == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(_camera.transform.position, AimPoint);
     }
 #endif
 }

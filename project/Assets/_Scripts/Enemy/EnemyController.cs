@@ -7,7 +7,7 @@ using UnityEditor;
 
 public class EnemyController : NetworkBehaviour
 {
-    [SerializeField] private EnemySettings _settings;
+    [SerializeField] private SOEnemy _settings;
     [SerializeField] private Health _health;
 
     private PathGrid _grid;
@@ -34,7 +34,7 @@ public class EnemyController : NetworkBehaviour
     internal ulong? TargetClientId;
     internal Vector2 MoveInput;
     internal float MoveSpeed;
-    internal EnemySettings Settings => _settings;
+    internal SOEnemy Settings => _settings;
     public void InjectGrid(PathGrid grid)
     {
         Debug.Assert(grid.Profile == _settings.Profile, $"{name}: 그리드 프로필과 적 프로필이 다름", this);

@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class BulletPoolService : MonoBehaviour
+public class ProjectileVisualService : MonoBehaviour
 {
-    public static BulletPoolService Instance { get; private set; }
+    public static ProjectileVisualService Instance { get; private set; }
 
     [SerializeField] private Bullet _prefab;
     [SerializeField] private int _defaultCapacity = 64;

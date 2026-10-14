@@ -13,9 +13,9 @@ public class PlayerInput : MonoBehaviour
     private PlayerAction _action;
     private bool _attackPressed;
 
-    public void Initialize(PlayerAction instance)
+    public void Initialize()
     {
-        _action = instance;
+        _action = InputService.Instance.Actions;
     }
 
     public void Active()

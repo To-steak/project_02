@@ -10,7 +10,6 @@ public class PlayerServer : NetworkBehaviour
     private int _latestTick = -1;
     private const int BUFFER_SIZE = 64;
     private const int BUFFER_MASK = BUFFER_SIZE - 1;
-    private int _nextFireTick;
 
     private void Awake()
     {
@@ -100,22 +99,23 @@ public class PlayerServer : NetworkBehaviour
         _latestTick = tick - 1;
     }
 
+    // Simulate 직후에 호출해야 IsRunning이 이번 틱 값이다. (클라이언트 예측과 같은 순서)
     private void HandleFire(in InputPayload input)
     {
         PlayerWeapon weapon = _controller.PlayerWeapon;
-        if (!weapon.TryFire(input, ref _nextFireTick))
+        if (!weapon.TryFire(input, _controller.PlayerLocomotion.IsRunning, OwnerClientId, out PlayerWeapon.Shot shot))
         {
             return;
         }
 
-        WeaponData data = weapon.Data;
-        BulletData bullet = data.Bullet;
+        SOWeapon data = weapon.Data;
+        SOBullet bullet = data.Bullet;
         Vector3 origin = weapon.Origin;
-        Vector3 direction = (input.AimPoint - origin).normalized;
-        int damage = Mathf.RoundToInt(bullet.Damage * data.WeaponCoefficient);
+        Vector3 direction = PlayerWeapon.GetDirection(origin, input.AimPoint, shot.Spread);
+        float damage = bullet.Damage * data.WeaponCoefficient;
         bool isCritical = Random.value < data.CriticalChance;
 
-        ProjectileService.Instance.Spawn(new Projectile(origin, direction * bullet.Velocity, bullet.Lifespan, damage, OwnerClientId, isCritical));
-        _controller.PlayerClient.FireRPC(input.AimPoint);
+        ProjectileService.Instance.Spawn(new Projectile(origin, direction * bullet.Velocity, damage, OwnerClientId, isCritical, data.Range, data.Falloff));
+        _controller.PlayerClient.FireRPC(input.AimPoint, shot.Spread);
     }
 }

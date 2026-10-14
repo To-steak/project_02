@@ -25,7 +25,7 @@ public class ControlSettingsView : GameSettingsTabView
 
     [SerializeField] private RebindEntry[] _bindings;
     private InputActionRebindingExtensions.RebindingOperation _rebind;
-    private static InputActionAsset Asset => InputService.Actions.asset;
+    private static InputActionAsset Asset => InputService.Instance.Actions.asset;
 
     private void OnDisable()
     {

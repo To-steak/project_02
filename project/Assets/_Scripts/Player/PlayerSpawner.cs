@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class PlayerSpawner : MonoBehaviour
 {
     [SerializeField] private NetworkObject _playerPrefab;
     [SerializeField] private Transform[] _spawnPoints;

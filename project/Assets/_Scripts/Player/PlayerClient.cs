@@ -5,7 +5,6 @@ public class PlayerClient : NetworkBehaviour
 {
     [SerializeField] private PlayerController _controller;
     private int _tick = 0;
-    private int _nextFireTick;
 
     private const int BUFFER_SIZE = 1024;
     private const int BUFFER_MASK = BUFFER_SIZE - 1;
@@ -21,11 +20,11 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            _controller.PlayerInput.Initialize(InputService.Actions);
+            _controller.PlayerInput.Initialize();
             _controller.PlayerInput.Active();
             _controller.PlayerInput.Enable();
-            _controller.PlayerCamera.Initialize();
-            _controller.PlayerVisual.Initialize(transform.position);
+            _controller.PlayerCamera.Initialize(_controller.PlayerSettings);
+            _controller.PlayerVisual.Initialize(transform.position, _controller.PlayerSettings);
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -53,17 +52,18 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            float sensitivity = InputService.MouseSensitivity;
-            var s = _controller.PlayerSettings;
-            _controller.PlayerCamera.RotatePitch(_controller.PlayerInput.LookInput.y, s.PitchSpeed * sensitivity, s.MinPitch, s.MaxPitch);
-            _controller.PlayerCamera.RotateYaw(_controller.PlayerInput.LookInput.x, s.RotationSpeed * sensitivity);
+            PlayerCamera camera = _controller.PlayerCamera;
+            PlayerWeapon weapon = _controller.PlayerWeapon;
 
-            _controller.PlayerLocomotion.Rotate(_controller.PlayerCamera.Yaw);
-            _controller.PlayerCamera.ApplyAim(_controller.PlayerInput.AimInput);
+            camera.Look(_controller.PlayerInput.LookInput, InputService.Instance.MouseSensitivity, Time.deltaTime);
+            _controller.PlayerLocomotion.Rotate(camera.Yaw);
+
+            float zoom = weapon.HasWeapon ? weapon.Data.AdsZoom : 1.0f;
+            camera.ApplyAim(_controller.PlayerInput.AimInput, zoom, Time.deltaTime);
+            _controller.PlayerVisual.Face(camera.AimPoint, weapon.Muzzle, Time.deltaTime);
 
             var motion = _controller.PlayerLocomotion.State;
             _controller.PlayerAnimation.SetAirborne(motion.IsGrounded, motion.VerticalSpeed);
-            // _controller.PlayerAnimation.SetMoveBlendTree(_controller.PlayerInput.MoveInput, _controller.PlayerInput.RunInput, Time.deltaTime);
             _controller.PlayerAnimation.SetMoveBlendTree(_controller.PlayerInput.MoveInput, _controller.PlayerLocomotion.IsRunning, Time.deltaTime);
         }
         else
@@ -78,15 +78,20 @@ public class PlayerClient : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Vector3 aimPoint = CameraService.Instance.GetAimPoint();
+            Vector3 aimPoint = _controller.PlayerCamera.GetAimPoint();
             InputPayload input = _controller.PlayerInput.Capture(_tick, _controller.PlayerCamera.Yaw, _controller.PlayerCamera.Pitch, aimPoint);
             _inputHistory[_tick & BUFFER_MASK] = input;
 
             _controller.Simulate(input);
-            if (_controller.PlayerWeapon.TryFire(input, ref _nextFireTick))
+
+            PlayerWeapon weapon = _controller.PlayerWeapon;
+            if (weapon.TryFire(input, _controller.PlayerLocomotion.IsRunning, OwnerClientId, out PlayerWeapon.Shot shot))
             {
-                SpawnBulletVisual(aimPoint);
+                SpawnBulletVisual(aimPoint, shot.Spread);
+                _controller.PlayerCamera.AddRecoil(weapon.RollRecoil(shot.Stance));
+                weapon.PlayFeedback(shot.Stance);
             }
+
             StatePayload state = _controller.PlayerLocomotion.Capture(_tick);
             _stateHistory[_tick & BUFFER_MASK] = state;
 
@@ -145,32 +150,34 @@ public class PlayerClient : NetworkBehaviour
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void FireRPC(Vector3 aimPoint)
+    public void FireRPC(Vector3 aimPoint, Vector2 spread)
     {
         if (IsOwner)
         {
             return;
         }
 
-        SpawnBulletVisual(aimPoint);
+        SpawnBulletVisual(aimPoint, spread);
     }
 
-    private void SpawnBulletVisual(Vector3 aimPoint)
+    private void SpawnBulletVisual(Vector3 aimPoint, Vector2 spread)
     {
         if (!_controller.PlayerWeapon.HasWeapon)
         {
             return;
         }
 
-        BulletData bulletData = _controller.PlayerWeapon.Data.Bullet;
+        SOWeapon data = _controller.PlayerWeapon.Data;
+        SOBullet bulletData = data.Bullet;
         if (bulletData == null)
         {
             return;
         }
 
         Vector3 from = _controller.PlayerWeapon.Muzzle;
-        Vector3 to = Vector3.MoveTowards(from, aimPoint, bulletData.Velocity * bulletData.Lifespan);
-        BulletPoolService.Instance.Fire(from, to, bulletData.Velocity);
+        Vector3 direction = PlayerWeapon.GetDirection(from, aimPoint, spread);
+        float distance = Mathf.Min(Vector3.Distance(from, aimPoint), data.Range);
+        ProjectileVisualService.Instance.Fire(from, from + direction * distance, bulletData.Velocity);
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

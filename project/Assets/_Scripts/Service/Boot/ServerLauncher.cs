@@ -16,12 +16,13 @@ public class ServerLauncher : MonoBehaviour
 
         if (!OpenServer())
         {
-            Application.Quit(1);   // 실패하면 종료 코드로 알려서 재시작 스크립트가 잡을 수 있게            
+            Application.Quit(1);
         }
     }
-    
+
 #if UNITY_EDITOR
     [ContextMenu("Open Server")]
+#endif
     public bool OpenServer()
     {
         NetworkManager networkManager = NetworkManager.Singleton;
@@ -37,5 +38,4 @@ public class ServerLauncher : MonoBehaviour
         networkManager.SceneManager.LoadScene(_firstScene, LoadSceneMode.Single);
         return true;
     }
-#endif
 }

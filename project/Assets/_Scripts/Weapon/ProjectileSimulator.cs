@@ -24,29 +24,34 @@ public class ProjectileSimulator
         for (int i = _projectiles.Count - 1; i >= 0; i--)
         {
             Projectile projectile = _projectiles[i];
-            Vector3 next = projectile.Position + projectile.Velocity * dt;
-            Vector3 segment = next - projectile.Position;
-            if (Physics.Raycast(projectile.Position, segment.normalized, out RaycastHit hit, segment.magnitude, _hitLayer, QueryTriggerInteraction.Ignore))
+
+            // 이번 틱 이동 거리를 남은 사거리로 자른다.
+            float traveled = Vector3.Distance(projectile.Origin, projectile.Position);
+            float remaining = projectile.Range - traveled;
+            Vector3 step = projectile.Velocity * dt;
+            float length = Mathf.Min(step.magnitude, remaining);
+            Vector3 direction = step.normalized;
+
+            if (length > 0.0f && Physics.Raycast(projectile.Position, direction, out RaycastHit hit, length, _hitLayer, QueryTriggerInteraction.Ignore))
             {
                 if (hit.collider.TryGetComponent(out IDamageable target))
                 {
-                    target.ApplyDamage(DamageInfo.FromPlayer(projectile.Damage, projectile.Owner, projectile.Origin, projectile.IsCritical));
+                    int damage = projectile.GetDamage(traveled + hit.distance);
+                    target.ApplyDamage(DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical));
                 }
 
                 _projectiles.RemoveAt(i);
                 continue;
             }
 
-            projectile.Position = next;
-            projectile.Lifespan -= dt;
-            if (projectile.Lifespan <= 0f)
+            if (length >= remaining)
             {
                 _projectiles.RemoveAt(i);
+                continue;
             }
-            else
-            {
-                _projectiles[i] = projectile;
-            }
+
+            projectile.Position += direction * length;
+            _projectiles[i] = projectile;
         }
     }
 }

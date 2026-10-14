@@ -1,58 +1,73 @@
 using System;
+using Project02.Service;
 
-public class GameSettingsPresenter
+namespace Project02.Presenter
 {
-    private readonly IGameSettingsView _view;
-
-    public GameSettings Current { get; private set; }
-
-    public GameSettingsPresenter(IGameSettingsView view)
+    public class GameSettingsPresenter
     {
-        _view = view;
+        public interface IView
+        {
+            event Action SaveClicked;
+            event Action ResetClicked;
+            event Action BackClicked;
 
-        Current = GameSettingsService.Instance.Saved;
-        UpdateSaveButton();
-    }
+            void Show();
+            void Hide();
+            void SetSaveInteractable(bool value);
+            void RefreshTabs();
+        }
 
-    public void Open()
-    {
-        Current = GameSettingsService.Instance.Saved;
-        UpdateSaveButton();
-    }
+        public event Action Closed;
 
-    /// <summary>편집 중인 설정을 바꾸고 미리보기와 저장 버튼 상태를 갱신한다.</summary>
-    public void Modify(Action<GameSettings> change)
-    {
-        change(Current);
-        GameSettingsService.Instance.Preview(Current);
-        UpdateSaveButton();
-    }
+        public GameSettings Current { get; private set; }
 
-    public void Save()
-    {
-        GameSettingsService.Instance.Save(Current);
+        private readonly IView _view;
 
-        Current = GameSettingsService.Instance.Saved;
-        UpdateSaveButton();
-    }
+        public GameSettingsPresenter(IView view)
+        {
+            _view = view;
 
-    public void Reset()
-    {
-        Current = new GameSettings();
-        GameSettingsService.Instance.Preview(Current);
-        _view.RefreshTabs();
-        UpdateSaveButton();
-    }
+            Current = GameSettingsService.Instance.Saved;
+            UpdateSaveButton();
+        }
 
-    public void Cancel()
-    {
-        Current = GameSettingsService.Instance.Saved;
-        GameSettingsService.Instance.Preview(Current);
-    }
+        public void Open()
+        {
+            Current = GameSettingsService.Instance.Saved;
+            UpdateSaveButton();
+        }
 
-    private void UpdateSaveButton()
-    {
-        bool dirty = !GameSettings.AreEqual(Current, GameSettingsService.Instance.Saved);
-        _view.SetSaveInteractable(dirty);
+        public void Apply(GameSettings next)
+        {
+            Current = next;
+            GameSettingsService.Instance.Preview(Current);
+            UpdateSaveButton();
+        }
+
+        public void Save()
+        {
+            GameSettingsService.Instance.Save(Current);
+            UpdateSaveButton();
+        }
+
+        public void Reset()
+        {
+            Current = default;
+            GameSettingsService.Instance.Preview(Current);
+            _view.RefreshTabs();
+            UpdateSaveButton();
+        }
+
+        public void Cancel()
+        {
+            Current = GameSettingsService.Instance.Saved;
+            GameSettingsService.Instance.Preview(Current);
+        }
+
+        private void UpdateSaveButton()
+        {
+            bool dirty = !Current.Equals(GameSettingsService.Instance.Saved);
+            _view.SetSaveInteractable(dirty);
+        }
     }
 }
