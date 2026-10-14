@@ -1,66 +1,92 @@
 using UnityEngine;
 
-public class PlayerVisual : MonoBehaviour
+namespace Project02.Player
 {
-    [SerializeField] private Transform _visual;
-
-    private readonly VisualInterpolator<Vector3> _position = new(Vector3.Lerp);
-
-    private const float SNAP_DISTANCE = 1f;
-    private const float MIN_FACE_SQR = 0.01f;
-
-    private PlayerSettings _settings;
-
-    public void Initialize(Vector3 position, PlayerSettings settings)
+    public class PlayerVisual : MonoBehaviour
     {
-        _settings = settings;
-        _position.Reset(position);
-        _visual.rotation = transform.rotation;
-    }
+        /// <summary>
+        /// 마지막 FixedUpdate 이후 다음 FixedUpdate까지 진행한 비율(0~1).
+        /// FixedUpdate에서 기록한 이전/현재 값을 Update나 LateUpdate에서 보간할 때 쓴다.
+        /// </summary>
+        public static float Alpha => Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
 
-    // FixedUpdate - Simulate() 직후
-    public void Record()
-    {
-        Vector3 position = transform.position;
-        if (Vector3.Distance(_position.Current, position) > SNAP_DISTANCE)
+        [SerializeField] private Transform _visual;
+        [SerializeField] private Transform _lookPos;
+        [SerializeField] private Transform _aimTarget;
+
+        private Vector3 _previous;
+        private Vector3 _current;
+
+        private const float SNAP_DISTANCE = 1f;
+        private const float MIN_FACE_SQR = 0.01f;
+        private const float AIM_TARGET_DISTANCE = 2f;
+
+        private SOPlayer _settings;
+
+        public void Initialize(Vector3 position, SOPlayer settings)
         {
-            _position.Reset(position);
-        }
-        else
-        {
-            _position.Record(position);
-        }
-    }
-
-    // LateUpdate
-    public void Interpolate()
-    {
-        _visual.position = _position.Interpolate();
-    }
-
-    /// <summary>
-    /// 소유자 전용, 매 프레임. 총구에서 조준점을 향하도록 모델을 수평으로 돌린다.
-    /// 카메라가 어깨 옆에 있어서 생기는 시차를 보정한다. 판정용 루트 회전에는 영향이 없다.
-    /// </summary>
-    public void Face(Vector3 aimPoint, Vector3 muzzle, float deltaTime)
-    {
-        Vector3 direction = aimPoint - muzzle;
-        direction.y = 0.0f;
-        if (direction.sqrMagnitude < MIN_FACE_SQR)
-        {
-            return;
+            _settings = settings;
+            _previous = _current = position;
+            _visual.rotation = transform.rotation;
         }
 
-        Quaternion look = Quaternion.LookRotation(direction);
-        _visual.rotation = Quaternion.RotateTowards(_visual.rotation, look, _settings.TurnSpeed * deltaTime);
-    }
+        // FixedUpdate - Simulate() 직후
+        public void Record()
+        {
+            Vector3 position = transform.position;
+            bool snap = Vector3.Distance(_current, position) > SNAP_DISTANCE;
 
-    /// <summary>
-    /// 월드 좌표를 루트 기준 로컬 좌표로. 보간으로 생긴 위치 차이와 모델의 추가 회전을 빼서,
-    /// 서버가 자기 루트에 TransformPoint로 되돌릴 수 있는 값을 만든다.
-    /// </summary>
-    public Vector3 ToLocal(Vector3 world)
-    {
-        return Quaternion.Inverse(transform.rotation) * (world - _visual.position);
+            _previous = snap ? position : _current;
+            _current = position;
+        }
+
+        // LateUpdate
+        public void Interpolate()
+        {
+            _visual.position = Vector3.Lerp(_previous, _current, Alpha);
+        }
+
+        public void Face(Vector3 aimPoint, Vector3 muzzle, float deltaTime)
+        {
+            Vector3 direction = aimPoint - muzzle;
+            direction.y = 0.0f;
+            if (direction.sqrMagnitude < MIN_FACE_SQR)
+            {
+                return;
+            }
+
+            Quaternion look = Quaternion.LookRotation(direction);
+            _visual.rotation = Quaternion.RotateTowards(_visual.rotation, look, _settings.TurnSpeed * deltaTime);
+        }
+        
+        /// <summary>상체(와 소유자 카메라)의 상하 각도.</summary>
+        public void ApplyPitch(float pitch)
+        {
+            _lookPos.localRotation = Quaternion.Euler(pitch, 0.0f, 0.0f);
+        }
+
+        /// <summary>소유자. 상체가 조준점을 보게 한다.</summary>
+        public void AimAt(Vector3 point)
+        {
+            _aimTarget.position = point;
+        }
+
+        /// <summary>다른 플레이어. 조준점이 없으니 pitch로 앞쪽 지점을 만든다.</summary>
+        public void AimAtPitch(float pitch)
+        {
+            Vector3 direction = transform.rotation * Quaternion.Euler(pitch, 0.0f, 0.0f) * Vector3.forward;
+            _aimTarget.position = _lookPos.position + direction * AIM_TARGET_DISTANCE;
+        }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (_lookPos == null || _aimTarget == null) return;
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(_lookPos.position, _aimTarget.position);
+            Gizmos.DrawWireSphere(_aimTarget.position, 0.05f);
+        }
+#endif
     }
 }

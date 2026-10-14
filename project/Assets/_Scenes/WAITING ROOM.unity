@@ -695,52 +695,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1109865655}
   m_CullTransparentMesh: 1
---- !u!1 &1355679302
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1355679304}
-  - component: {fileID: 1355679303}
-  m_Layer: 0
-  m_Name: WaitingRoom View
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1355679303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355679302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2825bbf9591fb4b9e2dbf59056fb3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameManager::WaitingRoomManager
-  _tutorialWorld: {fileID: 1953725734}
-  _testWorld: {fileID: 1109865657}
---- !u!4 &1355679304
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355679302}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1650858778
 GameObject:
   m_ObjectHideFlags: 0
@@ -1092,6 +1046,8 @@ GameObject:
   - component: {fileID: 2049385474}
   - component: {fileID: 2049385476}
   - component: {fileID: 2049385477}
+  - component: {fileID: 2049385479}
+  - component: {fileID: 2049385478}
   m_Layer: 5
   m_Name: Panel - Screen
   m_TagString: Untagged
@@ -1154,6 +1110,33 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2049385478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049385473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 784957f6bb9024f45ad2c12abdadc448, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project02.Presenter.WaitingRoomPresenter
+  _view: {fileID: 2049385479}
+--- !u!114 &2049385479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049385473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2825bbf9591fb4b9e2dbf59056fb3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project02.View.WaitingRoomView
+  _tutorialWorld: {fileID: 1953725734}
+  _testWorld: {fileID: 1109865657}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1162,4 +1145,3 @@ SceneRoots:
   - {fileID: 1757149054}
   - {fileID: 753441857}
   - {fileID: 90848027}
-  - {fileID: 1355679304}
