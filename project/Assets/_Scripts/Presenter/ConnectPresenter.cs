@@ -1,68 +1,92 @@
 using System;
+using Project02.View;
+using UnityEngine;
 
-public class ConnectPresenter : IDisposable
+namespace Project02.Presenter
 {
-    private readonly IConnectView _view;
-    private bool _nicknameRequired;
-
-    public ConnectPresenter(IConnectView view)
+    public class ConnectPresenter : MonoBehaviour
     {
-        _view = view;
+        public event Action Closed;
 
-        ConnectionService.Instance.StateChanged += OnStateChanged;
+        [SerializeField] private ConnectView _view;
 
-        _view.ShowNickname(false);
-        _view.Render(ConnectState.Idle, null);
-    }
+        private ConnectionService _service;
+        private bool _nicknameRequired;
 
-    public void Connect(string address, string nickname)
-    {
-        address = address?.Trim();
-        if (string.IsNullOrEmpty(address))
+        private void OnEnable()
         {
-            _view.Render(ConnectState.Failed, "enter server address");
-            return;
+            _service = ConnectionService.Instance;
+
+            _view.ConnectClicked += OnConnectClicked;
+            _view.BackClicked += OnBackClicked;
+            _service.StateChanged += OnStateChanged;
         }
 
-        string sendNickname = null;
-        if (_nicknameRequired && !NicknameRule.TryNormalize(nickname, out sendNickname, out string error))
+        private void OnDisable()
         {
-            _view.Render(ConnectState.Failed, error);
-            return;
+            _view.ConnectClicked -= OnConnectClicked;
+            _view.BackClicked -= OnBackClicked;
+            _service.StateChanged -= OnStateChanged;
         }
 
-        ConnectionService.Instance.Connect(address, sendNickname);
-    }
-
-    private void OnStateChanged(ConnectState state)
-    {
-        if (state != ConnectState.Failed)
+        public void Open()
         {
-            _view.Render(state, null);
-            return;
+            _nicknameRequired = false;
+            _view.Show();
+            _view.ShowNickname(false);
+            _view.Render(ConnectState.Idle, null);
         }
 
-        var reason = ConnectionService.Instance.FailReason;
-        if (reason == ConnectReject.NicknameRequired)
+        private void OnConnectClicked(string address, string nickname)
         {
-            _nicknameRequired = true;
-            _view.ShowNickname(true);
+            address = address?.Trim();
+            if (string.IsNullOrEmpty(address))
+            {
+                _view.Render(ConnectState.Failed, "enter server address");
+                return;
+            }
+
+            string sendNickname = null;
+            if (_nicknameRequired && !NicknameRule.TryNormalize(nickname, out sendNickname, out string error))
+            {
+                _view.Render(ConnectState.Failed, error);
+                return;
+            }
+
+            _service.Connect(address, sendNickname);
         }
 
-        _view.Render(state, MessageFor(reason));
-    }
+        private void OnStateChanged(ConnectState state)
+        {
+            if (state != ConnectState.Failed)
+            {
+                _view.Render(state, null);
+                return;
+            }
 
-    private static string MessageFor(ConnectReject reason) => reason switch
-    {
-        ConnectReject.NicknameRequired => "first connection: choose a nickname",
-        ConnectReject.NicknameInvalid => "invalid nickname",
-        ConnectReject.NicknameTaken => "nickname already taken",
-        ConnectReject.AlreadyConnected => "already connected",
-        _ => null
-    };
+            ConnectReject reason = _service.FailReason;
+            if (reason == ConnectReject.NicknameRequired)
+            {
+                _nicknameRequired = true;
+                _view.ShowNickname(true);
+            }
 
-    public void Dispose()
-    {
-        ConnectionService.Instance.StateChanged -= OnStateChanged;
+            _view.Render(state, MessageFor(reason));
+        }
+
+        private void OnBackClicked()
+        {
+            _view.Hide();
+            Closed?.Invoke();
+        }
+
+        private static string MessageFor(ConnectReject reason) => reason switch
+        {
+            ConnectReject.NicknameRequired => "first connection: choose a nickname",
+            ConnectReject.NicknameInvalid => "invalid nickname",
+            ConnectReject.NicknameTaken => "nickname already taken",
+            ConnectReject.AlreadyConnected => "already connected",
+            _ => null
+        };
     }
 }

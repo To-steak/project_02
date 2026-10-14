@@ -1,18 +1,21 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WaitingRoomView : MonoBehaviour
+namespace Project02.View
 {
-    [SerializeField] private Button _tutorialWorld;
-    [SerializeField] private Button _testWorld;
-
-    private WaitingRoomPresenter _presenter;
-
-    private void Awake()
+    public class WaitingRoomView : MonoBehaviour
     {
-        _presenter = new WaitingRoomPresenter();
+        public event Action TutorialClicked;
+        public event Action TestClicked;
 
-        _tutorialWorld.onClick.AddListener(() => _presenter.RequestWorld(WorldId.Tutorial));
-        _testWorld.onClick.AddListener(() => _presenter.RequestWorld(WorldId.Test));
+        [SerializeField] private Button _tutorialWorld;
+        [SerializeField] private Button _testWorld;
+
+        private void Awake()
+        {
+            _tutorialWorld.onClick.AddListener(() => TutorialClicked?.Invoke());
+            _testWorld.onClick.AddListener(() => TestClicked?.Invoke());
+        }
     }
 }

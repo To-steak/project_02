@@ -34,9 +34,9 @@ namespace Project02.Service
         public string LocaleCode;
     }
 
-    public class GameSettingsService : MonoBehaviour
+    public class SettingsService : MonoBehaviour
     {
-        public static GameSettingsService Instance { get; private set; }
+        public static SettingsService Instance { get; private set; }
 
         [SerializeField] private AudioMixer _mixer;
 

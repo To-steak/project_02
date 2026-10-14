@@ -1,74 +1,35 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>메인 메뉴의 패널 전환을 맡는 컨테이너 View.</summary>
-public class MainMenuView : MonoBehaviour
+namespace Project02.View
 {
-    [SerializeField] GameObject menuPanel;
-    [SerializeField] GameObject settingsPanel;
-    [SerializeField] GameObject playPanel;
-
-    [SerializeField] Button playButton;
-    [SerializeField] Button settingsButton;
-    [SerializeField] Button exitButton;
-
-    [SerializeField] GameSettingsView settingsView;
-    [SerializeField] ConnectView connectView;
-
-    void Awake()
+    public class MainMenuView : MonoBehaviour
     {
-        playButton.onClick.AddListener(OnPlay);
-        settingsButton.onClick.AddListener(OnSettings);
-        exitButton.onClick.AddListener(OnExit);
+        public event Action StartClicked;
+        public event Action SettingsClicked;
+        public event Action ExitClicked;
 
-        settingsView.Closed += CloseSettingsPanel;
-        connectView.Closed += ClosePlayPanel;
-    }
+        [SerializeField] private GameObject _content;
+        [SerializeField] private Button _startButton;
+        [SerializeField] private Button _settingsButton;
+        [SerializeField] private Button _exitButton;
 
-    void OnDestroy()
-    {
-        settingsView.Closed -= CloseSettingsPanel;
-        connectView.Closed -= ClosePlayPanel;
-    }
+        private void Awake()
+        {
+            _startButton.onClick.AddListener(() => StartClicked?.Invoke());
+            _settingsButton.onClick.AddListener(() => SettingsClicked?.Invoke());
+            _exitButton.onClick.AddListener(() => ExitClicked?.Invoke());
+        }
 
-    void Start()
-    {
-        settingsPanel.SetActive(false);
-        menuPanel.SetActive(true);
-        playPanel.SetActive(false);
-    }
+        public void Show()
+        {
+            _content.SetActive(true);
+        }
 
-    private void OnPlay()
-    {
-        menuPanel.SetActive(false);
-        playPanel.SetActive(true);
-    }
-
-    private void OnSettings()
-    {
-        menuPanel.SetActive(false);
-        settingsPanel.SetActive(true);
-        settingsView.OpenSettings();
-    }
-
-    private void OnExit()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
-
-    private void CloseSettingsPanel()
-    {
-        settingsPanel.SetActive(false);
-        menuPanel.SetActive(true);
-    }
-
-    private void ClosePlayPanel()
-    {
-        playPanel.SetActive(false);
-        menuPanel.SetActive(true);
+        public void Hide()
+        {
+            _content.SetActive(false);
+        }
     }
 }
