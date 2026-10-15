@@ -5,7 +5,7 @@ public class SOWeapon : ScriptableObject
 {
     public string DisplayName;
     public float WeaponCoefficient;
-    public float RapidFire;
+
     public SOBullet Bullet;
     public WeaponView Prefab;
     public float CriticalChance;
@@ -13,7 +13,6 @@ public class SOWeapon : ScriptableObject
     public float MaxSpread;
     public float SpreadPerShot;
     public float SpreadRecovery;
-    public float SpreadRecoveryDelay;
     public float AdsSpreadMultiplier;
     public float IdleSpreadMultiplier;
     public float WalkSpreadMultiplier;
@@ -27,4 +26,8 @@ public class SOWeapon : ScriptableObject
     public float NoiseRange;
     public float ShakeRandom;
     public bool IsSuppressed;
+
+    [Header("Tick")]
+    public int RapidFireTick;
+    public int SpreadRecoveryDelayTick;
 }

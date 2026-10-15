@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameWeapon::WeaponData
   DisplayName: Default Name
   WeaponCoefficient: 1
-  RapidFire: 0.11
   Bullet: {fileID: 11400000, guid: 024559caf0956554ca75bc21f041c7fa, type: 2}
   Prefab: {fileID: 1447260616732509512, guid: d325bd5ddf177974e8e92bd5c17db2dd, type: 3}
   CriticalChance: 0
@@ -22,7 +21,6 @@ MonoBehaviour:
   MaxSpread: 6
   SpreadPerShot: 0.5
   SpreadRecovery: 8
-  SpreadRecoveryDelay: 0.1
   AdsSpreadMultiplier: 0.3
   IdleSpreadMultiplier: 1
   WalkSpreadMultiplier: 1.5
@@ -57,4 +55,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   NoiseRange: 30
+  ShakeRandom: 0
   IsSuppressed: 0
+  RapidFireTick: 20
+  SpreadRecoveryDelayTick: 40
