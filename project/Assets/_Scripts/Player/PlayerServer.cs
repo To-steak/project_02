@@ -38,7 +38,7 @@ namespace Project02.Player
                 }
 
                 _controller.Pitch.Value = input.PitchInput;
-                StatePayload payload = new StatePayload { State = _controller.PlayerLocomotion.Capture(input.Tick) };
+                StatePayload payload = new StatePayload { State = _controller.Capture(input.Tick) };
                 _controller.PlayerOwner.StateRPC(payload);
             }
         }
@@ -108,7 +108,7 @@ namespace Project02.Player
         private void Fire(in InputPayload input, in Shot shot)
         {
             PlayerWeapon weapon = _controller.PlayerWeapon;
-            SOWeapon data = weapon.Data;
+            SOWeapon data = weapon.Settings;
             SOBullet bullet = data.Bullet;
 
             Vector3 origin = weapon.Origin;

@@ -6,6 +6,7 @@ namespace Project02.Player
     public class PlayerLocomotion : MonoBehaviour
     {
         public MovementState Movement => _movement;
+        public StaminaState Stamina => _stamina;
         public float Energy => _stamina.Energy;
         public bool IsRunning { get; private set; }
 
@@ -33,17 +34,10 @@ namespace Project02.Player
             _stamina = new StaminaState { Energy = value, IsExhausted = false };
         }
 
-        public PlayerSimulationState Capture(int tick) => new()
+        public void Restore(in MovementState movement, in StaminaState stamina)
         {
-            Tick = tick,
-            Movement = _movement,
-            Stamina = _stamina,
-        };
-
-        public void Restore(in PlayerSimulationState state)
-        {
-            _movement = state.Movement;
-            _stamina = state.Stamina;
+            _movement = movement;
+            _stamina = stamina;
             transform.position = _movement.Position;
         }
 

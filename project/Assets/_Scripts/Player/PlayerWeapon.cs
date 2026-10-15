@@ -27,10 +27,10 @@ namespace Project02.Player
     public class PlayerWeapon : MonoBehaviour
     {
         public WeaponView View => _view;
-        public SOWeapon Data => _data;
+        public SOWeapon Settings => _settings;
         public Vector3 Muzzle => _view != null ? _view.Muzzle : Origin;
         public Vector3 Origin => _origin.position;
-        public bool HasWeapon => _data != null;
+        public bool HasWeapon => _settings != null;
         public WeaponState State => _state;
 
         [SerializeField] private WeaponCatalog _catalog;
@@ -41,13 +41,13 @@ namespace Project02.Player
         [SerializeField] private TwoBoneIKConstraint _rightHandIK;
         [SerializeField] private TwoBoneIKConstraint _leftHandIK;
 
-        private SOWeapon _data;
+        private SOWeapon _settings;
         private WeaponView _view;
         private WeaponState _state;
 
         public bool TryFire(in InputPayload input, bool isRunning, ulong ownerId, out Shot shot)
         {
-            return WeaponFire.TryFire(_data, ref _state, input, isRunning, ownerId, SimulationClock.DeltaTime, out shot);
+            return WeaponFire.TryFire(_settings, ref _state, input, isRunning, ownerId, SimulationClock.DeltaTime, out shot);
         }
 
         public static Vector3 GetDirection(Vector3 from, Vector3 aimPoint, Vector2 spread)
@@ -64,14 +64,14 @@ namespace Project02.Player
                 _view = null;
             }
 
-            _data = _catalog.Get(id);
+            _settings = _catalog.Get(id);
             _state = default;
 
-            bool hasView = createView && _data != null && _data.Prefab != null;
+            bool hasView = createView && _settings != null && _settings.Prefab != null;
             if (hasView)
             {
-                _view = Instantiate(_data.Prefab, _socket);
-                _view.Initialize(_data);
+                _view = Instantiate(_settings.Prefab, _socket);
+                _view.Initialize(_settings);
                 _rightHandIK.data.target = _view.RightGrip;
                 _leftHandIK.data.target = _view.LeftGrip;
             }
@@ -83,6 +83,11 @@ namespace Project02.Player
             {
                 _rigBuilder.Build();
             }
+        }
+
+        public void Restore(in WeaponState weapon)
+        {
+            
         }
     }
 }

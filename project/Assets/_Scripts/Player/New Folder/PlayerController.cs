@@ -52,13 +52,22 @@ namespace Project02.Player
 
         public bool Step(in InputPayload input, out Shot shot)
         {
-            Simulate(input);
+            PlayerLocomotion.Simulate(input);
             return PlayerWeapon.TryFire(input, PlayerLocomotion.IsRunning, OwnerClientId, out shot);
         }
 
-        public void Simulate(in InputPayload input)
+        public PlayerSimulationState Capture(int tick) => new PlayerSimulationState
         {
-            PlayerLocomotion.Simulate(input);
+            Tick = tick,
+            Movement = PlayerLocomotion.Movement,
+            Stamina = PlayerLocomotion.Stamina,
+            Weapon = PlayerWeapon.State,
+        };
+
+        public void Restore(in PlayerSimulationState state)
+        {
+            PlayerLocomotion.Restore(state.Movement, state.Stamina);
+            PlayerWeapon.Restore(state.Weapon);
         }
 
         private void OnEquippedWeaponChanged(int previous, int current)

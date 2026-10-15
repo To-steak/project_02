@@ -12,6 +12,7 @@ namespace Project02.Player
         private const int BUFFER_SIZE = 1024;
         private const float POSITION_RECONCILE_THRESHOLD = 1.0f;
         private const float ENERGY_RECONCILE_THRESHOLD = 0.5f;
+        private const float BLOOM_RECONCILE_THRESHOLD = 0.1f;
 
         private readonly InputPayload[] _inputHistory = new InputPayload[BUFFER_SIZE];
         private readonly PlayerSimulationState[] _stateHistory = new PlayerSimulationState[BUFFER_SIZE];
@@ -50,7 +51,7 @@ namespace Project02.Player
 
             camera.Look(_controller.PlayerInput.LookInput, InputService.Instance.MouseSensitivity, Time.deltaTime);
 
-            float zoom = weapon.HasWeapon ? weapon.Data.AdsZoom : 1.0f;
+            float zoom = weapon.HasWeapon ? weapon.Settings.AdsZoom : 1.0f;
             camera.ApplyAim(_controller.PlayerInput.AimInput, zoom, Time.deltaTime);
         }
 
@@ -77,7 +78,7 @@ namespace Project02.Player
                 camera.AddRecoil(weapon.View.RollRecoil(shot.Stance));
             }
 
-            _stateHistory[_tick & BUFFER_SIZE - 1] = _controller.PlayerLocomotion.Capture(_tick);
+            _stateHistory[_tick & BUFFER_SIZE - 1] = _controller.Capture(_tick);
 
             _view.OnTick(_controller.PlayerLocomotion.Movement);
             SendInputs();
@@ -115,12 +116,12 @@ namespace Project02.Player
             Debug.LogWarning($"reconcile at tick {server.Tick}, error {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F4}, y diff {server.Movement.Position.y - predicted.Movement.Position.y:F4}");
 #endif
 
-            _controller.PlayerLocomotion.Restore(server);
+            _controller.Restore(server);
 
             for (int tick = server.Tick + 1; tick < _tick; tick++)
             {
-                _controller.Simulate(_inputHistory[tick & BUFFER_SIZE - 1]);
-                _stateHistory[tick & BUFFER_SIZE - 1] = _controller.PlayerLocomotion.Capture(tick);
+                _controller.Step(_inputHistory[tick & BUFFER_SIZE - 1], out _);
+                _stateHistory[tick & BUFFER_SIZE - 1] = _controller.Capture(tick);
             }
         }
 
@@ -128,8 +129,9 @@ namespace Project02.Player
         {
             bool position = Vector3.Distance(predicted.Movement.Position, server.Movement.Position) >= POSITION_RECONCILE_THRESHOLD;
             bool energy = Mathf.Abs(predicted.Stamina.Energy - server.Stamina.Energy) >= ENERGY_RECONCILE_THRESHOLD || predicted.Stamina.IsExhausted != server.Stamina.IsExhausted;
+            bool weapon = predicted.Weapon.NextFireTick != server.Weapon.NextFireTick || Mathf.Abs(predicted.Weapon.Bloom - server.Weapon.Bloom) >= BLOOM_RECONCILE_THRESHOLD;
 
-            return position || energy;
+            return position || energy || weapon;
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
