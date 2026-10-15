@@ -1,3 +1,4 @@
+using Project02.Server;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -22,7 +23,22 @@ namespace Project02.Player
             }
         }
 
-        private void FixedUpdate()
+        public override void OnNetworkSpawn()
+        {
+            if (!IsServer) return;
+            Debug.Assert(ServerSimulation.Instance != null, "씬에 ServerSimulation이 없습니다", this);
+            ServerSimulation.Instance.Register(this);
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (IsServer && ServerSimulation.Instance != null)
+            {
+                ServerSimulation.Instance.Unregister(this);
+            }
+        }
+
+        public void Tick()
         {
             int consume = _latestTick - _consumedTick > 1 ? 2 : 1;
             for (int i = 0; i < consume; i++)

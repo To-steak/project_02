@@ -38,8 +38,6 @@ namespace Project02.Player
 
         protected override void OnNetworkPostSpawn()
         {
-            PlayerServer.enabled = IsServer;
-
             _networkTransform.enabled = !(IsOwner && !IsServer);
 
             PlayerLocomotion.Initialize();
