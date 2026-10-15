@@ -1,5 +1,5 @@
+using Project02.Character;
 using Unity.Netcode;
-using UnityEngine;
 
 namespace Project02.Player
 {
@@ -11,15 +11,16 @@ namespace Project02.Player
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref State.Tick);
-            serializer.SerializeValue(ref State.Movement.Position);
-            serializer.SerializeValue(ref State.Movement.VerticalSpeed);
-            serializer.SerializeValue(ref State.Movement.IsGrounded);
+
+            MovementStateSerializer.Serialize(serializer, ref State.Movement);
+
             serializer.SerializeValue(ref State.Stamina.Energy);
             serializer.SerializeValue(ref State.Stamina.IsExhausted);
+            
             serializer.SerializeValue(ref State.Weapon.Bloom);
             serializer.SerializeValue(ref State.Weapon.LastFireTick);
             serializer.SerializeValue(ref State.Weapon.NextFireTick);
-            
+
             serializer.SerializeValue(ref InputBuffer);
         }
     }

@@ -24,7 +24,6 @@ namespace Project02.Enemy
 
         private readonly List<int> _path = new();
         private readonly List<ulong> _contributors = new();
-        private readonly NetworkVariable<EnemyStateId> _netStateId = new();
 
         private MovementState _movement;
         private Quaternion _rotation;
@@ -68,7 +67,6 @@ namespace Project02.Enemy
                 TargetClientId = null;
                 CurrentStateId = EnemyStateId.General;
                 StateTime = 0.0f;
-                _netStateId.Value = EnemyStateId.General;
                 _states[(int)EnemyStateId.General].Enter(this);
 
                 _health.Damaged += OnDamaged;
@@ -191,7 +189,6 @@ namespace Project02.Enemy
             _states[(int)CurrentStateId].Exit(this);
             CurrentStateId = nextStateId;
             StateTime = 0.0f;
-            _netStateId.Value = nextStateId;
             _states[(int)nextStateId].Enter(this);
         }
 
@@ -239,6 +236,14 @@ namespace Project02.Enemy
             return found;
         }
 
+        internal EnemySnapshot Capture() => new EnemySnapshot
+        {
+            ObjectId = NetworkObjectId,
+            Movement = _movement,
+            Yaw = _rotation.eulerAngles.y,
+            StateId = CurrentStateId,
+        };
+        
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {

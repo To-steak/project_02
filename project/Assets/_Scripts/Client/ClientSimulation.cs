@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using Project02.Enemy;
 using Project02.Player;
+using Project02.Server;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Project02.Client
@@ -9,9 +13,33 @@ namespace Project02.Client
 
         private ClientClock _clock;
         private PlayerOwner _local;
+        private InterpolationClock _interp;
+        private readonly Dictionary<ulong, EnemyRemote> _enemies = new();
 
-        private void Awake() => Instance = this;
-        private void OnDestroy() { if (Instance == this) Instance = null; }
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+        private void Start()
+        {
+            NetworkManager.Singleton.OnClientStarted += OnClientStarted;
+            NetworkManager.Singleton.OnClientStopped += OnClientStopped;
+        }
+
+        private void OnDestroy()
+        {
+            if (NetworkManager.Singleton != null)
+            {
+                NetworkManager.Singleton.OnClientStarted -= OnClientStarted;
+                NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
+            }
+
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+        }
 
         public void Register(PlayerOwner owner)
         {
@@ -19,9 +47,19 @@ namespace Project02.Client
             _clock = ClockSystem.Create();
         }
 
+        public void Register(EnemyRemote enemy)
+        {
+            _enemies[enemy.NetworkObjectId] = enemy;
+        }
+
         public void Unregister(PlayerOwner owner)
         {
             if (_local == owner) _local = null;
+        }
+
+        public void Unregister(EnemyRemote enemy)
+        {
+            _enemies.Remove(enemy.NetworkObjectId);
         }
 
         private void Update()
@@ -29,15 +67,12 @@ namespace Project02.Client
             if (_local == null) return;
             float frameTime = Time.deltaTime;
 
-            // 1. CameraSystem
             CameraSystem.Update(_local, frameTime);
 
-            // 2. ReconcileSystem.Process(_local, ref _clock)
             ReconcileSystem.Process(_local, ref _clock);
 
-            // 3. int ticks = ClockSystem.Advance(ref _clock, frameTime)
             int ticks = ClockSystem.Advance(ref _clock, frameTime);
-            for (int i = 0; i < ticks; i++)                            // 4
+            for (int i = 0; i < ticks; i++)
             {
                 PredictSystem.Tick(_local, _clock.Tick, SimulationClock.DeltaTime);
                 _clock.Tick++;
@@ -46,10 +81,47 @@ namespace Project02.Client
 
         private void LateUpdate()
         {
+            float frameTime = Time.deltaTime;
+
+            InterpolationSystem.Advance(ref _interp, frameTime);
+            foreach (EnemyRemote enemy in _enemies.Values)
+            {
+                InterpolationSystem.Present(enemy, _interp.RenderTick);
+            }
+
             if (_local == null) return;
-            // 5. alpha = _clock.Accumulator / _clock.Interval → ViewSystem
             float alpha = Mathf.Clamp01(_clock.Accumulator / _clock.Interval);
-            ViewSystem.Present(_local, alpha, Time.deltaTime);
+            ViewSystem.Present(_local, alpha, frameTime);
+        }
+
+        private void OnClientStarted()
+        {
+            _interp = default;
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(SnapshotSystem.MESSAGE, OnSnapshot);
+        }
+
+        private void OnClientStopped(bool value)
+        {
+            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(SnapshotSystem.MESSAGE);
+            _enemies.Clear();
+        }
+
+        private void OnSnapshot(ulong senderId, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out int tick);
+            reader.ReadValueSafe(out ushort count);
+
+            if (_interp.HasTick && tick <= _interp.LatestTick - EnemyRemote.BUFFER_SIZE) return;
+            InterpolationSystem.Receive(ref _interp, tick);
+
+            for (int i = 0; i < count; i++)
+            {
+                reader.ReadNetworkSerializable(out EnemySnapshot snapshot);
+                if (_enemies.TryGetValue(snapshot.ObjectId, out EnemyRemote enemy))
+                {
+                    enemy.Record(tick, snapshot);
+                }
+            }
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
