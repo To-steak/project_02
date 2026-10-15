@@ -42,12 +42,7 @@ public class Health : NetworkBehaviour, IDamageable
         }
     }
 
-    /// <summary>
-    /// 레벨 업으로 최대 체력 갱신
-    /// </summary>
-    /// <param name="max"></param>
-    /// <param name="refill"></param>
-    public void SetMax(int max, bool refill)
+    public void SetMax(int max)
     {
         if (!IsServer)
         {
@@ -55,6 +50,6 @@ public class Health : NetworkBehaviour, IDamageable
         }
 
         Max.Value = max;
-        Current.Value = refill ? max : Mathf.Min(Current.Value, max);
+        Current.Value = max;
     }
 }

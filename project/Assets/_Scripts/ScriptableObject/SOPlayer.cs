@@ -5,7 +5,6 @@ namespace Project02.Player
     [CreateAssetMenu(fileName = "SOPlayer", menuName = "Scriptable Objects/SOPlayer")]
     public class SOPlayer : ScriptableObject
     {
-        public CharacterProfile Profile;
         public float RotationSpeed;
         public float PitchSpeed;
         public float MinPitch;
@@ -19,6 +18,5 @@ namespace Project02.Player
         public float RecoilSpeed = 20.0f;
         public float TurnSpeed = 720.0f;
         public float MaxMuzzleOffset = 2.0f;
-        public PlayerLevelTable LevelTable;
     }
 }
