@@ -111,10 +111,11 @@ namespace Project02.Player
             SOWeapon data = weapon.Settings;
             SOBullet bullet = data.Bullet;
 
-            Vector3 origin = weapon.Origin;
+            MovementState movement = _controller.PlayerLocomotion.Movement;
+            Vector3 origin = WeaponFire.GetOrigin(movement, input.YawInput, _controller.PlayerSettings.FireOriginOffset);
             Vector3 direction = PlayerWeapon.GetDirection(origin, input.AimPoint, shot.Spread);
             float damage = bullet.Damage * data.WeaponCoefficient;
-            bool isCritical = Random.value < data.CriticalChance;
+            bool isCritical = WeaponFire.RollCritical(OwnerClientId, input.Tick, data.CriticalChance);
 
             ProjectileService.Instance.Spawn(new Projectile(origin, direction * bullet.Velocity, damage, OwnerClientId, isCritical, data.Range, data.Falloff));
             _controller.PlayerRemote.FireRPC(input.AimPoint, shot.Spread);

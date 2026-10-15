@@ -18,5 +18,6 @@ namespace Project02.Player
         public float RecoilSpeed = 20.0f;
         public float TurnSpeed = 720.0f;
         public float MaxMuzzleOffset = 2.0f;
+        public Vector3 FireOriginOffset = new(0.0f, 0.74f, 0.0f);
     }
 }

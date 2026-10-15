@@ -4,6 +4,8 @@ namespace Project02.Player
 {
     public static class WeaponFire
     {
+        private const uint CRITICAL_SALT = 0x68E31DA4u;
+
         public static bool TryFire(SOWeapon settings, ref WeaponState state, in InputPayload input, bool isRunning, ulong ownerId, float deltaTime, out Shot shot)
         {
             shot = default;
@@ -36,6 +38,17 @@ namespace Project02.Player
             return true;
         }
 
+        public static Vector3 GetOrigin(in MovementState movement, float yaw, Vector3 offset)
+        {
+            return movement.Position + Quaternion.Euler(0.0f, yaw, 0.0f) * offset;
+        }
+
+        public static bool RollCritical(ulong ownerId, int tick, float chance)
+        {
+            uint hash = Hash((uint)ownerId * 0x9E3779B9u ^ (uint)tick ^ CRITICAL_SALT);
+            return (hash & 0xFFFFFF) / 16777216.0f < chance;   // 하위 24비트로 0~1
+        }
+        
         private static FireStance GetStance(in InputPayload input, bool value)
         {
             if (input.AimInput)
