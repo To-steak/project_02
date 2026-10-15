@@ -9,7 +9,6 @@ namespace Project02.Player
         [SerializeField] private PlayerController _controller;
 
         private readonly InputPayload[] _inputBuffer = new InputPayload[BUFFER_SIZE];
-        private readonly bool[] _duplicated = new bool[BUFFER_SIZE];
         private InputPayload _lastInput;
         private int _consumedTick = -1;
         private int _latestTick = -1;
@@ -55,6 +54,7 @@ namespace Project02.Player
             input.JumpInput |= _carryJump;
             input.AttackPressed |= _carryAttack;
             _carryJump = _carryAttack = false;
+
             if (_controller.Step(input, deltaTime, out Shot shot))
             {
                 Fire(input, shot);
@@ -72,15 +72,13 @@ namespace Project02.Player
         private InputPayload Dequeue()
         {
             int tick = _consumedTick + 1;
-            int index = tick & BUFFER_SIZE - 1;
-            InputPayload slot = _inputBuffer[index];
+            InputPayload slot = _inputBuffer[tick & BUFFER_SIZE - 1];
 
             InputPayload input;
             if (slot.Tick == tick)
             {
                 input = slot;
                 _lastInput = slot;
-                _duplicated[index] = false;   // ← 진짜 입력으로 처리
             }
             else
             {
@@ -88,7 +86,6 @@ namespace Project02.Player
                 input.Tick = tick;
                 input.JumpInput = false;
                 input.AttackPressed = false;
-                _duplicated[index] = true;    // ← 복제로 때움. 늦게 오면 눌림을 건진다
             }
 
             _consumedTick = tick;
@@ -104,11 +101,12 @@ namespace Project02.Player
                 if (payload.Tick <= _consumedTick)
                 {
                     int index = payload.Tick & BUFFER_SIZE - 1;
-                    if (_duplicated[index])
+                    bool lateForDuplicatedTick = _inputBuffer[index].Tick != payload.Tick && payload.Tick > _consumedTick - BUFFER_SIZE;
+                    if (lateForDuplicatedTick)
                     {
                         _carryJump |= payload.JumpInput;
                         _carryAttack |= payload.AttackPressed;
-                        _duplicated[index] = false;   // 사본이 여러 번 와도 한 번만
+                        _inputBuffer[index] = payload;
                     }
                     continue;
                 }
@@ -131,8 +129,8 @@ namespace Project02.Player
             for (int i = 0; i < BUFFER_SIZE; i++)
             {
                 _inputBuffer[i].Tick = -1;
-                _duplicated[i] = false;
             }
+
             _carryJump = _carryAttack = false;
             _consumedTick = tick - 1;
             _latestTick = tick - 1;
