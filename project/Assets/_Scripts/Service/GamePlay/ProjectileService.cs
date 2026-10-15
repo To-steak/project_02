@@ -1,4 +1,5 @@
-using Unity.Netcode;
+using System.Collections.Generic;
+using Project02.Server;
 using UnityEngine;
 
 public class ProjectileService : MonoBehaviour
@@ -23,15 +24,9 @@ public class ProjectileService : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    public void Tick(List<Hit> hits, float dt)
     {
-        NetworkManager networkManager = NetworkManager.Singleton;
-        if (networkManager == null || !networkManager.IsServer)
-        {
-            return;
-        }
-
-        _simulator.Tick(Time.fixedDeltaTime);
+        _simulator.Tick(hits, dt);
     }
 
     public void Spawn(in Projectile projectile)

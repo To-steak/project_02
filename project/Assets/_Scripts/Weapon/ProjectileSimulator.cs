@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Project02.Server;
 using UnityEngine;
 
 public class ProjectileSimulator
@@ -19,13 +20,11 @@ public class ProjectileSimulator
         _projectiles.Add(projectile);
     }
 
-    public void Tick(float dt)
+    public void Tick(List<Hit> hits, float dt)
     {
         for (int i = _projectiles.Count - 1; i >= 0; i--)
         {
             Projectile projectile = _projectiles[i];
-
-            // 이번 틱 이동 거리를 남은 사거리로 자른다.
             float traveled = Vector3.Distance(projectile.Origin, projectile.Position);
             float remaining = projectile.Range - traveled;
             Vector3 step = projectile.Velocity * dt;
@@ -37,7 +36,7 @@ public class ProjectileSimulator
                 if (hit.collider.TryGetComponent(out IDamageable target))
                 {
                     int damage = projectile.GetDamage(traveled + hit.distance);
-                    target.ApplyDamage(DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical));
+                    hits.Add(new Hit(target, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
                 }
 
                 _projectiles.RemoveAt(i);

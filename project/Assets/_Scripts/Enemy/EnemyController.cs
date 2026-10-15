@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Project02.Server;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -60,6 +62,8 @@ public class EnemyController : NetworkBehaviour
 
             _health.Damaged += OnDamaged;
             _health.Died += OnDied;
+
+            ServerSimulation.Instance.Register(this);
         }
     }
 
@@ -70,10 +74,13 @@ public class EnemyController : NetworkBehaviour
         {
             _health.Damaged -= OnDamaged;
             _health.Died -= OnDied;
+
+
+            ServerSimulation.Instance.Unregister(this);
         }
     }
 
-    private void FixedUpdate()
+    public void Tick()
     {
         if (!IsSpawned || !IsServer) return;
 
@@ -160,7 +167,7 @@ public class EnemyController : NetworkBehaviour
         {
             int exp = _settings.RewardExp / count;
             int gold = _settings.RewardGold / count;
-            
+
             SessionService.Instance.AddReward(_contributors, exp, gold);
         }
 
