@@ -83,6 +83,7 @@ public class EnemyController : NetworkBehaviour
     public void Tick()
     {
         if (!IsSpawned || !IsServer) return;
+        if (_health.IsDead) return;
 
         float time = Time.fixedDeltaTime;
         StateTime += time;
@@ -161,6 +162,11 @@ public class EnemyController : NetworkBehaviour
     }
 
     private void OnDied(Health health)
+    {
+        ServerSimulation.Instance.EnqueueDeath(this);
+    }
+
+    internal void Die()
     {
         int count = _contributors.Count;
         if (count > 0)

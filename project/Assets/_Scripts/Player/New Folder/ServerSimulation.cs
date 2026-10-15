@@ -30,6 +30,18 @@ namespace Project02.Server
         }
     }
 
+    public static class DeathSystem
+    {
+        public static void Process(List<EnemyController> deaths)
+        {
+            foreach (EnemyController enemy in deaths)
+            {
+                enemy.Die();
+            }
+            deaths.Clear();
+        }
+    }
+
     public class ServerSimulation : MonoBehaviour
     {
         public static ServerSimulation Instance { get; private set; }
@@ -37,14 +49,18 @@ namespace Project02.Server
         private readonly List<PlayerServer> _players = new();
         private readonly List<EnemyController> _enemies = new();
         private readonly List<Hit> _hits = new();
+        private readonly List<EnemyController> _deaths = new();
 
         private void Awake() => Instance = this;
         private void OnDestroy() { if (Instance == this) Instance = null; }
 
         public void Register(PlayerServer player) => _players.Add(player);
         public void Register(EnemyController enemy) => _enemies.Add(enemy);
+
         public void Unregister(PlayerServer player) => _players.Remove(player);
         public void Unregister(EnemyController enemy) => _enemies.Remove(enemy);
+
+        public void EnqueueDeath(EnemyController enemy) => _deaths.Add(enemy);
 
         private void FixedUpdate()
         {
@@ -70,6 +86,7 @@ namespace Project02.Server
             }
 
             // 9. 사망 (6-4)
+            DeathSystem.Process(_deaths);
         }
     }
 }
