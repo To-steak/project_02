@@ -71,7 +71,7 @@ namespace Project02.Server
             // 1~3. 플레이어
             foreach (PlayerServer player in _players)
             {
-                player.Tick();
+                player.Tick(SimulationClock.DeltaTime);
             }
 
             // 4~5. 투사체

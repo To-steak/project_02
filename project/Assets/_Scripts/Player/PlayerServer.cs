@@ -12,8 +12,10 @@ namespace Project02.Player
         private InputPayload _lastInput;
         private int _consumedTick = -1;
         private int _latestTick = -1;
+        private bool _started;
+
+        private const int START_BUFFER = 2;
         private const int BUFFER_SIZE = 64;
-        private const int BUFFER_MASK = BUFFER_SIZE - 1;
 
         private void Awake()
         {
@@ -26,7 +28,6 @@ namespace Project02.Player
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-            Debug.Assert(ServerSimulation.Instance != null, "씬에 ServerSimulation이 없습니다", this);
             ServerSimulation.Instance.Register(this);
         }
 
@@ -38,37 +39,36 @@ namespace Project02.Player
             }
         }
 
-        public void Tick()
+        public void Tick(float deltaTime)
         {
-            int consume = _latestTick - _consumedTick > 1 ? 2 : 1;
-            for (int i = 0; i < consume; i++)
+            if (!_started)
             {
-                if (!TryDequeue(out InputPayload input))
-                {
-                    break;
-                }
-
-                if (_controller.Step(input, out Shot shot))
-                {
-                    Fire(input, shot);
-                }
-
-                _controller.Pitch.Value = input.PitchInput;
-                StatePayload payload = new StatePayload { State = _controller.Capture(input.Tick) };
-                _controller.PlayerOwner.StateRPC(payload);
+                // 첫 입력들이 몇 개 쌓일 때까지 기다림. 바로 시작하면 버퍼가 0이라 곧바로 굶음
+                if (_latestTick - _consumedTick < START_BUFFER) return;
+                _started = true;
             }
+
+            InputPayload input = Dequeue();
+            if (_controller.Step(input, deltaTime, out Shot shot))
+            {
+                Fire(input, shot);
+            }
+
+            _controller.Pitch.Value = input.PitchInput;
+            StatePayload payload = new StatePayload
+            {
+                State = _controller.Capture(input.Tick),
+                InputBuffer = (sbyte)Mathf.Clamp(_latestTick - _consumedTick, sbyte.MinValue, sbyte.MaxValue),
+            };
+            _controller.PlayerOwner.StateRPC(payload);
         }
 
-        private bool TryDequeue(out InputPayload input)
+        private InputPayload Dequeue()
         {
             int tick = _consumedTick + 1;
-            if (tick > _latestTick)
-            {
-                input = default;
-                return false;
-            }
+            InputPayload slot = _inputBuffer[tick & BUFFER_SIZE - 1];
 
-            InputPayload slot = _inputBuffer[tick & BUFFER_MASK];
+            InputPayload input;
             if (slot.Tick == tick)
             {
                 input = slot;
@@ -83,7 +83,7 @@ namespace Project02.Player
             }
 
             _consumedTick = tick;
-            return true;
+            return input;
         }
 
         [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
@@ -102,7 +102,7 @@ namespace Project02.Player
                     Resync(payload.Tick);
                 }
 
-                _inputBuffer[payload.Tick & BUFFER_MASK] = payload;
+                _inputBuffer[payload.Tick & BUFFER_SIZE - 1] = payload;
                 if (payload.Tick > _latestTick)
                 {
                     _latestTick = payload.Tick;

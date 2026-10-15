@@ -4,12 +4,6 @@ namespace Project02.Player
 {
     public class PlayerVisual : MonoBehaviour
     {
-        /// <summary>
-        /// 마지막 FixedUpdate 이후 다음 FixedUpdate까지 진행한 비율(0~1).
-        /// FixedUpdate에서 기록한 이전/현재 값을 Update나 LateUpdate에서 보간할 때 쓴다.
-        /// </summary>
-        public static float Alpha => Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
-
         [SerializeField] private Transform _presentation;
         [SerializeField] private Transform _model;
 
@@ -41,9 +35,9 @@ namespace Project02.Player
         }
 
         // LateUpdate
-        public void Interpolate()
+        public void Interpolate(float alpha)
         {
-            _presentation.position = Vector3.Lerp(_previous, _current, Alpha);
+            _presentation.position = Vector3.Lerp(_previous, _current, alpha);
         }
 
         public void Face(Vector3 aimPoint, Vector3 muzzle, float deltaTime)

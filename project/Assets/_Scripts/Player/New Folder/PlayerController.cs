@@ -48,10 +48,10 @@ namespace Project02.Player
             EquippedWeapon.OnValueChanged -= OnEquippedWeaponChanged;
         }
 
-        public bool Step(in InputPayload input, out Shot shot)
+        public bool Step(in InputPayload input, float deltaTime, out Shot shot)
         {
-            PlayerLocomotion.Simulate(input);
-            return PlayerWeapon.TryFire(input, PlayerLocomotion.IsRunning, OwnerClientId, out shot);
+            PlayerLocomotion.Simulate(input, deltaTime);
+            return PlayerWeapon.TryFire(input, PlayerLocomotion.IsRunning, OwnerClientId, deltaTime, out shot);
         }
 
         public PlayerSimulationState Capture(int tick) => new PlayerSimulationState

@@ -45,9 +45,9 @@ namespace Project02.Player
         private WeaponView _view;
         private WeaponState _state;
 
-        public bool TryFire(in InputPayload input, bool isRunning, ulong ownerId, out Shot shot)
+        public bool TryFire(in InputPayload input, bool isRunning, ulong ownerId, float deltaTime, out Shot shot)
         {
-            return WeaponFire.TryFire(_settings, ref _state, input, isRunning, ownerId, SimulationClock.DeltaTime, out shot);
+            return WeaponFire.TryFire(_settings, ref _state, input, isRunning, ownerId, deltaTime, out shot);
         }
 
         public static Vector3 GetDirection(Vector3 from, Vector3 aimPoint, Vector2 spread)
@@ -85,9 +85,9 @@ namespace Project02.Player
             }
         }
 
-        public void Restore(in WeaponState weapon)
+        public void Restore(in WeaponState state)
         {
-            
+            _state = state;
         }
     }
 }

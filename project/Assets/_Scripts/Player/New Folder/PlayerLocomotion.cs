@@ -16,13 +16,6 @@ namespace Project02.Player
         private StaminaState _stamina;
         private float _maxEnergy;
 
-        // TODO: 순수 View 함수이다. Owner가 Yaw입력에 따른 즉시 회전을 위함.
-        // 위치를 옮길 방법고 고려해야 함.
-        public void Rotate(float yaw)
-        {
-            transform.rotation = Quaternion.Euler(0f, yaw, 0f);
-        }
-
         public void Initialize()
         {
             _movement = new MovementState { Position = transform.position };
@@ -41,9 +34,9 @@ namespace Project02.Player
             transform.position = _movement.Position;
         }
 
-        public void Simulate(InputPayload payload)
+        public void Simulate(InputPayload payload, float deltaTime)
         {
-            PlayerMovement.Step(_settings, ref _movement, ref _stamina, payload, _maxEnergy, SimulationClock.DeltaTime, out bool isRunning);
+            PlayerMovement.Step(_settings, ref _movement, ref _stamina, payload, _maxEnergy, deltaTime, out bool isRunning);
             IsRunning = isRunning;
             transform.SetPositionAndRotation(_movement.Position, Quaternion.Euler(0f, payload.YawInput, 0f));
         }

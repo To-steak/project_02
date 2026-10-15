@@ -6,6 +6,7 @@ namespace Project02.Player
     public struct StatePayload : INetworkSerializable
     {
         public PlayerSimulationState State;
+        public sbyte InputBuffer;
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -18,6 +19,8 @@ namespace Project02.Player
             serializer.SerializeValue(ref State.Weapon.Bloom);
             serializer.SerializeValue(ref State.Weapon.LastFireTick);
             serializer.SerializeValue(ref State.Weapon.NextFireTick);
+            
+            serializer.SerializeValue(ref InputBuffer);
         }
     }
 }

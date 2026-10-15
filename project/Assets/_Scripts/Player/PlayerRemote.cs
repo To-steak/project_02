@@ -23,7 +23,7 @@ namespace Project02.Player
 
         private void Update()
         {
-            float pitch = Mathf.Lerp(_previous, _current, PlayerVisual.Alpha);
+            float pitch = Mathf.Lerp(_previous, _current, Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime));
             _controller.PlayerVisual.ApplyPitch(pitch);
             _controller.PlayerVisual.AimAtPitch(pitch);
         }

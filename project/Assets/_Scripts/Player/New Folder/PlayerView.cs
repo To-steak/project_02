@@ -34,15 +34,15 @@ namespace Project02.Player
         }
 
         // LateUpdate
-        public void Present(float yaw, float pitch, Vector3 point, Vector2 move, in MovementState movement, bool isRunning, float deltaTime)
+        public void Present(float yaw, float pitch, Vector3 point, Vector2 move, in MovementState movement, bool isRunning, float alpha, float deltaTime)
         {
             // 1. 위치 보간
-            _visual.Interpolate();
+            _visual.Interpolate(alpha);
 
             // 2. 즉시 회전
             _visual.ApplyPitch(pitch);
             _visual.ApplyYaw(yaw);
-            
+
             // 3. 상체 각도, 조준, 바라보기
             _visual.AimAt(point);
             _visual.Face(point, _weapon.Muzzle, deltaTime);
