@@ -33,23 +33,17 @@ namespace Project02.Player
             _stamina = new StaminaState { Energy = value, IsExhausted = false };
         }
 
-        public StatePayload Capture(int tick) => new StatePayload
+        public PlayerSimulationState Capture(int tick) => new()
         {
             Tick = tick,
-            Position = _movement.Position,
-            VerticalSpeed = _movement.VerticalSpeed,
-            IsGrounded = _movement.IsGrounded,
-            Mp = _stamina.Energy,
-            IsExhausted = _stamina.IsExhausted
+            Movement = _movement,
+            Stamina = _stamina,
         };
 
-        public void RollbackState(StatePayload payload)
+        public void Restore(in PlayerSimulationState state)
         {
-            _movement.Position = payload.Position;
-            _movement.VerticalSpeed = payload.VerticalSpeed;
-            _movement.IsGrounded = payload.IsGrounded;
-            _stamina.Energy = payload.Mp;
-            _stamina.IsExhausted = payload.IsExhausted;
+            _movement = state.Movement;
+            _stamina = state.Stamina;
             transform.position = _movement.Position;
         }
 

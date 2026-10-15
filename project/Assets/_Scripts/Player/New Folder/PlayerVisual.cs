@@ -10,7 +10,9 @@ namespace Project02.Player
         /// </summary>
         public static float Alpha => Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
 
-        [SerializeField] private Transform _visual;
+        [SerializeField] private Transform _presentation;
+        [SerializeField] private Transform _model;
+
         [SerializeField] private Transform _lookPos;
         [SerializeField] private Transform _aimTarget;
 
@@ -27,7 +29,7 @@ namespace Project02.Player
         {
             _settings = settings;
             _previous = _current = position;
-            _visual.rotation = transform.rotation;
+            _presentation.rotation = transform.rotation;
         }
 
         // FixedUpdate - Simulate() 직후
@@ -41,7 +43,7 @@ namespace Project02.Player
         // LateUpdate
         public void Interpolate()
         {
-            _visual.position = Vector3.Lerp(_previous, _current, Alpha);
+            _presentation.position = Vector3.Lerp(_previous, _current, Alpha);
         }
 
         public void Face(Vector3 aimPoint, Vector3 muzzle, float deltaTime)
@@ -54,13 +56,18 @@ namespace Project02.Player
             }
 
             Quaternion look = Quaternion.LookRotation(direction);
-            _visual.rotation = Quaternion.RotateTowards(_visual.rotation, look, _settings.TurnSpeed * deltaTime);
+            _model.rotation = Quaternion.RotateTowards(_model.rotation, look, _settings.TurnSpeed * deltaTime);
         }
 
         /// <summary>상체(와 소유자 카메라)의 상하 각도.</summary>
         public void ApplyPitch(float pitch)
         {
             _lookPos.localRotation = Quaternion.Euler(pitch, 0.0f, 0.0f);
+        }
+
+        public void ApplyYaw(float yaw)
+        {
+            _presentation.rotation = Quaternion.Euler(0.0f, yaw, 0.0f);
         }
 
         /// <summary>소유자. 상체가 조준점을 보게 한다.</summary>

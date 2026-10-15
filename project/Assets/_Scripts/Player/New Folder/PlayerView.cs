@@ -26,7 +26,6 @@ namespace Project02.Player
         public void OnTick(in MovementState movement)
         {
             _visual.Record(movement.Position);
-
         }
 
         public void OnFired(in Shot shot, Vector3 point)
@@ -41,10 +40,10 @@ namespace Project02.Player
             _visual.Interpolate();
 
             // 2. 즉시 회전
-            transform.rotation = Quaternion.Euler(0.0f, yaw, 0.0f);
-
-            // 3. 상체 각도, 조준, 바라보기
             _visual.ApplyPitch(pitch);
+            _visual.ApplyYaw(yaw);
+            
+            // 3. 상체 각도, 조준, 바라보기
             _visual.AimAt(point);
             _visual.Face(point, _weapon.Muzzle, deltaTime);
 

@@ -10,11 +10,11 @@ namespace Project02.Player
 
         private int _tick;
         private const int BUFFER_SIZE = 1024;
-        private const float RECONCILE_THRESHOLD = 1.0f;
-        private const float MP_THRESHOLD = 0.5f;
+        private const float POSITION_RECONCILE_THRESHOLD = 1.0f;
+        private const float ENERGY_RECONCILE_THRESHOLD = 0.5f;
 
         private readonly InputPayload[] _inputHistory = new InputPayload[BUFFER_SIZE];
-        private readonly StatePayload[] _stateHistory = new StatePayload[BUFFER_SIZE];
+        private readonly PlayerSimulationState[] _stateHistory = new PlayerSimulationState[BUFFER_SIZE];
 
         public override void OnNetworkSpawn()
         {
@@ -98,31 +98,38 @@ namespace Project02.Player
         [Rpc(SendTo.Owner, Delivery = RpcDelivery.Unreliable)]
         public void StateRPC(StatePayload payload)
         {
-            var predicted = _stateHistory[payload.Tick & BUFFER_SIZE - 1];
-            if (predicted.Tick != payload.Tick)
+            PlayerSimulationState server = payload.State;
+            PlayerSimulationState predicted = _stateHistory[server.Tick & BUFFER_SIZE - 1];
+            if (predicted.Tick != server.Tick)
             {
                 return;
             }
 
-            bool positionMiss = Vector3.Distance(predicted.Position, payload.Position) >= RECONCILE_THRESHOLD;
-            bool mpMiss = Mathf.Abs(predicted.Mp - payload.Mp) >= MP_THRESHOLD || predicted.IsExhausted != payload.IsExhausted;
-            if (!positionMiss && !mpMiss)
+            if (!IsMispredicted(predicted, server))
             {
                 return;
             }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DEBUG_RECONCILE++;
-            Debug.LogWarning($"reconcile at tick {payload.Tick}, error {Vector3.Distance(predicted.Position, payload.Position):F4}, y diff {payload.Position.y - predicted.Position.y:F4}");
+            Debug.LogWarning($"reconcile at tick {server.Tick}, error {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F4}, y diff {server.Movement.Position.y - predicted.Movement.Position.y:F4}");
 #endif
 
-            _controller.PlayerLocomotion.RollbackState(payload);
+            _controller.PlayerLocomotion.Restore(server);
 
-            for (int tick = payload.Tick + 1; tick < _tick; tick++)
+            for (int tick = server.Tick + 1; tick < _tick; tick++)
             {
                 _controller.Simulate(_inputHistory[tick & BUFFER_SIZE - 1]);
                 _stateHistory[tick & BUFFER_SIZE - 1] = _controller.PlayerLocomotion.Capture(tick);
             }
+        }
+
+        private static bool IsMispredicted(in PlayerSimulationState predicted, in PlayerSimulationState server)
+        {
+            bool position = Vector3.Distance(predicted.Movement.Position, server.Movement.Position) >= POSITION_RECONCILE_THRESHOLD;
+            bool energy = Mathf.Abs(predicted.Stamina.Energy - server.Stamina.Energy) >= ENERGY_RECONCILE_THRESHOLD || predicted.Stamina.IsExhausted != server.Stamina.IsExhausted;
+
+            return position || energy;
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

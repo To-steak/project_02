@@ -6,7 +6,7 @@ namespace Project02.Player
     public class PlayerServer : NetworkBehaviour
     {
         [SerializeField] private PlayerController _controller;
-        
+
         private readonly InputPayload[] _inputBuffer = new InputPayload[BUFFER_SIZE];
         private InputPayload _lastInput;
         private int _consumedTick = -1;
@@ -38,8 +38,8 @@ namespace Project02.Player
                 }
 
                 _controller.Pitch.Value = input.PitchInput;
-                StatePayload state = _controller.PlayerLocomotion.Capture(input.Tick);
-                _controller.PlayerOwner.StateRPC(state);
+                StatePayload payload = new StatePayload { State = _controller.PlayerLocomotion.Capture(input.Tick) };
+                _controller.PlayerOwner.StateRPC(payload);
             }
         }
 
