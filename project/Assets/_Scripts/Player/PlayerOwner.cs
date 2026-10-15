@@ -6,20 +6,16 @@ namespace Project02.Player
 {
     public class PlayerOwner : NetworkBehaviour
     {
-        internal int LatestServerTick = -1;
-
-        internal const int BUFFER_SIZE = 1024;
-        internal const int BUFFER_MASK = BUFFER_SIZE - 1;
-
-        internal readonly InputPayload[] InputHistory = new InputPayload[BUFFER_SIZE];
-        internal readonly PlayerSimulationState[] StateHistory = new PlayerSimulationState[BUFFER_SIZE];
-
-        internal StatePayload PendingState;
-        internal bool HasPendingState;
-
         internal PlayerView View => _view;
         internal PlayerController Controller => _controller;
+        internal readonly InputPayload[] InputHistory = new InputPayload[BUFFER_SIZE];
+        internal readonly PlayerSimulationState[] StateHistory = new PlayerSimulationState[BUFFER_SIZE];
+        internal StatePayload PendingState;
+        internal bool HasPendingState;
+        internal int LatestServerTick = -1;
         internal int ReconcileCount;
+        internal const int BUFFER_SIZE = 1024;
+        internal const int BUFFER_MASK = BUFFER_SIZE - 1;
 
         [SerializeField] private PlayerController _controller;
         [SerializeField] private PlayerView _view;

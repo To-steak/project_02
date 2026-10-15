@@ -6,28 +6,28 @@ namespace Project02.Client
 {
     public static class CameraSystem
     {
-        public static void Update(PlayerOwner owner, float frameTime)
+        public static void Update(PlayerOwner owner, float deltaTime)
         {
             PlayerController controller = owner.Controller;
             PlayerCamera camera = controller.PlayerCamera;
             PlayerWeapon weapon = controller.PlayerWeapon;
 
-            camera.Look(controller.PlayerInput.LookInput, InputService.Instance.MouseSensitivity, frameTime);
+            camera.Look(controller.PlayerInput.LookInput, InputService.Instance.MouseSensitivity, deltaTime);
 
             float zoom = weapon.HasWeapon ? weapon.Settings.AdsZoom : 1.0f;
-            camera.ApplyAim(controller.PlayerInput.AimInput, zoom, frameTime);
+            camera.ApplyAim(controller.PlayerInput.AimInput, zoom, deltaTime);
         }
     }
 
     public static class ViewSystem
     {
-        public static void Present(PlayerOwner owner, float alpha, float frameTime)
+        public static void Present(PlayerOwner owner, float alpha, float deltaTime)
         {
             PlayerController controller = owner.Controller;
             PlayerCamera camera = controller.PlayerCamera;
             PlayerLocomotion locomotion = controller.PlayerLocomotion;
 
-            owner.View.Present(camera.Yaw, camera.Pitch, camera.AimPoint, controller.PlayerInput.MoveInput, locomotion.Movement, locomotion.IsRunning, alpha, frameTime);
+            owner.View.Present(camera.Yaw, camera.Pitch, camera.AimPoint, controller.PlayerInput.MoveInput, locomotion.Movement, locomotion.IsRunning, alpha, deltaTime);
         }
     }
 
@@ -68,7 +68,7 @@ namespace Project02.Client
 
     public static class ClockSystem
     {
-        private const float TARGET_BUFFER = 2.0f;
+        private const float TARGET_BUFFER = 3.0f;
         private const float MAX_DILATION = 0.05f;
         private const float DILATION_GAIN = 0.025f;
         private const int MAX_TICKS_PER_FRAME = 5;
