@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Project02.Character;
 using Project02.Player;
+using Project02.Enemy;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -82,7 +83,7 @@ namespace Project02.Server
             // 7~8. 적
             for (int i = _enemies.Count - 1; i >= 0; i--)
             {
-                _enemies[i].Tick();
+                _enemies[i].Tick(SimulationClock.DeltaTime);
             }
 
             // 9. 사망 (6-4)

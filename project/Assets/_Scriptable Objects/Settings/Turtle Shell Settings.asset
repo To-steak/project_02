@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79c25908565b63488ff8994adff9e5d, type: 3}
   m_Name: Turtle Shell Settings
   m_EditorClassIdentifier: Enemy::EnemySettings
+  Profile: {fileID: 11400000, guid: 1ad3790a0d0f4e2449e8c2842dbb0158, type: 2}
   WalkSpeed: 1
   RunSpeed: 3
   RotationSpeed: 360
-  Profile: {fileID: 11400000, guid: 1ad3790a0d0f4e2449e8c2842dbb0158, type: 2}
   RewardExp: 10
   RewardGold: 30
+  PerceptionRange: 10
+  BattleRange: 15
+  AttackRange: 3

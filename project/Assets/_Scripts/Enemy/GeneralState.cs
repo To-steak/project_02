@@ -1,25 +1,28 @@
-public class GeneralState : IEnemyState
+namespace Project02.Enemy
 {
-    public void Enter(EnemyController enemy)
+    public class GeneralState : IEnemyState
     {
-        enemy.TargetClientId = null;
-    }
-
-    public void Exit(EnemyController enemy)
-    {
-        // throw new System.NotImplementedException();
-    }
-
-    public void Tick(EnemyController enemy, float dt)
-    {
-        if (enemy.TryFindClosestPlayer(enemy.Settings.PerceptionRange, out ulong clientId))
+        public void Enter(EnemyController enemy)
         {
-            enemy.TargetClientId = clientId;
-            enemy.ChangeState(EnemyStateId.Battle);
-            return;
+            enemy.TargetClientId = null;
         }
 
-        enemy.MoveInput = enemy.WanderInput(dt);
-        enemy.MoveSpeed = enemy.Settings.WalkSpeed;
+        public void Exit(EnemyController enemy)
+        {
+            // throw new System.NotImplementedException();
+        }
+
+        public void Tick(EnemyController enemy, float dt)
+        {
+            if (enemy.TryFindClosestPlayer(enemy.Settings.PerceptionRange, out ulong clientId))
+            {
+                enemy.TargetClientId = clientId;
+                enemy.ChangeState(EnemyStateId.Battle);
+                return;
+            }
+
+            enemy.MoveInput = enemy.WanderInput(dt);
+            enemy.MoveSpeed = enemy.Settings.WalkSpeed;
+        }
     }
 }
