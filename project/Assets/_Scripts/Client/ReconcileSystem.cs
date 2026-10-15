@@ -1,0 +1,49 @@
+using Project02.Player;
+using UnityEngine;
+
+namespace Project02.Client
+{
+    public static class ReconcileSystem
+    {
+        private const float POSITION_THRESHOLD = 1.0f;
+        private const float ENERGY_THRESHOLD = 0.5f;
+        private const float BLOOM_THRESHOLD = 0.1f;
+        private const float BUFFER_SMOOTHING = 0.1f;
+
+        public static void Process(PlayerOwner owner, ref ClientClock clock)
+        {
+            if (!owner.HasPendingState) return;
+            StatePayload payload = owner.PendingState;
+            owner.HasPendingState = false;
+
+            clock.SmoothedBuffer = Mathf.Lerp(clock.SmoothedBuffer, payload.InputBuffer, BUFFER_SMOOTHING);
+
+            PlayerSimulationState server = payload.State;
+            PlayerSimulationState predicted = owner.StateHistory[server.Tick & PlayerOwner.BUFFER_MASK];
+            if (predicted.Tick != server.Tick) return;
+
+            if (!IsMispredicted(predicted, server)) return;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            owner.ReconcileCount++;
+            Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
+#endif
+            PlayerController controller = owner.Controller;
+            controller.Restore(server);
+
+            for (int tick = server.Tick + 1; tick < clock.Tick; tick++)
+            {
+                controller.Step(owner.InputHistory[tick & PlayerOwner.BUFFER_MASK], SimulationClock.DeltaTime, out _);
+                owner.StateHistory[tick & PlayerOwner.BUFFER_MASK] = controller.Capture(tick);
+            }
+        }
+
+        private static bool IsMispredicted(in PlayerSimulationState predicted, in PlayerSimulationState server)
+        {
+            bool position = Vector3.Distance(predicted.Movement.Position, server.Movement.Position) >= POSITION_THRESHOLD;
+            bool energy = Mathf.Abs(predicted.Stamina.Energy - server.Stamina.Energy) >= ENERGY_THRESHOLD || predicted.Stamina.IsExhausted != server.Stamina.IsExhausted;
+            bool weapon = predicted.Weapon.NextFireTick != server.Weapon.NextFireTick || Mathf.Abs(predicted.Weapon.Bloom - server.Weapon.Bloom) >= BLOOM_THRESHOLD;
+            return position || energy || weapon;
+        }
+    }
+}

@@ -3,39 +3,42 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ServerLauncher : MonoBehaviour
+namespace Project02.Service
 {
-    [SerializeField] private string _firstScene = Scenes.WaitingRoom;
-
-    private void Start()
+    public class ServerLauncher : MonoBehaviour
     {
-        if (!Application.isBatchMode)
-        {
-            return;
-        }
+        [SerializeField] private string _firstScene = Scenes.WaitingRoom;
 
-        if (!OpenServer())
+        private void Start()
         {
-            Application.Quit(1);
+            if (!Application.isBatchMode)
+            {
+                return;
+            }
+
+            if (!OpenServer())
+            {
+                Application.Quit(1);
+            }
         }
-    }
 
 #if UNITY_EDITOR
-    [ContextMenu("Open Server")]
+        [ContextMenu("Open Server")]
 #endif
-    public bool OpenServer()
-    {
-        NetworkManager networkManager = NetworkManager.Singleton;
-        networkManager.GetComponent<UnityTransport>().SetConnectionData("127.0.0.1", NetworkDefaults.Port, "0.0.0.0");
-
-        if (!networkManager.StartServer())
+        public bool OpenServer()
         {
-            Debug.LogError($"[{nameof(ServerLauncher)}] failed to start on port {NetworkDefaults.Port}", this);
-            return false;
-        }
+            NetworkManager networkManager = NetworkManager.Singleton;
+            networkManager.GetComponent<UnityTransport>().SetConnectionData("127.0.0.1", NetworkDefaults.Port, "0.0.0.0");
 
-        Application.targetFrameRate = (int)networkManager.NetworkConfig.TickRate;
-        networkManager.SceneManager.LoadScene(_firstScene, LoadSceneMode.Single);
-        return true;
+            if (!networkManager.StartServer())
+            {
+                Debug.LogError($"[{nameof(ServerLauncher)}] failed to start on port {NetworkDefaults.Port}", this);
+                return false;
+            }
+
+            Application.targetFrameRate = (int)networkManager.NetworkConfig.TickRate;
+            networkManager.SceneManager.LoadScene(_firstScene, LoadSceneMode.Single);
+            return true;
+        }
     }
 }

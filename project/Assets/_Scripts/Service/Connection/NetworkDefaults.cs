@@ -1,4 +1,7 @@
-public static class NetworkDefaults
+namespace Project02.Service
 {
-    public const ushort Port = 7777;
+    public static class NetworkDefaults
+    {
+        public const ushort Port = 7777;
+    }
 }

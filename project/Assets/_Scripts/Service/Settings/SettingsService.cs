@@ -1,39 +1,10 @@
-using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+
 namespace Project02.Service
 {
-    public enum WindowModeType
-    {
-        ExclusiveFullScreen = 0,
-        FullScreenWindow = 1,
-        Windowed = 2
-    }
-
-    [Serializable]
-    public struct GameSettings
-    {
-        // Graphic
-        public int ResolutionWidth;
-        public int ResolutionHeight;
-        public WindowModeType WindowMode;
-        public int TargetFrameRate;
-
-        // Audio
-        public float MasterVolume;
-        public float MusicVolume;
-        public float SFXVolume;
-
-        // Keyboard
-        public float MouseSensitivity;
-        public string KeyBinding;
-
-        // Language
-        public string LocaleCode;
-    }
-
     public class SettingsService : MonoBehaviour
     {
         public static SettingsService Instance { get; private set; }

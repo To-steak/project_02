@@ -1,4 +1,7 @@
+using Project02.Character;
 using Project02.Server;
+using Project02.Service;
+using Project02.Weapon;
 using Unity.Netcode;
 using UnityEngine;
 

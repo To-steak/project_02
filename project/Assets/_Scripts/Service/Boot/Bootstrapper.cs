@@ -1,21 +1,24 @@
 using UnityEngine;
 
-public static class Bootstrapper
+namespace Project02.Service
 {
-    private const string SERVICES_PREFAB = "Services";
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void CreateServices()
+    public static class Bootstrapper
     {
-        var prefab = Resources.Load<GameObject>(SERVICES_PREFAB);
-        if (prefab == null)
-        {
-            Debug.LogError($"[{nameof(Bootstrapper)}] Resources/{SERVICES_PREFAB} 프리팹이 없습니다.");
-            return;
-        }
+        private const string SERVICES_PREFAB = "Services";
 
-        var instance = Object.Instantiate(prefab);
-        instance.name = prefab.name;
-        Object.DontDestroyOnLoad(instance);
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void CreateServices()
+        {
+            var prefab = Resources.Load<GameObject>(SERVICES_PREFAB);
+            if (prefab == null)
+            {
+                Debug.LogError($"[{nameof(Bootstrapper)}] Resources/{SERVICES_PREFAB} 프리팹이 없습니다.");
+                return;
+            }
+
+            var instance = Object.Instantiate(prefab);
+            instance.name = prefab.name;
+            Object.DontDestroyOnLoad(instance);
+        }
     }
 }

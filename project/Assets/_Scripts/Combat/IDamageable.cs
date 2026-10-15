@@ -1,4 +1,7 @@
-public interface IDamageable
+namespace Project02.Combat
 {
-    void ApplyDamage(in DamageInfo info);
+    public interface IDamageable
+    {
+        void ApplyDamage(in DamageInfo info);
+    }
 }

@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using Unity.Netcode;
 using Project02.Server;
+using Project02.Character;
+using Project02.Combat;
+using Project02.Navigation;
+using Project02.Service;
 
 namespace Project02.Enemy
 {

@@ -1,56 +1,60 @@
 using System.Collections.Generic;
+using Project02.Combat;
 using Project02.Server;
 using UnityEngine;
 
-public class ProjectileSimulator
+namespace Project02.Weapon
 {
-    public int Count => _projectiles.Count;
-    public IReadOnlyList<Projectile> Projectiles => _projectiles;
-
-    private readonly LayerMask _hitLayer;
-    private readonly List<Projectile> _projectiles = new();
-
-    public ProjectileSimulator(LayerMask hitLayer)
+    public class ProjectileSimulator
     {
-        _hitLayer = hitLayer;
-    }
+        public int Count => _projectiles.Count;
+        public IReadOnlyList<Projectile> Projectiles => _projectiles;
 
-    public void Spawn(in Projectile projectile)
-    {
-        _projectiles.Add(projectile);
-    }
+        private readonly LayerMask _hitLayer;
+        private readonly List<Projectile> _projectiles = new();
 
-    public void Tick(List<Hit> hits, float dt)
-    {
-        for (int i = _projectiles.Count - 1; i >= 0; i--)
+        public ProjectileSimulator(LayerMask hitLayer)
         {
-            Projectile projectile = _projectiles[i];
-            float traveled = Vector3.Distance(projectile.Origin, projectile.Position);
-            float remaining = projectile.Range - traveled;
-            Vector3 step = projectile.Velocity * dt;
-            float length = Mathf.Min(step.magnitude, remaining);
-            Vector3 direction = step.normalized;
+            _hitLayer = hitLayer;
+        }
 
-            if (length > 0.0f && Physics.Raycast(projectile.Position, direction, out RaycastHit hit, length, _hitLayer, QueryTriggerInteraction.Ignore))
+        public void Spawn(in Projectile projectile)
+        {
+            _projectiles.Add(projectile);
+        }
+
+        public void Tick(List<HitInfo> hits, float dt)
+        {
+            for (int i = _projectiles.Count - 1; i >= 0; i--)
             {
-                if (hit.collider.TryGetComponent(out IDamageable target))
+                Projectile projectile = _projectiles[i];
+                float traveled = Vector3.Distance(projectile.Origin, projectile.Position);
+                float remaining = projectile.Range - traveled;
+                Vector3 step = projectile.Velocity * dt;
+                float length = Mathf.Min(step.magnitude, remaining);
+                Vector3 direction = step.normalized;
+
+                if (length > 0.0f && Physics.Raycast(projectile.Position, direction, out RaycastHit hit, length, _hitLayer, QueryTriggerInteraction.Ignore))
                 {
-                    int damage = projectile.GetDamage(traveled + hit.distance);
-                    hits.Add(new Hit(target, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
+                    if (hit.collider.TryGetComponent(out IDamageable target))
+                    {
+                        int damage = projectile.GetDamage(traveled + hit.distance);
+                        hits.Add(new HitInfo(target, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
+                    }
+
+                    _projectiles.RemoveAt(i);
+                    continue;
                 }
 
-                _projectiles.RemoveAt(i);
-                continue;
-            }
+                if (length >= remaining)
+                {
+                    _projectiles.RemoveAt(i);
+                    continue;
+                }
 
-            if (length >= remaining)
-            {
-                _projectiles.RemoveAt(i);
-                continue;
+                projectile.Position += direction * length;
+                _projectiles[i] = projectile;
             }
-
-            projectile.Position += direction * length;
-            _projectiles[i] = projectile;
         }
     }
 }

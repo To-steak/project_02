@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Project02.Navigation;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;

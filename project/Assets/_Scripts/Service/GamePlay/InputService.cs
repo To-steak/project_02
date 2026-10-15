@@ -1,26 +1,29 @@
 using UnityEngine;
 
-public class InputService : MonoBehaviour
+namespace Project02.Service
 {
-    public static InputService Instance { get; private set; }
-
-    public PlayerAction Actions { get; private set; }
-    public float MouseSensitivity { get; set; } = 1.0f;
-
-    private void Awake()
+    public class InputService : MonoBehaviour
     {
-        Actions = new PlayerAction();
-        Instance = this;
-    }
+        public static InputService Instance { get; private set; }
 
-    private void OnDestroy()
-    {
-        if (Instance == this)
+        public PlayerAction Actions { get; private set; }
+        public float MouseSensitivity { get; set; } = 1.0f;
+
+        private void Awake()
         {
-            Instance = null;
+            Actions = new PlayerAction();
+            Instance = this;
         }
 
-        Actions.Disable();
-        Actions.Dispose();
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+
+            Actions.Disable();
+            Actions.Dispose();
+        }
     }
 }

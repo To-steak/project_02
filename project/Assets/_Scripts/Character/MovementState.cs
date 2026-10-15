@@ -1,8 +1,11 @@
 using UnityEngine;
 
-public struct MovementState
+namespace Project02.Character
 {
-    public Vector3 Position;
-    public float VerticalSpeed;
-    public bool IsGrounded;
+    public struct MovementState
+    {
+        public Vector3 Position;
+        public float VerticalSpeed;
+        public bool IsGrounded;
+    }
 }

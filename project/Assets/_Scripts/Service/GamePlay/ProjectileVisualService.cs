@@ -1,41 +1,45 @@
+using Project02.Weapon;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class ProjectileVisualService : MonoBehaviour
+namespace Project02.Service
 {
-    public static ProjectileVisualService Instance { get; private set; }
-
-    [SerializeField] private Bullet _prefab;
-    [SerializeField] private int _defaultCapacity = 64;
-    [SerializeField] private int _maxSize = 256;
-
-    private ObjectPool<Bullet> _pool;
-
-    private void Awake()
+    public class ProjectileVisualService : MonoBehaviour
     {
-        _pool = new ObjectPool<Bullet>(
-            createFunc: () => Instantiate(_prefab, transform).Inject(_pool),
-            actionOnGet: bullet => bullet.gameObject.SetActive(true),
-            actionOnRelease: bullet => bullet.gameObject.SetActive(false),
-            actionOnDestroy: bullet => Destroy(bullet.gameObject),
-            defaultCapacity: _defaultCapacity,
-            maxSize: _maxSize
-        );
+        public static ProjectileVisualService Instance { get; private set; }
 
-        Instance = this;
-    }
+        [SerializeField] private Bullet _prefab;
+        [SerializeField] private int _defaultCapacity = 64;
+        [SerializeField] private int _maxSize = 256;
 
-    private void OnDestroy()
-    {
-        if (Instance == this)
+        private ObjectPool<Bullet> _pool;
+
+        private void Awake()
         {
-            Instance = null;
-        }
-        _pool.Dispose();
-    }
+            _pool = new ObjectPool<Bullet>(
+                createFunc: () => Instantiate(_prefab, transform).Inject(_pool),
+                actionOnGet: bullet => bullet.gameObject.SetActive(true),
+                actionOnRelease: bullet => bullet.gameObject.SetActive(false),
+                actionOnDestroy: bullet => Destroy(bullet.gameObject),
+                defaultCapacity: _defaultCapacity,
+                maxSize: _maxSize
+            );
 
-    public void Fire(Vector3 from, Vector3 to, float speed)
-    {
-        _pool.Get().Launch(from, to, speed);
+            Instance = this;
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+            _pool.Dispose();
+        }
+
+        public void Fire(Vector3 from, Vector3 to, float speed)
+        {
+            _pool.Get().Launch(from, to, speed);
+        }
     }
 }

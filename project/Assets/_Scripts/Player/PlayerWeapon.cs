@@ -1,4 +1,4 @@
-using Project02.Character;
+using Project02.Weapon;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -33,7 +33,7 @@ namespace Project02.Player
         public bool HasWeapon => _settings != null;
         public WeaponState State => _state;
 
-        [SerializeField] private WeaponCatalog _catalog;
+        [SerializeField] private SOCatalog _catalog;
         [SerializeField] private Transform _origin;
         [SerializeField] private Transform _socket;
 
