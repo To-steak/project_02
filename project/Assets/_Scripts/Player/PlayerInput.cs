@@ -6,7 +6,7 @@ namespace Project02.Player
     public class PlayerInput : MonoBehaviour
     {
         public Vector2 MoveInput { get; private set; }
-        public Vector2 LookInput { get; private set; }
+        public Vector2 LookInput => _action.General.Look.ReadValue<Vector2>();
         public bool RunInput { get; private set; }
         public bool JumpInput { get; private set; }
         public bool AimInput { get; private set; }
@@ -35,9 +35,6 @@ namespace Project02.Player
             _action.General.Move.performed += OnMove;
             _action.General.Move.canceled += OnMove;
 
-            _action.General.Look.performed += OnLook;
-            _action.General.Look.canceled += OnLook;
-
             _action.General.Jump.performed += OnJump;
 
             _action.General.Run.performed += OnRun;
@@ -54,9 +51,6 @@ namespace Project02.Player
         {
             _action.General.Move.performed -= OnMove;
             _action.General.Move.canceled -= OnMove;
-
-            _action.General.Look.performed -= OnLook;
-            _action.General.Look.canceled -= OnLook;
 
             _action.General.Jump.performed -= OnJump;
 
@@ -99,11 +93,6 @@ namespace Project02.Player
         private void OnJump(InputAction.CallbackContext context)
         {
             if (context.performed) JumpInput = true;
-        }
-
-        private void OnLook(InputAction.CallbackContext context)
-        {
-            LookInput = context.ReadValue<Vector2>();
         }
 
         private void OnRun(InputAction.CallbackContext context)

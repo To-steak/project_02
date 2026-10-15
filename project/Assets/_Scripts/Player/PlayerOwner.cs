@@ -6,6 +6,7 @@ namespace Project02.Player
     public class PlayerOwner : NetworkBehaviour
     {
         [SerializeField] private PlayerController _controller;
+        [SerializeField] private PlayerView _view;
 
         private int _tick;
         private const int BUFFER_SIZE = 1024;
@@ -45,21 +46,20 @@ namespace Project02.Player
         private void Update()
         {
             PlayerCamera camera = _controller.PlayerCamera;
-            PlayerVisual visual = _controller.PlayerVisual;
             PlayerWeapon weapon = _controller.PlayerWeapon;
 
             camera.Look(_controller.PlayerInput.LookInput, InputService.Instance.MouseSensitivity, Time.deltaTime);
-            visual.ApplyPitch(camera.Pitch);
-            _controller.PlayerLocomotion.Rotate(camera.Yaw);
 
             float zoom = weapon.HasWeapon ? weapon.Data.AdsZoom : 1.0f;
             camera.ApplyAim(_controller.PlayerInput.AimInput, zoom, Time.deltaTime);
-            visual.AimAt(camera.AimPoint);
-            visual.Face(camera.AimPoint, weapon.Muzzle, Time.deltaTime);
+        }
 
-            var motion = _controller.PlayerLocomotion.State;
-            _controller.PlayerAnimation.SetAirborne(motion.IsGrounded, motion.VerticalSpeed);
-            _controller.PlayerAnimation.SetMoveBlendTree(_controller.PlayerInput.MoveInput, _controller.PlayerLocomotion.IsRunning, Time.deltaTime);
+        private void LateUpdate()
+        {
+            PlayerCamera camera = _controller.PlayerCamera;
+            PlayerLocomotion locomotion = _controller.PlayerLocomotion;
+
+            _view.Present(camera.Yaw, camera.Pitch, camera.AimPoint, _controller.PlayerInput.MoveInput, locomotion.Movement, locomotion.IsRunning, Time.deltaTime);
         }
 
         private void FixedUpdate()
@@ -70,25 +70,18 @@ namespace Project02.Player
             Vector3 aimPoint = camera.AimPoint;
             InputPayload input = _controller.PlayerInput.Capture(_tick, camera.Yaw, camera.Pitch, aimPoint);
             _inputHistory[_tick & BUFFER_SIZE - 1] = input;
-            
+
             if (_controller.Step(input, out Shot shot))
             {
-                WeaponView view = weapon.View;
-                view.SpawnBullet(aimPoint, shot.Spread);
-                view.Shake(shot.Stance);
-                camera.AddRecoil(view.RollRecoil(shot.Stance));
+                _view.OnFired(shot, aimPoint);
+                camera.AddRecoil(weapon.View.RollRecoil(shot.Stance));
             }
 
             _stateHistory[_tick & BUFFER_SIZE - 1] = _controller.PlayerLocomotion.Capture(_tick);
-            _controller.PlayerVisual.Record();
 
+            _view.OnTick(_controller.PlayerLocomotion.Movement);
             SendInputs();
             _tick++;
-        }
-
-        private void LateUpdate()
-        {
-            _controller.PlayerVisual.Interpolate();
         }
 
         private void SendInputs()
@@ -150,6 +143,8 @@ namespace Project02.Player
             GUI.Label(new Rect(xPos, 50, width, height), $"tick: {_tick}", style);
             GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
             GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
+            GUI.Label(new Rect(xPos, 110, width, height), $"energy: {_controller.PlayerLocomotion.Energy:F1}", style);
+            GUI.Label(new Rect(xPos, 130, width, height), $"yaw: {_controller.PlayerCamera.Yaw:F1}", style);
         }
 #endif
     }

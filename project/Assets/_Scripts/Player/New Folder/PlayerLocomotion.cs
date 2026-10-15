@@ -5,8 +5,8 @@ namespace Project02.Player
 {
     public class PlayerLocomotion : MonoBehaviour
     {
-        public MovementState State => _movement;
-        public float Mp => _stamina.Energy;
+        public MovementState Movement => _movement;
+        public float Energy => _stamina.Energy;
         public bool IsRunning { get; private set; }
 
         [SerializeField] private SOMovement _settings;

@@ -31,11 +31,9 @@ namespace Project02.Player
         }
 
         // FixedUpdate - Simulate() 직후
-        public void Record()
+        public void Record(Vector3 position)
         {
-            Vector3 position = transform.position;
             bool snap = Vector3.Distance(_current, position) > SNAP_DISTANCE;
-
             _previous = snap ? position : _current;
             _current = position;
         }
@@ -58,7 +56,7 @@ namespace Project02.Player
             Quaternion look = Quaternion.LookRotation(direction);
             _visual.rotation = Quaternion.RotateTowards(_visual.rotation, look, _settings.TurnSpeed * deltaTime);
         }
-        
+
         /// <summary>상체(와 소유자 카메라)의 상하 각도.</summary>
         public void ApplyPitch(float pitch)
         {
