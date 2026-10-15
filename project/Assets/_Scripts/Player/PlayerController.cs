@@ -43,14 +43,14 @@ namespace Project02.Player
         protected override void OnNetworkPostSpawn()
         {
             PlayerServer.enabled = IsServer;
-            
+
             _networkTransform.enabled = !(IsOwner && !IsServer);
             if (IsServer)
             {
                 Health.SetMax(Stats.MaxHp, true);
             }
 
-            PlayerLocomotion.ResetMp(Stats.MaxMp);
+            PlayerLocomotion.Initialize(Stats.MaxMp);
         }
 
         public override void OnNetworkDespawn()
@@ -70,8 +70,7 @@ namespace Project02.Player
 
         public void Simulate(in InputPayload input)
         {
-            PlayerLocomotion.Rotate(input.YawInput);
-            PlayerLocomotion.Simulate(input, PlayerSettings, Stats.MaxMp);
+            PlayerLocomotion.Simulate(input, Stats.MaxMp);
         }
 
         private void OnExpChanged(ulong clientId, int exp)

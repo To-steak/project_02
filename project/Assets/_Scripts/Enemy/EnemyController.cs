@@ -12,7 +12,7 @@ public class EnemyController : NetworkBehaviour
 
     private PathGrid _grid;
     private float _timer;
-    private CharacterState _state;
+    private MovementState _state;
     private int _waypoint;
     private readonly List<int> _path = new();
     private const float WANDER_INTERVAL = 1.0f;  // 도착 후 다음 배회까지 대기 시간

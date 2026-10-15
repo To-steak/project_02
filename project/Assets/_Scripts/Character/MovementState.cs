@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public struct CharacterState
+public struct MovementState
 {
     public Vector3 Position;
     public float VerticalSpeed;

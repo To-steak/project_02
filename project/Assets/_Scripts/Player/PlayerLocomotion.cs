@@ -1,87 +1,56 @@
+using Project02.Character;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Project02.Player
 {
     public class PlayerLocomotion : MonoBehaviour
     {
-        public CharacterState State => _state;
-        public float Mp => _mp;
+        public MovementState State => _movement;
+        public float Mp => _stamina.Energy;
         public bool IsRunning { get; private set; }
 
-        private CharacterState _state;
-        private float _mp;
-        private bool _exhausted;
+        [SerializeField] private SOMovement _settings;
+
+        private MovementState _movement;
+        private StaminaState _stamina;
 
         public void Rotate(float yaw)
         {
             transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         }
 
-        public void ResetMp(float maxMp)
+        public void Initialize(float maxEnergy)
         {
-            _mp = maxMp;
-            _exhausted = false;
+            _movement = new MovementState { Position = transform.position };
+            _stamina = new StaminaState { Energy = maxEnergy, IsExhausted = false };
         }
 
         public StatePayload Capture(int tick) => new StatePayload
         {
             Tick = tick,
-            Position = transform.position,
-            VerticalSpeed = _state.VerticalSpeed,
-            IsGrounded = _state.IsGrounded,
-            Mp = _mp,
-            IsExhausted = _exhausted
+            Position = _movement.Position,
+            VerticalSpeed = _movement.VerticalSpeed,
+            IsGrounded = _movement.IsGrounded,
+            Mp = _stamina.Energy,
+            IsExhausted = _stamina.IsExhausted
         };
 
         public void RollbackState(StatePayload payload)
         {
-            transform.position = payload.Position;
-            _state.VerticalSpeed = payload.VerticalSpeed;
-            _state.IsGrounded = payload.IsGrounded;
-            _mp = payload.Mp;
-            _exhausted = payload.IsExhausted;
+            _movement.Position = payload.Position;
+            _movement.VerticalSpeed = payload.VerticalSpeed;
+            _movement.IsGrounded = payload.IsGrounded;
+            _stamina.Energy = payload.Mp;
+            _stamina.IsExhausted = payload.IsExhausted;
+            transform.position = _movement.Position;
         }
 
-        public void Simulate(InputPayload payload, SOPlayer setting, float maxMp)
+        public void Simulate(InputPayload payload, float maxMp)
         {
-            float time = Time.fixedDeltaTime;
-            Vector2 move = Vector2.ClampMagnitude(payload.MoveInput, 1.0f);
-            bool moving = move != Vector2.zero;
-
-            _mp = Mathf.Min(_mp, maxMp);
-            if (_exhausted && _mp >= maxMp * setting.RecoveryRatio)
-            {
-                _exhausted = false;
-            }
-
-            bool jumping = payload.JumpInput && _state.IsGrounded && _mp >= setting.JumpCost;
-            if (jumping)
-            {
-                _mp -= setting.JumpCost;
-            }
-
-            bool running = moving && payload.RunInput && !_exhausted && _mp > 0.0f;
-            if (running)
-            {
-                _mp = Mathf.Max(0.0f, _mp - setting.RunCost * time);
-                if (_mp <= 0.0f)
-                {
-                    _exhausted = true;
-                }
-            }
-            else
-            {
-                _mp = Mathf.Min(maxMp, _mp + setting.RegenMp * time);
-            }
-
-            IsRunning = running;
-
-            float moveSpeed = !moving ? 0.0f : (running ? setting.RunSpeed : setting.WalkSpeed);
-            float jumpSpeed = jumping ? setting.JumpSpeed : 0.0f;
-            Vector3 direction = Quaternion.Euler(0.0f, payload.YawInput, 0.0f) * new Vector3(move.x, 0.0f, move.y);
-            _state.Position = transform.position;
-            _state = CharacterMotor.Step(_state, moveSpeed * time * direction, jumpSpeed, setting.Profile, time);
-            transform.position = _state.Position;
+            PlayerMovement.Step(_settings, ref _movement, ref _stamina, payload, maxMp, SimulationClock.DeltaTime, out bool isRunning);
+            IsRunning = isRunning;
+            transform.SetPositionAndRotation(_movement.Position, Quaternion.Euler(0f, payload.YawInput, 0f));
         }
     }
 }
