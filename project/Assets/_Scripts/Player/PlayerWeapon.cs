@@ -4,26 +4,6 @@ using UnityEngine.Animations.Rigging;
 
 namespace Project02.Player
 {
-    public enum FireStance : byte
-    {
-        Idle,
-        Walk,
-        Run,
-        Ads
-    }
-
-    public readonly struct Shot
-    {
-        public readonly FireStance Stance;
-        public readonly Vector2 Spread;
-
-        public Shot(FireStance stance, Vector2 spread)
-        {
-            Stance = stance;
-            Spread = spread;
-        }
-    }
-
     public class PlayerWeapon : MonoBehaviour
     {
         public WeaponView View => _view;
@@ -45,7 +25,7 @@ namespace Project02.Player
         private WeaponView _view;
         private WeaponState _state;
 
-        public bool TryFire(in InputPayload input, bool isRunning, ulong ownerId, float deltaTime, out Shot shot)
+        public bool TryFire(in InputPayload input, bool isRunning, ulong ownerId, float deltaTime, out ShotInfo shot)
         {
             return WeaponFire.TryFire(_settings, ref _state, input, isRunning, ownerId, deltaTime, out shot);
         }

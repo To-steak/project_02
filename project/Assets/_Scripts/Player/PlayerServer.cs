@@ -58,7 +58,7 @@ namespace Project02.Player
             input.AttackPressed |= _carryAttack;
             _carryJump = _carryAttack = false;
 
-            if (_controller.Step(input, deltaTime, out Shot shot))
+            if (_controller.Step(input, deltaTime, out ShotInfo shot))
             {
                 Fire(input, shot);
             }
@@ -139,7 +139,7 @@ namespace Project02.Player
             _latestTick = tick - 1;
         }
 
-        private void Fire(in InputPayload input, in Shot shot)
+        private void Fire(in InputPayload input, in ShotInfo shot)
         {
             PlayerWeapon weapon = _controller.PlayerWeapon;
             SOWeapon data = weapon.Settings;

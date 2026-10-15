@@ -14,7 +14,7 @@ namespace Project02.Client
             InputPayload input = controller.PlayerInput.Capture(tick, camera.Yaw, camera.Pitch, aimPoint);
             owner.InputHistory[tick & PlayerOwner.BUFFER_MASK] = input;
 
-            if (controller.Step(input, deltaTime, out Shot shot))
+            if (controller.Step(input, deltaTime, out ShotInfo shot))
             {
                 owner.View.OnFired(shot, aimPoint);
                 camera.AddRecoil(controller.PlayerWeapon.View.RollRecoil(shot.Stance));

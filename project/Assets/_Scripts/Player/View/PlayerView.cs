@@ -9,10 +9,10 @@ namespace Project02.Player
     {
         private readonly struct FireEvent
         {
-            public readonly Shot Shot;
+            public readonly ShotInfo Shot;
             public readonly Vector3 Point;
 
-            public FireEvent(in Shot shot, Vector3 point)
+            public FireEvent(in ShotInfo shot, Vector3 point)
             {
                 Shot = shot;
                 Point = point;
@@ -30,7 +30,7 @@ namespace Project02.Player
             _visual.Record(movement.Position);
         }
 
-        public void OnFired(in Shot shot, Vector3 point)
+        public void OnFired(in ShotInfo shot, Vector3 point)
         {
             _fired.Add(new FireEvent(shot, point));
         }

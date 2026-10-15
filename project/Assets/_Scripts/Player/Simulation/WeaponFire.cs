@@ -8,7 +8,7 @@ namespace Project02.Player
     {
         private const uint CRITICAL_SALT = 0x68E31DA4u;
 
-        public static bool TryFire(SOWeapon settings, ref WeaponState state, in InputPayload input, bool isRunning, ulong ownerId, float deltaTime, out Shot shot)
+        public static bool TryFire(SOWeapon settings, ref WeaponState state, in InputPayload input, bool isRunning, ulong ownerId, float deltaTime, out ShotInfo shot)
         {
             shot = default;
             if (settings == null)
@@ -36,7 +36,7 @@ namespace Project02.Player
             state.Bloom = Mathf.Min(state.Bloom + settings.SpreadPerShot, settings.MaxSpread);
             state.LastFireTick = input.Tick;
             state.NextFireTick = input.Tick + settings.RapidFireTick;
-            shot = new Shot(stance, spread);
+            shot = new ShotInfo(stance, spread);
             return true;
         }
 
