@@ -5,25 +5,24 @@ using Project02.Server;
 using Project02.Character;
 using Project02.Combat;
 using Project02.Navigation;
-using Project02.Service;
 
 namespace Project02.Enemy
 {
     public class EnemyController : NetworkBehaviour
     {
-        internal EnemyStateId CurrentStateId { get; private set; }
-        internal float StateTime;
-        internal ulong? TargetClientId;
-        internal Vector2 MoveInput;
-        internal float MoveSpeed;
-        internal SOEnemy Settings => _settings;
-        internal Vector3 Position => _movement.Position;
+        public EnemyStateId CurrentStateId { get; private set; }
+        public float StateTime;
+        public ulong? TargetClientId;
+        public Vector2 MoveInput;
+        public float MoveSpeed;
+        public SOEnemy Settings => _settings;
+        public Vector3 Position => _movement.Position;
+        public Health Health => _health;
 
         [SerializeField] private SOEnemy _settings;
         [SerializeField] private Health _health;
 
         private readonly List<int> _path = new();
-        private readonly List<ulong> _contributors = new();
 
         private MovementState _movement;
         private Quaternion _rotation;
@@ -60,7 +59,6 @@ namespace Project02.Enemy
             _movement = new MovementState { Position = transform.position };
             _rotation = transform.rotation;
             _timer = 0.0f;
-            _contributors.Clear();
 
             if (IsServer)
             {
@@ -69,22 +67,14 @@ namespace Project02.Enemy
                 StateTime = 0.0f;
                 _states[(int)EnemyStateId.General].Enter(this);
 
-                _health.Damaged += OnDamaged;
-                _health.Died += OnDied;
-
                 ServerSimulation.Instance.Register(this);
             }
         }
 
         public override void OnNetworkDespawn()
         {
-            // TODO: Object Pool에 반납할 때
             if (IsServer)
             {
-                _health.Damaged -= OnDamaged;
-                _health.Died -= OnDied;
-
-
                 ServerSimulation.Instance.Unregister(this);
             }
         }
@@ -154,36 +144,6 @@ namespace Project02.Enemy
             }
         }
 
-        private void OnDamaged(Health health, in DamageInfo info, int previous)
-        {
-            if (info.Source == DamageSource.Player && !_contributors.Contains(info.AttackerId))
-            {
-                _contributors.Add(info.AttackerId);
-            }
-
-            if (health.IsDead) return;              // 1. Die는 Died 이벤트에서
-            if (CurrentStateId == EnemyStateId.Defend) return; // 2. 피해만 감소, 경직 없음
-        }
-
-        private void OnDied(Health health)
-        {
-            ServerSimulation.Instance.EnqueueDeath(this);
-        }
-
-        internal void Die()
-        {
-            int count = _contributors.Count;
-            if (count > 0)
-            {
-                int exp = _settings.RewardExp / count;
-                int gold = _settings.RewardGold / count;
-
-                SessionService.Instance.AddReward(_contributors, exp, gold);
-            }
-
-            NetworkObject.Despawn();
-        }
-
         internal void ChangeState(EnemyStateId nextStateId)
         {
             _states[(int)CurrentStateId].Exit(this);
@@ -243,7 +203,7 @@ namespace Project02.Enemy
             Yaw = _rotation.eulerAngles.y,
             StateId = CurrentStateId,
         };
-        
+
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {

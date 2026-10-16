@@ -36,7 +36,7 @@ namespace Project02.Weapon
 
                 if (length > 0.0f && Physics.Raycast(projectile.Position, direction, out RaycastHit hit, length, _hitLayer, QueryTriggerInteraction.Ignore))
                 {
-                    if (hit.collider.TryGetComponent(out IDamageable target))
+                    if (hit.collider.TryGetComponent(out Health target))
                     {
                         int damage = projectile.GetDamage(traveled + hit.distance);
                         hits.Add(new HitInfo(target, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));

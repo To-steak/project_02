@@ -6,10 +6,12 @@ namespace Project02.Server
 {
     public sealed class ServerWorld
     {
+        // Singleton Components
         public ServerClock Clock;
         public readonly List<HitInfo> Hits = new();
-        public readonly List<EnemyController> Deaths = new();
-        
+        public readonly List<RewardInfo> Rewards = new();
+
+        // Entities
         public readonly List<PlayerServer> Players = new();
         public readonly List<EnemyController> Enemies = new();
     }

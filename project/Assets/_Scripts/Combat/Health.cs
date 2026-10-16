@@ -1,54 +1,36 @@
-using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Project02.Combat
 {
-    public class Health : NetworkBehaviour, IDamageable
+    public class Health : NetworkBehaviour
     {
         [SerializeField] private int _defaultMax = 100;
 
         public readonly NetworkVariable<int> Current = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public readonly NetworkVariable<int> Max = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        public float DamageReduction;
+        public readonly List<ulong> Contributors = new();
+
         public bool IsDead => Current.Value <= 0;
-        public float DamageReduction { get; set; }
-        public delegate void DamageHandler(Health health, in DamageInfo info, int previous);
-        public event DamageHandler Damaged;
-        public event Action<Health> Died;
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
-            {
-                return;
-            }
+            if (!IsServer) return;
 
+            // 초기화 (Authoring)
             DamageReduction = 0.0f;
+            Contributors.Clear();
             Max.Value = _defaultMax;
             Current.Value = _defaultMax;
         }
 
-        public void ApplyDamage(in DamageInfo info)
-        {
-            if (!IsServer || IsDead || info.Amount <= 0) return;
-
-            int amount = Mathf.RoundToInt(info.Amount * (1.0f - Mathf.Clamp01(DamageReduction)));
-            int previous = Current.Value;
-            Current.Value = Mathf.Max(0, previous - amount);
-            Damaged?.Invoke(this, info, previous);
-
-            if (Current.Value == 0)
-            {
-                Died?.Invoke(this);
-            }
-        }
-
+        // TODO(3단계): 레벨 → 스탯 반영 시스템으로 이동
         public void SetMax(int max)
         {
-            if (!IsServer)
-            {
-                return;
-            }
+            if (!IsServer) return;
 
             Max.Value = max;
             Current.Value = max;
