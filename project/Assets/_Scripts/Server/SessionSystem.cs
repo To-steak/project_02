@@ -7,7 +7,7 @@ namespace Project02.Server
     // 세션(Iceberg) ↔ 플레이어 엔티티 사이의 유일한 통로
     public static class SessionSystem
     {
-        // 스폰 시 1회 (ServerSimulation.Register에서). 스폰 메시지에 실리도록 즉시 처리
+        // 스폰 시 1회 (ServerLoop.Register에서). 스폰 메시지에 실리도록 즉시 처리
         public static void Join(PlayerServer player, SessionService session)
         {
             PlayerController controller = player.Controller;

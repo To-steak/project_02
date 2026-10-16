@@ -17,7 +17,7 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | Singleton Component | World에 하나뿐인 데이터 | 서버: `Clock`, `Hits`, `Projectiles`, `Rewards`, `Despawns`, `Outbox` / 클라: `Clock`, `Interp`, `Input`, `Camera` |
 | System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `DamageSystem`, `PredictSystem`, `EnemyViewSystem` |
 | Utility (읽기) | 입력 → 출력만 있는 함수. 어디서 불러도 됨 | `CharacterMotor`, `WeaponFire`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil` |
-| Utility (쓰기) | Component를 직접 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `EnemyFsm`, `EnemyNavigation` |
+| Utility (쓰기) | Component를 직접 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `PlayerEquipUtil`, `EnemyFsm`, `EnemyNavigation` |
 | Authoring | NGO 생명주기에서 엔티티를 World에 등록/해제하고 Component를 초기화하는 MonoBehaviour | `PlayerServer`, `PlayerOwner`, `PlayerRemote`, `EnemyController`, `EnemyRemote` |
 | Proxy | 엔진 기능(Animator, Cinemachine, IK, VFX, NetworkVariable)에 값을 전달만 하는 MonoBehaviour | `PlayerVisual`, `PlayerAnimation`, `PlayerCamera`, `WeaponView` |
 | Iceberg | ECS 밖의 큰 하위 시스템. 경계만 정하고 내부는 건드리지 않음 | NGO, `PathGrid`, UI, `SessionService`, `ProgressService`, `InputService` |
@@ -36,11 +36,12 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
    - Authoring이 NGO 생명주기에서 `XxxLoop.Instance.Register/Unregister`를 부른다
 4. **큰 부수효과는 큐에 쌓고 한 곳에서 처리한다.** 스폰, 디스폰, 데미지, 보상, RPC 전송.
    쌓는 쪽은 기록만 하고, 처리하는 System은 하나뿐이다.
-   - 서버 송신: `NetSendSystem`(RPC), `SnapshotSystem`(스냅샷) / 디스폰: `DespawnSystem` (Step 맨 끝)
+   - 서버 송신: `NetSendSystem`(RPC), `SnapshotSystem`(스냅샷) / 디스폰: `DespawnSystem` (`ServerLoop.Tick` 맨 끝)
    - 클라 송신: `PredictSystem`의 입력 전송 한 곳 (예측 틱마다 즉시. 별도 Outbox 없음)
 5. **쓰기 Utility는 호출처를 제한한다.** 같은 결과를 내야 하는 곳만 부른다.
    - `PlayerStepUtil.Step`: `ServerPlayerSystem`, `PredictSystem`, `ReconcileSystem` (같은 틱 → 같은 결과)
-   - 그 밖의 쓰기 Utility: 해당 System + Authoring의 스폰 초기화 1회
+   - `PlayerStepUtil.WriteTransform`: `ServerPlayerSystem`, `ClientLoop` (틱 루프가 끝난 뒤 1회)
+   - 그 밖의 쓰기 Utility: 해당 System + 스폰 초기화 1회 (Authoring의 `OnNetworkPostSpawn`, 또는 World 틱이 필요하면 Loop의 `Register`)
 6. **MonoBehaviour는 Loop, Authoring, Proxy 세 종류만.** 시뮬레이션 로직을 갖지 않는다.
 7. **`transform`은 시뮬레이션의 출력 전용.** 시뮬레이션은 `transform`을 읽지 않는다.
    위치의 정본은 `MovementState.Position`. transform 쓰기는 틱 루프가 끝난 뒤 한 번
@@ -88,7 +89,7 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | `*Loop` | Loop (진입점) |
 | `*Simulation` | 엔티티의 시뮬레이션 데이터 Component |
 | `*System` | System |
-| `*Util` | Utility |
+| `*Util` | Utility. 단, 도메인 이름이 더 분명한 경우는 예외 (`PlayerMovement`, `WeaponFire`, `EnemyFsm`, `EnemyNavigation`, `CharacterMotor`) |
 | `*State` (struct) | 롤백/스냅샷 대상 시뮬레이션 상태 |
 | `*Payload`, `*Bundle`, `*Snapshot`, `*Message` (struct) | 네트워크 메시지 |
 | `SO*` | ScriptableObject 전부 |
