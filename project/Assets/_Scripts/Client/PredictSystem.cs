@@ -18,6 +18,7 @@ namespace Project02.Client
             InputPayload input = new InputPayload
             {
                 Tick = tick,
+                ViewTick = world.Interp.HasTick ? world.Interp.RenderTick : -1.0f,
                 MoveInput = state.Move,
                 RunInput = state.Run,
                 JumpInput = state.JumpPressed,

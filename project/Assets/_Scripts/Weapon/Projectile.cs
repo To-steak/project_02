@@ -12,8 +12,9 @@ namespace Project02.Weapon
         public bool IsCritical;
         public float Range;             // 최대 사거리
         public AnimationCurve Falloff;  // 가로: 날아간 거리 ÷ Range, 세로: 피해 배율
+        public float Lag;
 
-        public Projectile(Vector3 origin, Vector3 velocity, float damage, ulong owner, bool isCritical, float range, AnimationCurve falloff)
+        public Projectile(Vector3 origin, Vector3 velocity, float damage, ulong owner, bool isCritical, float range, AnimationCurve falloff, float lag)
         {
             Origin = origin;
             Position = origin;
@@ -23,6 +24,7 @@ namespace Project02.Weapon
             IsCritical = isCritical;
             Range = range;
             Falloff = falloff;
+            Lag = lag;
         }
 
         public int GetDamage(float distance)

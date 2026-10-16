@@ -6,6 +6,8 @@ namespace Project02.Player
     public struct InputPayload : INetworkSerializable
     {
         public int Tick;
+        public float ViewTick;
+        
         public Vector2 MoveInput;
         public bool RunInput;
         public bool JumpInput;
@@ -19,7 +21,8 @@ namespace Project02.Player
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref Tick);
-            
+            serializer.SerializeValue(ref ViewTick);
+
             serializer.SerializeValue(ref MoveInput);
             serializer.SerializeValue(ref RunInput);
             serializer.SerializeValue(ref JumpInput);

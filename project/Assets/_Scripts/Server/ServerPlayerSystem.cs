@@ -9,8 +9,9 @@ namespace Project02.Server
     public static class ServerPlayerSystem
     {
         private const int START_BUFFER = 2;
+        private const float MAX_LAG_TICKS = 25.0f;
 
-        public static void Tick(ServerWorld world, ProjectileService projectiles, float deltaTime)
+        public static void Tick(ServerWorld world, float deltaTime)
         {
             foreach (PlayerServer player in world.Players)
             {
@@ -35,7 +36,7 @@ namespace Project02.Server
                 if (PlayerStepUtil.Step(sim, input, player.OwnerClientId, deltaTime, controller.transform, out ShotInfo shot))
                 {
                     // 5. 발사: 투사체 생성 + 다른 클라 연출용 메시지
-                    projectiles.Spawn(CreateProjectile(controller, player.OwnerClientId, input, shot));
+                    world.Projectiles.Add(CreateProjectile(controller, player.OwnerClientId, input, shot, world.Clock.Tick));
                     world.Outbox.Fires.Add(new FireMessage(player, input.AimPoint, shot.Spread));
                 }
 
@@ -123,7 +124,7 @@ namespace Project02.Server
             queue.LatestTick = tick - 1;
         }
 
-        private static Projectile CreateProjectile(PlayerController controller, ulong ownerId, in InputPayload input, in ShotInfo shot)
+        private static Projectile CreateProjectile(PlayerController controller, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)
         {
             SOWeapon data = controller.PlayerWeapon.Settings;
             SOBullet bullet = data.Bullet;
@@ -134,7 +135,9 @@ namespace Project02.Server
             float damage = bullet.Damage * data.WeaponCoefficient;
             bool isCritical = WeaponFire.RollCritical(ownerId, input.Tick, data.CriticalChance);
 
-            return new Projectile(origin, direction * bullet.Velocity, damage, ownerId, isCritical, data.Range, data.Falloff);
+            float lag = input.ViewTick < 0.0f ? 1.0f : Mathf.Clamp(serverTick - input.ViewTick, 1.0f, MAX_LAG_TICKS);
+
+            return new Projectile(origin, direction * bullet.Velocity, damage, ownerId, isCritical, data.Range, data.Falloff, lag);
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Project02.Enemy
     public class EnemyController : NetworkBehaviour
     {
         public readonly EnemySimulation Simulation = new();
+        public readonly RewindTarget Rewind = new();
         public Health Health => _health;
 
         [SerializeField] private SOEnemy _settings;
@@ -43,6 +44,10 @@ namespace Project02.Enemy
             sim.WanderTimer = 0.0f;
             EnemyFsm.Reset(sim);
 
+            Rewind.History.Clear();
+            Rewind.Radius = _settings.Profile.Radius;
+            Rewind.Height = _settings.Profile.Height;
+            
             ServerSimulation.Instance.Register(this);
         }
 
