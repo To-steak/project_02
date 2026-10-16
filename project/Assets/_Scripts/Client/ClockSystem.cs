@@ -5,7 +5,8 @@ namespace Project02.Client
 {
     public static class ClockSystem
     {
-        private const float TARGET_BUFFER = 3.0f;
+        public const float TARGET_BUFFER = 3.0f;
+        
         private const float MAX_DILATION = 0.05f;
         private const float DILATION_GAIN = 0.025f;
         private const int MAX_TICKS_PER_FRAME = 5;

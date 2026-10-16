@@ -75,9 +75,11 @@ namespace Project02.Client
 
             // 2. 카메라
             CameraSystem.Update(world, input.MouseSensitivity, frameTime);
-
-            // 3. 리컨사일
-            ReconcileSystem.Process(world);
+            
+            // 3. 리컨사일 (뒤처졌으면 시계 재동기화)
+            NetworkManager network = NetworkManager.Singleton;
+            float rttMs = network.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId);
+            ReconcileSystem.Process(world, rttMs / 1000.0f / SimulationClock.DeltaTime);
 
             // 4~5. 예측 시계 → 예측
             int ticks = ClockSystem.Advance(ref world.Clock, frameTime);

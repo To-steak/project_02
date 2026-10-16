@@ -150,3 +150,4 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
    - 클라에서 적 처치 반복 후 `ServerLoop`의 `Enemies` 수가 0 (클라는 서버 World에 등록하지 않음)
    - 진행도는 세계 단위 `.sav` 하나에 저장한다. 싱글은 슬롯마다, 전용 서버는 하나. 스키마는 같다.
    - 저장 파일은 여는 쪽(ServerLauncher / StartSinglePlayer)이 명시적으로 연다. 읽기 실패한 파일은 덮어쓰지 않는다.
+   - 클라 일시정지(또는 큰 히치) 후 재개: `clock resync` 1회 + 재조정 최대 1회, 이후 입력 정상 반영, buffer가 목표(3) 근처로 복귀

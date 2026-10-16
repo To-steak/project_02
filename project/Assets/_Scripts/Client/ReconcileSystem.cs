@@ -11,7 +11,7 @@ namespace Project02.Client
         private const float BLOOM_THRESHOLD = 0.1f;
         private const float BUFFER_SMOOTHING = 0.1f;
 
-        public static void Process(ClientWorld world)
+        public static void Process(ClientWorld world, float rttTicks)
         {
             PlayerOwner owner = world.Local;
             if (!owner.HasPendingState) return;
@@ -20,9 +20,16 @@ namespace Project02.Client
             owner.HasPendingState = false;
 
             ref ClientClock clock = ref world.Clock;
+            PlayerSimulationState server = payload.State;
+
+            // 0. 뒤처짐 복구: 서버가 이미 우리 현재 틱 이후까지 (복제 입력으로) 소비함 → 지금부터 보내는 입력은 서버에서 '과거'라 버려진다. 시계 팽창(최대 5%)으로는 못 따라잡으니 점프
+            if (server.Tick >= clock.Tick)
+            {
+                Resync(owner, ref clock, server, rttTicks);
+                return;
+            }
             clock.SmoothedBuffer = Mathf.Lerp(clock.SmoothedBuffer, payload.InputBuffer, BUFFER_SMOOTHING);
 
-            PlayerSimulationState server = payload.State;
             if (!owner.StateHistory.TryGetValue(server.Tick, out PlayerSimulationState predicted)) return;
             if (!IsMispredicted(predicted, server)) return;
 
@@ -53,6 +60,23 @@ namespace Project02.Client
                           || predicted.Weapon.NextFireTick != server.Weapon.NextFireTick
                           || Mathf.Abs(predicted.Weapon.Bloom - server.Weapon.Bloom) >= BLOOM_THRESHOLD;
             return position || energy || weapon;
+        }
+
+        // 서버 상태에서 다시 시작하고, 입력이 서버에 '미래'로 도착하도록 RTT + 목표 버퍼만큼 앞으로
+        private static void Resync(PlayerOwner owner, ref ClientClock clock, in PlayerSimulationState server, float rttTicks)
+        {
+            int lead = Mathf.CeilToInt(rttTicks + ClockSystem.TARGET_BUFFER) + 1;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning($"clock resync: client {clock.Tick} → {server.Tick + lead} (server {server.Tick}, rtt {rttTicks:F1} ticks)");
+#endif
+            clock.Tick = server.Tick + lead;
+            clock.Accumulator = 0.0f;
+            clock.SmoothedBuffer = ClockSystem.TARGET_BUFFER;
+
+            PlayerStepUtil.Restore(owner.Controller.Simulation, server);
+            owner.InputHistory.Clear();   // 건너뛴 구간의 기록은 의미 없음
+            owner.StateHistory.Clear();
         }
     }
 }
