@@ -37,11 +37,10 @@ namespace Project02.Server
                 {
                     // 5. 발사: 투사체 생성 + 다른 클라 연출용 메시지
                     world.Projectiles.Add(CreateProjectile(controller, player.OwnerClientId, input, shot, world.Clock.Tick));
-                    world.Outbox.Fires.Add(new FireMessage(player, input.AimPoint, shot.Spread));
+                    world.Outbox.Fires.Add(new FireMessage(player, world.Clock.Tick, input.AimPoint, shot.Spread));
                 }
 
                 // 6. 결과 기록 (송신은 NetSendSystem)
-                controller.Pitch.Value = input.PitchInput;
                 StatePayload payload = new StatePayload
                 {
                     State = sim.State,
@@ -62,8 +61,7 @@ namespace Project02.Server
                     // 이미 지나간 틱: 복제로 때운 틱에 진짜 입력이 늦게 왔으면 눌림만 살린다
                     if (payload.Tick <= queue.ConsumedTick)
                     {
-                        bool lateForDuplicatedTick = !queue.Buffer.TryGetValue(payload.Tick, out _)
-                                                     && payload.Tick > queue.ConsumedTick - InputQueue.CAPACITY;
+                        bool lateForDuplicatedTick = !queue.Buffer.TryGetValue(payload.Tick, out _) && payload.Tick > queue.ConsumedTick - InputQueue.CAPACITY;
                         if (lateForDuplicatedTick)
                         {
                             queue.CarryJump |= payload.JumpInput;

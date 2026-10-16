@@ -10,6 +10,9 @@ namespace Project02.Player
             PlayerMovement.Step(sim.Movement, ref sim.State.Movement, ref sim.State.Stamina, input, sim.MaxEnergy, deltaTime, out bool isRunning);
             sim.IsRunning = isRunning;
             sim.State.Tick = input.Tick;
+            sim.Yaw = input.YawInput;
+            sim.Pitch = input.PitchInput;
+            sim.Move = input.MoveInput;
 
             bool fired = WeaponFire.TryFire(sim.Weapon, ref sim.State.Weapon, input, isRunning, ownerId, deltaTime, out shot);
 

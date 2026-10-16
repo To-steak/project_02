@@ -57,6 +57,8 @@ namespace Project02.Client
             }
         }
 
+        public void Register(PlayerRemote player) => _world.Players[player.NetworkObjectId] = player;
+        public void Unregister(PlayerRemote player) => _world.Players.Remove(player.NetworkObjectId);
         public void Register(EnemyRemote enemy) => _world.Enemies[enemy.NetworkObjectId] = enemy;
         public void Unregister(EnemyRemote enemy) => _world.Enemies.Remove(enemy.NetworkObjectId);
 
@@ -93,9 +95,14 @@ namespace Project02.Client
 
             // 5. 원격 엔티티 보간 (로컬 플레이어 유무와 무관)
             InterpolationSystem.Advance(ref world.Interp, frameTime);
+            float renderTick = world.Interp.RenderTick;
             foreach (EnemyRemote enemy in world.Enemies.Values)
             {
-                InterpolationSystem.Present(enemy, world.Interp.RenderTick);
+                InterpolationSystem.Present(enemy, renderTick);
+            }
+            foreach (PlayerRemote player in world.Players.Values)
+            {
+                InterpolationSystem.Present(player, renderTick, frameTime);
             }
 
             // 6. 로컬 플레이어 연출
@@ -113,21 +120,31 @@ namespace Project02.Client
         {
             NetworkManager.Singleton.CustomMessagingManager?.UnregisterNamedMessageHandler(SnapshotSystem.MESSAGE);
             _world.Enemies.Clear();
+            _world.Players.Clear();
         }
 
         private void OnSnapshot(ulong senderId, FastBufferReader reader)
         {
             reader.ReadValueSafe(out int tick);
-            reader.ReadValueSafe(out ushort count);
-
             InterpolationSystem.Receive(ref _world.Interp, tick);
 
-            for (int i = 0; i < count; i++)
+            reader.ReadValueSafe(out ushort enemyCount);
+            for (int i = 0; i < enemyCount; i++)
             {
                 reader.ReadNetworkSerializable(out EnemySnapshot snapshot);
                 if (_world.Enemies.TryGetValue(snapshot.ObjectId, out EnemyRemote enemy))
                 {
                     enemy.Snapshots.SetValue(tick, snapshot);
+                }
+            }
+
+            reader.ReadValueSafe(out ushort playerCount);
+            for (int i = 0; i < playerCount; i++)
+            {
+                reader.ReadNetworkSerializable(out PlayerSnapshot snapshot);
+                if (_world.Players.TryGetValue(snapshot.ObjectId, out PlayerRemote player))
+                {
+                    player.Snapshots.SetValue(tick, snapshot);
                 }
             }
         }

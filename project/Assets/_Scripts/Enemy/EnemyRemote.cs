@@ -31,10 +31,5 @@ namespace Project02.Enemy
 
             ClientSimulation.Instance.Unregister(this);
         }
-
-        public void Record(int tick, in EnemySnapshot snapshot)
-        {
-            Snapshots.SetValue(tick, snapshot);
-        }
     }
 }

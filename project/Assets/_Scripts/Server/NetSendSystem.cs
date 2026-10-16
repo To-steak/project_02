@@ -15,7 +15,7 @@ namespace Project02.Server
             foreach (FireMessage message in outbox.Fires)
             {
                 if (message.Shooter == null) continue;
-                message.Shooter.Controller.PlayerRemote.FireRPC(message.AimPoint, message.Spread);
+                message.Shooter.Controller.PlayerRemote.FireRPC(message.Tick, message.AimPoint, message.Spread);
             }
 
             outbox.States.Clear();

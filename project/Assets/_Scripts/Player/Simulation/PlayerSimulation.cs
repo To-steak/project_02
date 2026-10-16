@@ -1,4 +1,5 @@
 using Project02.Weapon;
+using UnityEngine;
 
 namespace Project02.Player
 {
@@ -15,5 +16,10 @@ namespace Project02.Player
         // 파생값 / 레벨 스탯
         public float MaxEnergy;
         public bool IsRunning;           // 마지막 Step 결과. 연출용
+
+        // 마지막 Step의 입력 (스냅샷·연출용. 리컨사일 대상 아님)
+        public float Yaw;
+        public float Pitch;
+        public Vector2 Move;
     }
 }

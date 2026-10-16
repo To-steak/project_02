@@ -1,48 +1,48 @@
+using System.Collections.Generic;
+using Project02.Client;
+using Project02.Core;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Project02.Player
 {
+    // Authoring + RPC 프록시: 원격 플레이어 등록, 스냅샷/발사 기록. 표시는 InterpolationSystem
     public class PlayerRemote : NetworkBehaviour
     {
-        [SerializeField] private PlayerController _controller;
+        public const int BUFFER_SIZE = 32;   // 32틱 = 640ms
 
-        private float _previous;
-        private float _current;
+        public PlayerController Controller => _controller;
+        public readonly TickBuffer<PlayerSnapshot> Snapshots = new(BUFFER_SIZE);
+        public readonly List<RemoteFire> Fires = new();
+
+        [SerializeField] private PlayerController _controller;
 
         public override void OnNetworkSpawn()
         {
             enabled = IsClient && !IsOwner;
-            if (!enabled)
+            if (!enabled) return;
+
+            Snapshots.Clear();
+            Fires.Clear();
+            ClientSimulation.Instance.Register(this);
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (!enabled) return;
+
+            if (ClientSimulation.Instance != null)
             {
-                return;
+                ClientSimulation.Instance.Unregister(this);
             }
-
-            _previous = _current = _controller.Pitch.Value;
         }
 
-        private void Update()
-        {
-            float pitch = Mathf.Lerp(_previous, _current, Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime));
-            _controller.PlayerVisual.ApplyPitch(pitch);
-            _controller.PlayerVisual.AimAtPitch(pitch);
-        }
-
-        private void FixedUpdate()
-        {
-            _previous = _current;
-            _current = _controller.Pitch.Value;
-        }
-
+        // NGO가 아무 때나 부른다 → 기록만 (deferment)
         [Rpc(SendTo.ClientsAndHost)]
-        public void FireRPC(Vector3 aimPoint, Vector2 spread)
+        public void FireRPC(int tick, Vector3 aimPoint, Vector2 spread)
         {
-            if (IsOwner)
-            {
-                return;
-            }
-
-            _controller.PlayerWeapon.View.SpawnBullet(aimPoint, spread);
+            if (!enabled) return;   // 소유자는 예측으로 이미 재생함
+            Fires.Add(new RemoteFire(tick, aimPoint, spread));
         }
     }
 }
