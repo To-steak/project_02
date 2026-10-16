@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Project02.Player
 {
-    // Authoring + RPC 프록시: 원격 플레이어 등록, 스냅샷/발사 기록. 표시는 InterpolationSystem
+    // Authoring + RPC 프록시: 원격 플레이어 등록, 스냅샷/발사 기록. 표시는 RemotePlayerViewSystem
     public class PlayerRemote : NetworkBehaviour
     {
         public const int BUFFER_SIZE = 32;   // 32틱 = 640ms

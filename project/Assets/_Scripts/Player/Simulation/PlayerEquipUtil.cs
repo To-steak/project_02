@@ -5,8 +5,7 @@ namespace Project02.Player
     {
         public static void Apply(PlayerSimulation sim, int id)
         {
-            sim.State.Weapon = new WeaponState { EquippedId = id };   // 무기를 바꾸면 반동·연사 상태 초기화
-            sim.Weapon = sim.Catalog.Get(id);
+            sim.State.Weapon = new WeaponState { EquippedId = id };   // 무기를 바꾸면 반동·연사 상태 초기화. 무기 참조는 따라온다
         }
     }
 }

@@ -13,14 +13,16 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | World | 한 쪽(서버/클라)의 모든 상태를 가진 데이터 class | `ServerWorld`, `ClientWorld` |
 | Loop | World를 소유하고 System을 정해진 순서로 돌리는 진입점 MonoBehaviour | `ServerLoop`, `ClientLoop` |
 | Entity | NetworkObject 하나. 식별자는 `NetworkObjectId` (플레이어는 `OwnerClientId`도 사용) | 플레이어, 적 |
-| Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `Health`, `InputQueue`, `RewindTarget` |
+| Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `InputQueue`, `RewindTarget`, `Health`(Component + 동기화 Proxy + 스폰 초기화 겸용) |
 | Singleton Component | World에 하나뿐인 데이터 | 서버: `Clock`, `Hits`, `Projectiles`, `Rewards`, `Despawns`, `Outbox` / 클라: `Clock`, `Interp`, `Input`, `Camera` |
 | System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `DamageSystem`, `PredictSystem`, `EnemyViewSystem` |
-| Utility (읽기) | 입력 → 출력만 있는 함수. 어디서 불러도 됨 | `CharacterMotor`, `WeaponFire`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil` |
-| Utility (쓰기) | Component를 직접 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `PlayerEquipUtil`, `EnemyFsm`, `EnemyNavigation` |
+| Utility (읽기) | 숨은 상태 없이 인자로 받은 것만 다루는 함수. `ref`로 받은 값만 바꾸는 것도 포함. 어디서 불러도 됨 | `CharacterMotor`, `PlayerMovement`, `WeaponFire`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil` |
+| Utility (쓰기) | Component 객체를 직접 받아 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `PlayerEquipUtil`, `EnemyFsm`, `EnemyNavigation` |
 | Authoring | NGO 생명주기에서 엔티티를 World에 등록/해제하고 Component를 초기화하는 MonoBehaviour | `PlayerServer`, `PlayerOwner`, `PlayerRemote`, `EnemyController`, `EnemyRemote` |
 | Proxy | 엔진 기능(Animator, Cinemachine, IK, VFX, NetworkVariable)에 값을 전달만 하는 MonoBehaviour | `PlayerVisual`, `PlayerAnimation`, `PlayerCamera`, `WeaponView` |
 | Iceberg | ECS 밖의 큰 하위 시스템. 경계만 정하고 내부는 건드리지 않음 | NGO, `PathGrid`, UI, `SessionService`, `ProgressService`, `InputService` |
+
+- 겸용 클래스는 데이터 필드 + NGO 생명주기 초기화 + NetworkVariable까지만 허용한다. 로직 메서드가 생기면 System으로 뺀다.
 
 ---
 
@@ -128,8 +130,7 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 - 입력 장치: `InputService`, `PlayerAction`
 - 길찾기: `PathGrid`, `PathFinder`
 - 물리 유틸: `CharacterPhysics`, `CharacterMotor`
-- 접속/부팅/저장: `ConnectionService`, `SessionService`, `ProgressService`, `ServerLauncher`, `Bootstrapper`
-  → `SessionService`는 `SessionSystem` 한 곳에서만 부른다 (Loop가 인자로 넘김)
+- 접속/부팅/저장: `ConnectionService`, `SessionService`, `ProgressService`, `ServerLauncher`, `Bootstrapper` → `SessionService`는 `SessionSystem` 한 곳에서만 부른다 (Loop가 인자로 넘김)
 - 연출: `ProjectileVisualService` → `WeaponView`(Proxy)에서만 부른다
 
 ---
@@ -137,12 +138,13 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 ## 7. 과도기 운영
 
 - 한 번에 한 경로만 바꾼다. 한 단계가 끝나기 전에 다음 단계를 시작하지 않는다.
-- 옛 코드는 바로 지우지 않고 `[System.Obsolete]`를 붙인다. 컴파일러 경고가 남은 작업 목록이다.
-  해당 단계가 끝나면 삭제한다.
+- 옛 코드는 바로 지우지 않고 `[System.Obsolete]`를 붙인다. 컴파일러 경고가 남은 작업 목록이다. 해당 단계가 끝나면 삭제한다.
 - 단계마다 회귀 확인을 같은 조건으로 한다.
-  - 지연 0: 리컨사일 0회 (레벨업 순간의 1회는 의도된 것이라 제외)
-  - 지연 200ms + 손실 10%: 1분간 리컨사일 횟수를 단계 전후로 비교
-  - 적을 쏘면 피해가 들어가고, 죽으면 경험치가 오른다. 벽 뒤 적은 안 맞는다
-  - 지연 200ms에서 옆으로 움직이는 적의 몸 중앙을 겨눠 쏘면 맞는다 (지연 보상)
-  - 클라 2개: 상대 캐릭터와 발사 연출이 부드럽고, 몸보다 총알이 먼저 나가지 않는다
-  - 적 35마리 이상: 적과 원격 플레이어 보간이 끊기지 않는다 (스냅샷 분할)
+   - 지연 0: 리컨사일 0회 (레벨업 순간의 1회는 의도된 것이라 제외)
+   - 지연 200ms + 손실 10%: 1분간 리컨사일 횟수를 단계 전후로 비교
+   - 적을 쏘면 피해가 들어가고, 죽으면 경험치가 오른다. 벽 뒤 적은 안 맞는다
+   - 지연 200ms에서 옆으로 움직이는 적의 몸 중앙을 겨눠 쏘면 맞는다 (지연 보상)
+   - 클라 2개: 상대 캐릭터와 발사 연출이 부드럽고, 몸보다 총알이 먼저 나가지 않는다
+   - 적 35마리 이상: 적과 원격 플레이어 보간이 끊기지 않는다 (스냅샷 분할)
+   - 무기 교체(`EquippedWeapon` 변경): 소유자 리컨사일 정확히 1회, 이후 새 연사 간격·줌 적용, 추가 리컨사일 없음
+   - 클라에서 적 처치 반복 후 `ServerLoop`의 `Enemies` 수가 0 (클라는 서버 World에 등록하지 않음)

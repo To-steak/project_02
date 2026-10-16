@@ -31,6 +31,8 @@ namespace Project02.Enemy
 
         protected override void OnNetworkPostSpawn()
         {
+            if (!IsServer) return;
+            
             EnemySimulation sim = Simulation;
             sim.Movement = new MovementState { Position = transform.position };
             sim.Rotation = transform.rotation;
