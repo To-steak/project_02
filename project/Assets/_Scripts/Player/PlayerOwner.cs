@@ -9,6 +9,7 @@ namespace Project02.Player
     {
         public PlayerView View => _view;
         public PlayerController Controller => _controller;
+        public readonly PlayerSimulation Simulation = new();
 
         public readonly TickBuffer<InputPayload> InputHistory = new(BUFFER_SIZE);
         public readonly TickBuffer<PlayerSimulationState> StateHistory = new(BUFFER_SIZE);
@@ -37,6 +38,14 @@ namespace Project02.Player
             _controller.PlayerVisual.Initialize(transform.position, _controller.PlayerSettings);
 
             ClientLoop.Instance.Register(this);
+        }
+
+        protected override void OnNetworkPostSpawn()
+        {
+            if (!enabled) return;   // 소유자만
+
+            // 스폰 시 1회 (Authoring). 서버 사본과 같은 값으로 시작해야 첫 예측이 맞는다
+            PlayerSpawnUtil.Initialize(Simulation, _controller);
         }
 
         public override void OnNetworkDespawn()
@@ -81,7 +90,7 @@ namespace Project02.Player
             GUI.Label(new Rect(xPos, 30, width, height), $"reconcile: {DEBUG_ReconcileCount}", style);
             GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
             GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
-            GUI.Label(new Rect(xPos, 110, width, height), $"energy: {_controller.Simulation.State.Stamina.Energy:F1}", style);
+            GUI.Label(new Rect(xPos, 110, width, height), $"energy: {Simulation.State.Stamina.Energy:F1}", style);
         }
 #endif
     }

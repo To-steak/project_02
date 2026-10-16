@@ -9,10 +9,9 @@ namespace Project02.Server
         {
             foreach (PlayerServer player in world.Players)
             {
-                PlayerController controller = player.Controller;
-                PlayerSimulation sim = controller.Simulation;
+                PlayerSimulation sim = player.Simulation;
 
-                int desired = controller.EquippedWeapon.Value;
+                int desired = player.Controller.EquippedWeapon.Value;
                 if (sim.State.Weapon.EquippedId == desired) continue;
 
                 PlayerEquipUtil.Apply(sim, desired);

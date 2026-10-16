@@ -62,7 +62,7 @@ namespace Project02.Server
             for (int i = 0; i < playerCount; i++)
             {
                 PlayerServer player = world.Players[playerIndex + i];
-                PlayerSimulation sim = player.Controller.Simulation;
+                PlayerSimulation sim = player.Simulation;
                 PlayerSnapshot snapshot = new PlayerSnapshot
                 {
                     ObjectId = player.NetworkObjectId,

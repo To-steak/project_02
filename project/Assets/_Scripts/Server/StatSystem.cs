@@ -15,7 +15,9 @@ namespace Project02.Server
                 int level = progression.Level.Value;
                 if (progression.AppliedLevel == level) continue;
 
-                PlayerStatUtil.Apply(controller, progression.Table.Get(level), isServer: true);
+                SOLevelTable.Row stats = progression.Table.Get(level);
+                PlayerStatUtil.ApplyStamina(player.Simulation, stats);
+                PlayerStatUtil.ApplyHealth(controller.Health, stats);
                 progression.AppliedLevel = level;
             }
         }

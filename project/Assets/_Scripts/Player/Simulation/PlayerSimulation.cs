@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace Project02.Player
 {
-    // 컴포넌트(데이터): 예측과 서버가 공유하는 플레이어 시뮬레이션 상태. 로직 없음
+    // 컴포넌트(데이터): 플레이어 시뮬레이션 상태. World마다 하나씩 소유한다
+    // PlayerServer.Simulation = 서버 권한 / PlayerOwner.Simulation = 예측 사본
     public sealed class PlayerSimulation
     {
         // 설정 (Authoring이 채운다)

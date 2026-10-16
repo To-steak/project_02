@@ -31,11 +31,16 @@ namespace Project02.Server
 
                 // 4. 시뮬레이션 (예측과 같은 함수)
                 PlayerController controller = player.Controller;
-                PlayerSimulation sim = controller.Simulation;
+                PlayerSimulation sim = player.Simulation;
                 if (PlayerStepUtil.Step(sim, input, player.OwnerClientId, deltaTime, out ShotInfo shot))
                 {
-                    world.Projectiles.Add(CreateProjectile(controller, player.OwnerClientId, input, shot, world.Clock.Tick));
+                    world.Projectiles.Add(CreateProjectile(controller, sim, player.OwnerClientId, input, shot, world.Clock.Tick));
                     world.Outbox.Fires.Add(new FireMessage(player, world.Clock.Tick, input.AimPoint, shot.Spread));
+                }
+
+                if (world.WriteTransforms)
+                {
+                    PlayerStepUtil.WriteTransform(controller.transform, sim);
                 }
 
                 PlayerStepUtil.WriteTransform(controller.transform, sim);
@@ -122,12 +127,12 @@ namespace Project02.Server
             queue.LatestTick = tick - 1;
         }
 
-        private static Projectile CreateProjectile(PlayerController controller, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)
+        private static Projectile CreateProjectile(PlayerController controller, PlayerSimulation sim, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)
         {
-            SOWeapon data = controller.Simulation.Weapon;   // 연출용 PlayerWeapon이 아니라 시뮬레이션 상태
+            SOWeapon data = sim.Weapon;
             SOBullet bullet = data.Bullet;
 
-            MovementState movement = controller.Simulation.State.Movement;
+            MovementState movement = sim.State.Movement;
             Vector3 origin = WeaponFire.GetOrigin(movement, input.YawInput, controller.PlayerSettings.FireOriginOffset);
             Vector3 direction = PlayerWeapon.GetDirection(origin, input.AimPoint, shot.Spread);
             float damage = bullet.Damage * data.WeaponCoefficient;

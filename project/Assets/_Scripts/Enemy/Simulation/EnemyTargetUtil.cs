@@ -19,7 +19,7 @@ namespace Project02.Enemy
                 PlayerController controller = player.Controller;
                 if (controller.Health.IsDead) return false;
 
-                position = controller.Simulation.State.Movement.Position;
+                position = player.Simulation.State.Movement.Position;
                 return true;
             }
 
@@ -37,7 +37,7 @@ namespace Project02.Enemy
                 PlayerController controller = player.Controller;
                 if (controller.Health.IsDead) continue;
 
-                Vector3 offset = controller.Simulation.State.Movement.Position - origin;
+                Vector3 offset = player.Simulation.State.Movement.Position - origin;
                 offset.y = 0.0f;
                 float sqr = offset.sqrMagnitude;
                 if (sqr <= best)

@@ -7,7 +7,7 @@ namespace Project02.Client
     {
         public static void Present(ClientWorld world, float frameTime)
         {
-            PlayerSimulation sim = world.Local.Controller.Simulation;
+            PlayerSimulation sim = world.Local.Simulation;
             ref CameraState camera = ref world.Camera;
 
             float alpha = Mathf.Clamp01(world.Clock.Accumulator / world.Clock.Interval);

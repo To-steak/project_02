@@ -9,7 +9,7 @@ namespace Project02.Client
         {
             PlayerOwner owner = world.Local;
             PlayerController controller = owner.Controller;
-            PlayerSimulation sim = controller.Simulation;
+            PlayerSimulation sim = owner.Simulation;
             int tick = world.Clock.Tick;
 
             ref InputState state = ref world.Input;

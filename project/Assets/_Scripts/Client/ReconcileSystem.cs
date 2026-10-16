@@ -38,7 +38,7 @@ namespace Project02.Client
             Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} max {predicted.Stamina.MaxEnergy:F0}/{server.Stamina.MaxEnergy:F0} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
 #endif
             PlayerController controller = owner.Controller;
-            PlayerSimulation sim = controller.Simulation;
+            PlayerSimulation sim = owner.Simulation;
             PlayerStepUtil.Restore(sim, server);
 
             for (int tick = server.Tick + 1; tick < clock.Tick; tick++)
@@ -74,7 +74,7 @@ namespace Project02.Client
             clock.Accumulator = 0.0f;
             clock.SmoothedBuffer = ClockSystem.TARGET_BUFFER;
 
-            PlayerStepUtil.Restore(owner.Controller.Simulation, server);
+            PlayerStepUtil.Restore(owner.Simulation, server);
             owner.InputHistory.Clear();   // 건너뛴 구간의 기록은 의미 없음
             owner.StateHistory.Clear();
         }

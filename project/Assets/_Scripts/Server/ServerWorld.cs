@@ -14,6 +14,7 @@ namespace Project02.Server
         public readonly List<HitInfo> Hits = new();
         public readonly List<RewardInfo> Rewards = new();
         public readonly Outbox Outbox = new();
+        public bool WriteTransforms;   // 이 프로세스에 클라 World가 없을 때만 true (전용 서버 디버그용)
 
         // Entities
         public readonly List<PlayerServer> Players = new();

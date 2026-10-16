@@ -38,6 +38,9 @@ namespace Project02.Server
             NetworkManager network = NetworkManager.Singleton;
             if (network == null || !network.IsServer) return;
 
+            // 클라 World가 같은 프로세스에 있으면 transform은 클라 표시가 쓴다 (호스트)
+            _world.WriteTransforms = !network.IsClient;
+            
             ref ServerClock clock = ref _world.Clock;
             clock.Accumulator += Time.deltaTime;
 

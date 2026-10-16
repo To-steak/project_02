@@ -22,8 +22,11 @@ namespace Project02.Server
                 // 2. 이동
                 EnemyMovement.Step(sim.Settings, ref sim.Movement, ref sim.Rotation, sim.MoveInput, sim.MoveSpeed, deltaTime);
 
-                // 3. 출력만 (규칙 7)
-                enemy.transform.SetPositionAndRotation(sim.Movement.Position, sim.Rotation);
+                // 3. 출력 (규칙 7): 클라가 없는 프로세스에서만. 클라가 있으면 EnemyViewSystem이 쓴다
+                if (world.WriteTransforms)
+                {
+                    enemy.transform.SetPositionAndRotation(sim.Movement.Position, sim.Rotation);
+                }
             }
         }
     }

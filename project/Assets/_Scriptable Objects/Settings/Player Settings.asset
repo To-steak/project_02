@@ -18,7 +18,7 @@ MonoBehaviour:
   MaxPitch: 40
   AimLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 320
   AimDistance: 1000
   AdsCameraDistance: 2
   AdsVerticalArmLength: 0.74
