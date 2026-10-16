@@ -18,7 +18,11 @@ namespace Project02.Server
         private void Awake() => Instance = this;
         private void OnDestroy() { if (Instance == this) Instance = null; }
 
-        public void Register(PlayerServer player) => _world.Players.Add(player);
+        public void Register(PlayerServer player)
+        {
+            _world.Players.Add(player);
+            SessionSystem.Join(player, SessionService.Instance);
+        }
         public void Register(EnemyController enemy) => _world.Enemies.Add(enemy);
         public void Unregister(PlayerServer player) => _world.Players.Remove(player);
         public void Unregister(EnemyController enemy) => _world.Enemies.Remove(enemy);
@@ -64,8 +68,8 @@ namespace Project02.Server
             // 8. 사망: IsDead인 적 → world.Rewards + Despawn
             DeathSystem.Process(world);
 
-            // 9. 보상: Rewards → SessionService
-            RewardSystem.Process(world.Rewards, SessionService.Instance);
+            // 9. 세션: Rewards → SessionService → 레벨
+            SessionSystem.Process(world, SessionService.Instance);
 
             // 10. 스냅샷
             SnapshotSystem.Send(world, network);

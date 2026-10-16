@@ -26,14 +26,5 @@ namespace Project02.Combat
             Max.Value = _defaultMax;
             Current.Value = _defaultMax;
         }
-
-        // TODO(3단계): 레벨 → 스탯 반영 시스템으로 이동
-        public void SetMax(int max)
-        {
-            if (!IsServer) return;
-
-            Max.Value = max;
-            Current.Value = max;
-        }
     }
 }

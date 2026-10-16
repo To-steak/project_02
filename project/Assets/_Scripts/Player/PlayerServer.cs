@@ -10,6 +10,8 @@ namespace Project02.Player
 {
     public class PlayerServer : NetworkBehaviour
     {
+        public PlayerController Controller => _controller;
+
         [SerializeField] private PlayerController _controller;
 
         private readonly TickBuffer<InputPayload> _inputBuffer = new(BUFFER_SIZE);

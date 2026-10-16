@@ -10,8 +10,6 @@ namespace Project02.Service
     {
         public static SessionService Instance { get; private set; }
 
-        public event Action<ulong, int> ExpChanged;
-
         private NetworkManager _networkManager;
         private readonly Dictionary<ulong, string> _userIds = new();
 
@@ -189,11 +187,6 @@ namespace Project02.Service
                 userIds.Add(userId);
             }
             ProgressService.Instance.AddReward(userIds, exp, gold);
-
-            foreach (var (clientId, userId) in rewarded)
-            {
-                ExpChanged?.Invoke(clientId, ProgressService.Instance.GetExp(userId));
-            }
         }
     }
 }

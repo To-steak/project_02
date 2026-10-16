@@ -2717,6 +2717,7 @@ MonoBehaviour:
   PlayerOwner: {fileID: 6345587166369566394}
   PlayerRemote: {fileID: 636833016071899220}
   PlayerWeapon: {fileID: 7234265273799312356}
+  PlayerProgression: {fileID: 2910439071934825146}
   Health: {fileID: 2456796616233262538}
   _networkTransform: {fileID: 3691936339058646927}
 --- !u!114 &6345587166369566394
@@ -2732,8 +2733,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project02.Player.PlayerOwner
   ShowTopMostFoldoutHeaderGroup: 1
+  HasPendingState: 0
+  LatestServerTick: -1
   _controller: {fileID: 6006245556683299649}
   _view: {fileID: 7330228363150315847}
+  DEBUG_ReconcileCount: 0
 --- !u!114 &636833016071899220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2848,6 +2852,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Combat::Health
   ShowTopMostFoldoutHeaderGroup: 1
   _defaultMax: 100
+  DamageReduction: 0
 --- !u!114 &7330228363150315847
 MonoBehaviour:
   m_ObjectHideFlags: 0

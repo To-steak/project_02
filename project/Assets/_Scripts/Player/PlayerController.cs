@@ -9,22 +9,23 @@ namespace Project02.Player
 {
     public class PlayerController : NetworkBehaviour
     {
-        [SerializeField] internal SOPlayer PlayerSettings;
-        [SerializeField] internal PlayerInput PlayerInput;
-        [SerializeField] internal PlayerAnimation PlayerAnimation;
-        [SerializeField] internal PlayerLocomotion PlayerLocomotion;
-        [SerializeField] internal PlayerCamera PlayerCamera;
-        [SerializeField] internal PlayerVisual PlayerVisual;
-        [SerializeField] internal PlayerServer PlayerServer;
-        [SerializeField] internal PlayerOwner PlayerOwner;
-        [SerializeField] internal PlayerRemote PlayerRemote;
-        [SerializeField] internal PlayerWeapon PlayerWeapon;
-        [SerializeField] internal Health Health;
+        [SerializeField] public SOPlayer PlayerSettings;
+        [SerializeField] public PlayerInput PlayerInput;
+        [SerializeField] public PlayerAnimation PlayerAnimation;
+        [SerializeField] public PlayerLocomotion PlayerLocomotion;
+        [SerializeField] public PlayerCamera PlayerCamera;
+        [SerializeField] public PlayerVisual PlayerVisual;
+        [SerializeField] public PlayerServer PlayerServer;
+        [SerializeField] public PlayerOwner PlayerOwner;
+        [SerializeField] public PlayerRemote PlayerRemote;
+        [SerializeField] public PlayerWeapon PlayerWeapon;
+        [SerializeField] public PlayerProgression PlayerProgression;
+        [SerializeField] public Health Health;
         [SerializeField] private NetworkTransform _networkTransform;
 
-        internal readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        internal readonly NetworkVariable<int> EquippedWeapon = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        internal readonly NetworkVariable<FixedString64Bytes> Nickname = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public readonly NetworkVariable<float> Pitch = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public readonly NetworkVariable<int> EquippedWeapon = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public readonly NetworkVariable<FixedString64Bytes> Nickname = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         public override void OnNetworkSpawn()
         {
