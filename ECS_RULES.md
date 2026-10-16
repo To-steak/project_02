@@ -148,3 +148,5 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
    - 적 35마리 이상: 적과 원격 플레이어 보간이 끊기지 않는다 (스냅샷 분할)
    - 무기 교체(`EquippedWeapon` 변경): 소유자 리컨사일 정확히 1회, 이후 새 연사 간격·줌 적용, 추가 리컨사일 없음
    - 클라에서 적 처치 반복 후 `ServerLoop`의 `Enemies` 수가 0 (클라는 서버 World에 등록하지 않음)
+   - 진행도는 세계 단위 `.sav` 하나에 저장한다. 싱글은 슬롯마다, 전용 서버는 하나. 스키마는 같다.
+   - 저장 파일은 여는 쪽(ServerLauncher / StartSinglePlayer)이 명시적으로 연다. 읽기 실패한 파일은 덮어쓰지 않는다.
