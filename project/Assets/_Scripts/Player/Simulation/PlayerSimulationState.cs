@@ -5,6 +5,7 @@ namespace Project02.Player
     public struct StaminaState
     {
         public float Energy;
+        public float MaxEnergy;
         public bool IsExhausted;
     }
 

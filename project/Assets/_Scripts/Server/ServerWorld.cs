@@ -9,6 +9,7 @@ namespace Project02.Server
     {
         // Singleton Components
         public ServerClock Clock;
+        public readonly List<EnemyController> Despawns = new();   // DeathSystem이 쌓고 DespawnSystem이 Step 끝에 처리
         public readonly List<Projectile> Projectiles = new();
         public readonly List<HitInfo> Hits = new();
         public readonly List<RewardInfo> Rewards = new();

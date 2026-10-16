@@ -86,6 +86,10 @@ namespace Project02.Client
                 PredictSystem.Tick(world, SimulationClock.DeltaTime);
                 world.Clock.Tick++;
             }
+
+            // 6. 루트 transform 출력 (리컨사일·예측 루프 밖에서 1회)
+            PlayerController controller = world.Local.Controller;
+            PlayerStepUtil.WriteTransform(controller.transform, controller.Simulation);
         }
 
         private void LateUpdate()
@@ -93,19 +97,14 @@ namespace Project02.Client
             ClientWorld world = _world;
             float frameTime = Time.deltaTime;
 
-            // 5. 원격 엔티티 보간 (로컬 플레이어 유무와 무관)
+            // 7. 보간 시계
             InterpolationSystem.Advance(ref world.Interp, frameTime);
-            float renderTick = world.Interp.RenderTick;
-            foreach (EnemyRemote enemy in world.Enemies.Values)
-            {
-                InterpolationSystem.Present(enemy, renderTick);
-            }
-            foreach (PlayerRemote player in world.Players.Values)
-            {
-                InterpolationSystem.Present(player, renderTick, frameTime);
-            }
 
-            // 6. 로컬 플레이어 연출
+            // 8. 원격 엔티티 표시 (로컬 플레이어 유무와 무관)
+            EnemyViewSystem.Present(world);
+            RemotePlayerViewSystem.Present(world, frameTime);
+
+            // 9. 로컬 플레이어 표시
             if (world.Local == null) return;
             ViewSystem.Present(world, frameTime);
         }

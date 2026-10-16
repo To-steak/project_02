@@ -218,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project02.Server.ServerSimulation
   _projectileHitLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 320
 --- !u!114 &8382451423736570606
 MonoBehaviour:
   m_ObjectHideFlags: 0

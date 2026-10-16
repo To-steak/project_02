@@ -67,22 +67,28 @@ namespace Project02.Server
             // 4. 적: 상태 머신 → 이동
             EnemySystem.Tick(world, deltaTime);
 
-            // 5. 사망: IsDead인 적 → world.Rewards + Despawn
+            // 5. 사망: IsDead인 적 → world.Rewards, world.Despawns
             DeathSystem.Process(world);
 
-            // 6. 세션: Rewards → SessionService → 레벨
+            // 6. 세션: Rewards → SessionService → Level
             SessionSystem.Process(world, SessionService.Instance);
 
-            // 7. 되감기 이력: 이번 틱 결과 (스냅샷과 같은 시점)
+            // 7. 스탯: Level 변경 → Health, Stamina
+            StatSystem.Process(world);
+
+            // 8. 되감기 이력: 이번 틱 결과 (스냅샷과 같은 시점)
             RewindSystem.Record(world);
 
-            // 8. 스냅샷 (적)
+            // 9. 스냅샷 (분할 전송)
             SnapshotSystem.Send(world, network);
 
-            // 9. 송신: Outbox → RPC
+            // 10. 송신: Outbox → RPC
             NetSendSystem.Flush(world);
+
+            // 11. Despawn: 모든 순회가 끝난 뒤
+            DespawnSystem.Process(world);
         }
-        
+
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {

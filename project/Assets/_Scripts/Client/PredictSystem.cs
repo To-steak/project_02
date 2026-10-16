@@ -1,4 +1,5 @@
 using Project02.Player;
+using Project02.Weapon;
 
 namespace Project02.Client
 {
@@ -34,10 +35,10 @@ namespace Project02.Client
             owner.InputHistory.SetValue(tick, input);
 
             // 2. 시뮬레이션
-            if (PlayerStepUtil.Step(sim, input, controller.OwnerClientId, deltaTime, controller.transform, out ShotInfo shot))
+            if (PlayerStepUtil.Step(sim, input, controller.OwnerClientId, deltaTime, out ShotInfo shot))
             {
                 owner.View.OnFired(shot, input.AimPoint);
-                camera.Recoil += controller.PlayerWeapon.View.RollRecoil(shot.Stance);
+                camera.Recoil += WeaponFeedback.RollRecoil(sim.Weapon, shot.Stance);   // 발사 성공 = sim.Weapon != null
             }
 
             // 3. 기록

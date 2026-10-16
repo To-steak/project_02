@@ -53,12 +53,15 @@ namespace Project02.Player
             _animation.SetAirborne(movement.IsGrounded, movement.VerticalSpeed);
             _animation.SetMoveBlendTree(move, isRunning, deltaTime);
 
-            // 5. _fired 연출
+            // 5. _fired 연출 (프리팹 없는 무기는 뷰가 없다)
             WeaponView view = _weapon.View;
-            foreach (var fired in _fired)
+            if (view != null)
             {
-                view.SpawnBullet(fired.Point, fired.Shot.Spread);
-                view.Shake(fired.Shot.Stance);
+                foreach (var fired in _fired)
+                {
+                    view.SpawnBullet(fired.Point, fired.Shot.Spread);
+                    view.Shake(fired.Shot.Stance);
+                }
             }
 
             _fired.Clear();

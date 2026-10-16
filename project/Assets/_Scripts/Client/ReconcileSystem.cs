@@ -28,17 +28,17 @@ namespace Project02.Client
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             owner.DEBUG_ReconcileCount++;
-            Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
+            Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} max {predicted.Stamina.MaxEnergy:F0}/{server.Stamina.MaxEnergy:F0} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
 #endif
             PlayerController controller = owner.Controller;
             PlayerSimulation sim = controller.Simulation;
-            PlayerStepUtil.Restore(sim, server, controller.transform);
+            PlayerStepUtil.Restore(sim, server);
 
             for (int tick = server.Tick + 1; tick < clock.Tick; tick++)
             {
                 if (!owner.InputHistory.TryGetValue(tick, out InputPayload input)) break;
 
-                PlayerStepUtil.Step(sim, input, controller.OwnerClientId, SimulationClock.DeltaTime, controller.transform, out _);
+                PlayerStepUtil.Step(sim, input, controller.OwnerClientId, SimulationClock.DeltaTime, out _);
                 owner.StateHistory.SetValue(tick, sim.State);
             }
         }
@@ -46,7 +46,9 @@ namespace Project02.Client
         private static bool IsMispredicted(in PlayerSimulationState predicted, in PlayerSimulationState server)
         {
             bool position = Vector3.Distance(predicted.Movement.Position, server.Movement.Position) >= POSITION_THRESHOLD;
-            bool energy = Mathf.Abs(predicted.Stamina.Energy - server.Stamina.Energy) >= ENERGY_THRESHOLD || predicted.Stamina.IsExhausted != server.Stamina.IsExhausted;
+            bool energy = Mathf.Abs(predicted.Stamina.Energy - server.Stamina.Energy) >= ENERGY_THRESHOLD
+                          || predicted.Stamina.IsExhausted != server.Stamina.IsExhausted
+                          || !Mathf.Approximately(predicted.Stamina.MaxEnergy, server.Stamina.MaxEnergy);   // 레벨업
             bool weapon = predicted.Weapon.NextFireTick != server.Weapon.NextFireTick || Mathf.Abs(predicted.Weapon.Bloom - server.Weapon.Bloom) >= BLOOM_THRESHOLD;
             return position || energy || weapon;
         }

@@ -5,10 +5,11 @@ namespace Project02.Player
 {
     public static class PlayerMovement
     {
-        public static void Step(SOMovement settings, ref MovementState movement, ref StaminaState stamina, in InputPayload input, float maxEnergy, float deltaTime, out bool isRunning)
+        public static void Step(SOMovement settings, ref MovementState movement, ref StaminaState stamina, in InputPayload input, float deltaTime, out bool isRunning)
         {
             Vector2 move = Vector2.ClampMagnitude(input.MoveInput, 1.0f);
             bool moving = move != Vector2.zero;
+            float maxEnergy = stamina.MaxEnergy;
 
             stamina.Energy = Mathf.Min(stamina.Energy, maxEnergy);
             if (stamina.IsExhausted && stamina.Energy >= maxEnergy * settings.RecoveryRatio)

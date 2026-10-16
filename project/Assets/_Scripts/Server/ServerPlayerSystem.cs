@@ -1,6 +1,5 @@
 using Project02.Character;
 using Project02.Player;
-using Project02.Service;
 using Project02.Weapon;
 using UnityEngine;
 
@@ -33,12 +32,13 @@ namespace Project02.Server
                 // 4. 시뮬레이션 (예측과 같은 함수)
                 PlayerController controller = player.Controller;
                 PlayerSimulation sim = controller.Simulation;
-                if (PlayerStepUtil.Step(sim, input, player.OwnerClientId, deltaTime, controller.transform, out ShotInfo shot))
+                if (PlayerStepUtil.Step(sim, input, player.OwnerClientId, deltaTime, out ShotInfo shot))
                 {
-                    // 5. 발사: 투사체 생성 + 다른 클라 연출용 메시지
                     world.Projectiles.Add(CreateProjectile(controller, player.OwnerClientId, input, shot, world.Clock.Tick));
                     world.Outbox.Fires.Add(new FireMessage(player, world.Clock.Tick, input.AimPoint, shot.Spread));
                 }
+
+                PlayerStepUtil.WriteTransform(controller.transform, sim);
 
                 // 6. 결과 기록 (송신은 NetSendSystem)
                 StatePayload payload = new StatePayload

@@ -10,7 +10,8 @@ namespace Project02.Player
     public class PlayerRemote : NetworkBehaviour
     {
         public const int BUFFER_SIZE = 32;   // 32틱 = 640ms
-
+        public const int MAX_FIRES = 16;   // 스냅샷이 끊겨 RenderTick이 멈춰도 무한히 쌓이지 않게
+        
         public PlayerController Controller => _controller;
         public readonly TickBuffer<PlayerSnapshot> Snapshots = new(BUFFER_SIZE);
         public readonly List<RemoteFire> Fires = new();

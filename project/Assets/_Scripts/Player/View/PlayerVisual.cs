@@ -25,8 +25,8 @@ namespace Project02.Player
             _previous = _current = position;
             _presentation.rotation = transform.rotation;
         }
-
-        // FixedUpdate - Simulate() 직후
+        
+        // PredictSystem이 틱마다 (Step 직후)
         public void Record(Vector3 position)
         {
             bool snap = Vector3.Distance(_current, position) > SNAP_DISTANCE;
