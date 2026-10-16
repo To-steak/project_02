@@ -11,7 +11,7 @@ namespace Project02.Player
     {
         public const int BUFFER_SIZE = 32;   // 32틱 = 640ms
         public const int MAX_FIRES = 16;   // 스냅샷이 끊겨 RenderTick이 멈춰도 무한히 쌓이지 않게
-        
+
         public PlayerController Controller => _controller;
         public readonly TickBuffer<PlayerSnapshot> Snapshots = new(BUFFER_SIZE);
         public readonly List<RemoteFire> Fires = new();
@@ -38,11 +38,12 @@ namespace Project02.Player
             }
         }
 
-        // NGO가 아무 때나 부른다 → 기록만 (deferment)
         [Rpc(SendTo.ClientsAndHost)]
         public void FireRPC(int tick, Vector3 aimPoint, Vector2 spread)
         {
             if (!enabled) return;   // 소유자는 예측으로 이미 재생함
+
+            if (Fires.Count >= MAX_FIRES) Fires.RemoveAt(0);   // 가장 오래된 것 버림
             Fires.Add(new RemoteFire(tick, aimPoint, spread));
         }
     }
