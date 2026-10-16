@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Project02.Player
 {
-    // 유틸(쓰기 많음): 한 틱 시뮬레이션. 호출처는 PredictSystem, ReconcileSystem, PlayerServer뿐
+    // 유틸(쓰기 많음): 한 틱 시뮬레이션. 호출처는 PredictSystem, ReconcileSystem, ServerPlayerSystem뿐
     public static class PlayerStepUtil
     {
         public static bool Step(PlayerSimulation sim, in InputPayload input, ulong ownerId, float deltaTime, Transform root, out ShotInfo shot)

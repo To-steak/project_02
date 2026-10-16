@@ -52,17 +52,19 @@ namespace Project02.Server
 
         private static void Step(ServerWorld world, NetworkManager network, float deltaTime)
         {
-            // 1~3. 플레이어
-            foreach (PlayerServer player in world.Players) player.Tick(deltaTime);
+            ProjectileService projectiles = ProjectileService.Instance;
+
+            // 1~3. 플레이어: 수신 → 소비 → Step → 발사 → Outbox
+            ServerPlayerSystem.Tick(world, projectiles, deltaTime);
 
             // 4~5. 투사체 → world.Hits
             Physics.SyncTransforms();
-            ProjectileService.Instance.Tick(world.Hits, deltaTime);
+            projectiles.Tick(world.Hits, deltaTime);
 
             // 6. 피해: Hits → Health
             DamageSystem.Process(world.Hits);
 
-            // 7. 적 (죽은 적은 Tick 안에서 건너뜀)
+            // 7. 적
             for (int i = world.Enemies.Count - 1; i >= 0; i--) world.Enemies[i].Tick(deltaTime);
 
             // 8. 사망: IsDead인 적 → world.Rewards + Despawn
@@ -71,8 +73,11 @@ namespace Project02.Server
             // 9. 세션: Rewards → SessionService → 레벨
             SessionSystem.Process(world, SessionService.Instance);
 
-            // 10. 스냅샷
+            // 10. 스냅샷 (적)
             SnapshotSystem.Send(world, network);
+
+            // 11. 송신: Outbox → RPC (플레이어 상태, 발사 연출)
+            NetSendSystem.Flush(world);
         }
     }
 }

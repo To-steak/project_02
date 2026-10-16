@@ -10,6 +10,7 @@ namespace Project02.Server
         public ServerClock Clock;
         public readonly List<HitInfo> Hits = new();
         public readonly List<RewardInfo> Rewards = new();
+        public readonly Outbox Outbox = new();
 
         // Entities
         public readonly List<PlayerServer> Players = new();
