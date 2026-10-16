@@ -11,6 +11,7 @@ namespace Project02.Player
 
     public struct WeaponState
     {
+        public int EquippedId;       // SOCatalog 인덱스. -1 = 없음. 서버 EquipSystem만 바꾼다
         public float Bloom;
         public int LastFireTick;
         public int NextFireTick;

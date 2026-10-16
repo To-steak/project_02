@@ -11,14 +11,16 @@ namespace Project02.Enemy
 
         public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
         {
+            int tick = world.Clock.Tick;
+
             if (EnemyTargetUtil.TryFindClosest(world, sim.Movement.Position, sim.Settings.PerceptionRange, out ulong clientId))
             {
                 sim.TargetClientId = clientId;
-                EnemyFsm.Change(sim, EnemyStateId.Battle);
+                EnemyFsm.Change(sim, EnemyStateId.Battle, tick);
                 return;
             }
 
-            sim.MoveInput = EnemyNavigation.WanderInput(sim, deltaTime);
+            sim.MoveInput = EnemyNavigation.WanderInput(sim, tick);
             sim.MoveSpeed = sim.Settings.WalkSpeed;
         }
     }

@@ -124,7 +124,7 @@ namespace Project02.Server
 
         private static Projectile CreateProjectile(PlayerController controller, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)
         {
-            SOWeapon data = controller.PlayerWeapon.Settings;
+            SOWeapon data = controller.Simulation.Weapon;   // 연출용 PlayerWeapon이 아니라 시뮬레이션 상태
             SOBullet bullet = data.Bullet;
 
             MovementState movement = controller.Simulation.State.Movement;

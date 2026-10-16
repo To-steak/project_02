@@ -13,7 +13,6 @@ namespace Project02.Server
                 if (enemy.Health.IsDead) continue;   // DeathSystem이 같은 틱에 치운다
 
                 EnemySimulation sim = enemy.Simulation;
-                sim.StateTime += deltaTime;
 
                 // 1. 상태 머신이 이번 틱 이동 입력을 정한다
                 sim.MoveInput = Vector2.zero;

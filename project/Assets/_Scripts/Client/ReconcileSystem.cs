@@ -49,7 +49,9 @@ namespace Project02.Client
             bool energy = Mathf.Abs(predicted.Stamina.Energy - server.Stamina.Energy) >= ENERGY_THRESHOLD
                           || predicted.Stamina.IsExhausted != server.Stamina.IsExhausted
                           || !Mathf.Approximately(predicted.Stamina.MaxEnergy, server.Stamina.MaxEnergy);   // 레벨업
-            bool weapon = predicted.Weapon.NextFireTick != server.Weapon.NextFireTick || Mathf.Abs(predicted.Weapon.Bloom - server.Weapon.Bloom) >= BLOOM_THRESHOLD;
+            bool weapon = predicted.Weapon.EquippedId != server.Weapon.EquippedId
+                          || predicted.Weapon.NextFireTick != server.Weapon.NextFireTick
+                          || Mathf.Abs(predicted.Weapon.Bloom - server.Weapon.Bloom) >= BLOOM_THRESHOLD;
             return position || energy || weapon;
         }
     }

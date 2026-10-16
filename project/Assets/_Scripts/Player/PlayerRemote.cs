@@ -25,16 +25,16 @@ namespace Project02.Player
 
             Snapshots.Clear();
             Fires.Clear();
-            ClientSimulation.Instance.Register(this);
+            ClientLoop.Instance.Register(this);
         }
 
         public override void OnNetworkDespawn()
         {
             if (!enabled) return;
 
-            if (ClientSimulation.Instance != null)
+            if (ClientLoop.Instance != null)
             {
-                ClientSimulation.Instance.Unregister(this);
+                ClientLoop.Instance.Unregister(this);
             }
         }
 

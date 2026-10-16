@@ -31,9 +31,6 @@ namespace Project02.Enemy
 
         protected override void OnNetworkPostSpawn()
         {
-            if (!IsServer) return;   // 클라는 EnemyRemote가 맡는다
-
-            // TODO: Object Pool에서 나오면 초기화
             EnemySimulation sim = Simulation;
             sim.Movement = new MovementState { Position = transform.position };
             sim.Rotation = transform.rotation;
@@ -41,21 +38,20 @@ namespace Project02.Enemy
             sim.MoveSpeed = 0.0f;
             sim.Path.Clear();
             sim.Waypoint = 0;
-            sim.WanderTimer = 0.0f;
-            EnemyFsm.Reset(sim);
+            sim.NextWanderTick = -1;
 
             Rewind.History.Clear();
             Rewind.Radius = _settings.Profile.Radius;
             Rewind.Height = _settings.Profile.Height;
-            
-            ServerSimulation.Instance.Register(this);
+
+            ServerLoop.Instance.Register(this);
         }
 
         public override void OnNetworkDespawn()
         {
-            if (IsServer && ServerSimulation.Instance != null)
+            if (IsServer && ServerLoop.Instance != null)
             {
-                ServerSimulation.Instance.Unregister(this);
+                ServerLoop.Instance.Unregister(this);
             }
         }
 

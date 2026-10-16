@@ -19,12 +19,12 @@ namespace Project02.Enemy
 
         // 상태 머신
         public EnemyStateId StateId;
-        public float StateTime;
+        public int StateEnterTick;       // 상태에 들어간 서버 틱. 경과 = 현재 틱 − 이것
         public ulong? TargetClientId;
 
         // 배회
         public readonly List<int> Path = new();
         public int Waypoint;
-        public float WanderTimer;
+        public int NextWanderTick = -1;  // 도착 후 다음 배회 틱. -1 = 대기 시작 전
     }
 }

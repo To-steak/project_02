@@ -15,14 +15,14 @@ namespace Project02.Player
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-            ServerSimulation.Instance.Register(this);
+            ServerLoop.Instance.Register(this);
         }
 
         public override void OnNetworkDespawn()
         {
-            if (IsServer && ServerSimulation.Instance != null)
+            if (IsServer && ServerLoop.Instance != null)
             {
-                ServerSimulation.Instance.Unregister(this);
+                ServerLoop.Instance.Unregister(this);
             }
         }
 

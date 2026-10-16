@@ -8,7 +8,8 @@ namespace Project02.Player
     {
         // 설정 (Authoring이 채운다)
         public SOMovement Movement;
-        public SOWeapon Weapon;          // 장착 무기. 없으면 null
+        public SOCatalog Catalog;
+        public SOWeapon Weapon;          // = Catalog.Get(State.Weapon.EquippedId). PlayerEquipUtil/Restore만 맞춘다
 
         // 상태 (스냅샷, 리컨사일 대상)
         public PlayerSimulationState State;

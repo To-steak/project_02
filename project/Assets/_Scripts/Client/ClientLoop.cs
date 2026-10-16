@@ -9,9 +9,9 @@ using UnityEngine;
 namespace Project02.Client
 {
     // World 진입점: ClientWorld를 소유하고, 시스템을 정해진 순서로 돌린다
-    public class ClientSimulation : MonoBehaviour
+    public class ClientLoop : MonoBehaviour
     {
-        public static ClientSimulation Instance { get; private set; }
+        public static ClientLoop Instance { get; private set; }
 
         private readonly ClientWorld _world = new();
 

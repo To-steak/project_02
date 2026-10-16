@@ -36,7 +36,7 @@ namespace Project02.Player
             _controller.PlayerCamera.Initialize(_controller.PlayerSettings);
             _controller.PlayerVisual.Initialize(transform.position, _controller.PlayerSettings);
 
-            ClientSimulation.Instance.Register(this);
+            ClientLoop.Instance.Register(this);
         }
 
         public override void OnNetworkDespawn()
@@ -46,9 +46,9 @@ namespace Project02.Player
                 return;
             }
 
-            if (ClientSimulation.Instance != null)
+            if (ClientLoop.Instance != null)
             {
-                ClientSimulation.Instance.Unregister(this);
+                ClientLoop.Instance.Unregister(this);
             }
 
             _controller.PlayerCamera.Release();

@@ -17,7 +17,8 @@ namespace Project02.Player
             serializer.SerializeValue(ref State.Stamina.Energy);
             serializer.SerializeValue(ref State.Stamina.MaxEnergy);
             serializer.SerializeValue(ref State.Stamina.IsExhausted);
-
+            
+            serializer.SerializeValue(ref State.Weapon.EquippedId);
             serializer.SerializeValue(ref State.Weapon.Bloom);
             serializer.SerializeValue(ref State.Weapon.LastFireTick);
             serializer.SerializeValue(ref State.Weapon.NextFireTick);

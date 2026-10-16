@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace Project02.Server
 {
-    public class ServerSimulation : MonoBehaviour
+    public class ServerLoop : MonoBehaviour
     {
-        public static ServerSimulation Instance { get; private set; }
+        public static ServerLoop Instance { get; private set; }
 
         [Tooltip("투사체 레이캐스트 대상: 지형·장애물만. Enemy(이력 판정)와 Player 레이어는 빼야 함")]
         [SerializeField] private LayerMask _projectileHitLayer;
@@ -25,7 +25,11 @@ namespace Project02.Server
             _world.Players.Add(player);
             SessionSystem.Join(player, SessionService.Instance);
         }
-        public void Register(EnemyController enemy) => _world.Enemies.Add(enemy);
+        public void Register(EnemyController enemy)
+        {
+            _world.Enemies.Add(enemy);
+            EnemyFsm.Reset(enemy.Simulation, _world.Clock.Tick);
+        }
         public void Unregister(PlayerServer player) => _world.Players.Remove(player);
         public void Unregister(EnemyController enemy) => _world.Enemies.Remove(enemy);
 
@@ -41,7 +45,7 @@ namespace Project02.Server
             while (clock.Accumulator >= SimulationClock.DeltaTime && ticks < MAX_TICKS_PER_FRAME)
             {
                 clock.Accumulator -= SimulationClock.DeltaTime;
-                Step(_world, network, _projectileHitLayer, SimulationClock.DeltaTime);
+                Tick(_world, network, _projectileHitLayer, SimulationClock.DeltaTime);
                 clock.Tick++;
                 ticks++;
             }
@@ -52,8 +56,11 @@ namespace Project02.Server
             }
         }
 
-        private static void Step(ServerWorld world, NetworkManager network, LayerMask projectileHitLayer, float deltaTime)
+        private static void Tick(ServerWorld world, NetworkManager network, LayerMask projectileHitLayer, float deltaTime)
         {
+            // 0. 장착: EquippedWeapon 변경 → WeaponState (이번 틱 발사에 반영)
+            EquipSystem.Process(world);
+
             // 1. 플레이어: 수신 → 소비 → Step → 발사(world.Projectiles) → Outbox
             ServerPlayerSystem.Tick(world, deltaTime);
 

@@ -19,7 +19,7 @@ namespace Project02.Enemy
             }
 
             Snapshots.Clear();
-            ClientSimulation.Instance.Register(this);
+            ClientLoop.Instance.Register(this);
         }
 
         public override void OnNetworkDespawn()
@@ -29,7 +29,7 @@ namespace Project02.Enemy
                 return;
             }
 
-            ClientSimulation.Instance.Unregister(this);
+            ClientLoop.Instance.Unregister(this);
         }
     }
 }

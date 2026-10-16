@@ -5,18 +5,21 @@ namespace Project02.Enemy
 {
     public static class EnemyNavigation
     {
-        public const float WANDER_INTERVAL = 1.0f;
+        public const int WANDER_INTERVAL_TICKS = 50;   // 1초 (50Hz). 도착 후 다음 배회까지 대기
         public const float ARRIVE_THRESHOLD = 0.2f;
 
-        public static Vector2 WanderInput(EnemySimulation sim, float deltaTime)
+        public static Vector2 WanderInput(EnemySimulation sim, int tick)
         {
             if (sim.Waypoint >= sim.Path.Count)
             {
-                sim.WanderTimer += deltaTime;
-                if (sim.WanderTimer >= WANDER_INTERVAL)
+                if (sim.NextWanderTick < 0)
                 {
-                    sim.WanderTimer = 0.0f;
-                    Wander(sim);
+                    sim.NextWanderTick = tick + WANDER_INTERVAL_TICKS;   // 대기 시작
+                }
+                else if (tick >= sim.NextWanderTick)
+                {
+                    sim.NextWanderTick = -1;
+                    Wander(sim);   // 실패하면 다음 틱에 다시 1초 대기 (기존 동작과 같음)
                 }
             }
 
