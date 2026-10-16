@@ -1,14 +1,11 @@
+using Unity.Cinemachine;
+using UnityEngine;
+
 namespace Project02.Player
 {
-    using Unity.Cinemachine;
-    using UnityEngine;
-
+    // 프록시: CameraState → Cinemachine, 조준 레이캐스트. 상태는 ClientWorld.Camera
     public class PlayerCamera : MonoBehaviour
     {
-        public float Pitch { get; private set; }
-        public float Yaw { get; private set; }
-        public Vector3 AimPoint { get; private set; }
-
         [Tooltip("프리팹에서 비활성으로 둘 것. Tracking Target은 PlayerVisual의 LookPos")]
         [SerializeField] private CinemachineCamera _cmCamera;
 
@@ -19,9 +16,7 @@ namespace Project02.Player
         private float _cameraDistance;
         private float _verticalArmLength;
         private Vector3 _shoulderOffset;
-
-        private float _adsBlend;
-        private Vector2 _recoil;   // 아직 흡수되지 않은 반동 (x: yaw, y: 위쪽 pitch, 도)
+        private Vector3 _aimPoint;   // 기즈모용
 
         public void Initialize(SOPlayer settings)
         {
@@ -42,49 +37,19 @@ namespace Project02.Player
             _cmCamera.gameObject.SetActive(false);
         }
 
-        /// <summary>매 프레임. 마우스 입력으로 시점을 돌리고 남은 반동을 조금씩 흡수한다.</summary>
-        public void Look(Vector2 lookInput, float sensitivity, float deltaTime)
+        public void Apply(float adsBlend, float zoom)
         {
-            float t = 1.0f - Mathf.Exp(-_settings.RecoilSpeed * deltaTime);
-            Vector2 kick = _recoil * t;
-            _recoil -= kick;
-
-            float yaw = lookInput.x * _settings.RotationSpeed * sensitivity + kick.x;
-            float pitch = lookInput.y * _settings.PitchSpeed * sensitivity + kick.y;
-
-            Yaw = Mathf.Repeat(Yaw + yaw, 360f);
-            Pitch = Mathf.Clamp(Pitch - pitch, _settings.MinPitch, _settings.MaxPitch);
+            _cmCamera.Lens.FieldOfView = Mathf.Lerp(_fov, _fov / Mathf.Max(1.0f, zoom), adsBlend);
+            _follow.CameraDistance = Mathf.Lerp(_cameraDistance, _settings.AdsCameraDistance, adsBlend);
+            _follow.VerticalArmLength = Mathf.Lerp(_verticalArmLength, _settings.AdsVerticalArmLength, adsBlend);
+            _follow.ShoulderOffset = Vector3.Lerp(_shoulderOffset, _settings.AdsShoulderOffset, adsBlend);
         }
 
-        /// <summary>발사 반동을 쌓는다. Look이 프레임마다 흡수한다.</summary>
-        public void AddRecoil(Vector2 kick)
-        {
-            _recoil += kick;
-        }
-
-        /// <summary>매 프레임. 조준 상태로 FOV·거리·어깨 위치를 부드럽게 전환하고 조준점을 구한다.</summary>
-        public void ApplyAim(bool aim, float zoom, float deltaTime)
-        {
-            _adsBlend = Mathf.MoveTowards(_adsBlend, aim ? 1.0f : 0.0f, _settings.AdsSpeed * deltaTime);
-
-            _cmCamera.Lens.FieldOfView = Mathf.Lerp(_fov, _fov / Mathf.Max(1.0f, zoom), _adsBlend);
-            _follow.CameraDistance = Mathf.Lerp(_cameraDistance, _settings.AdsCameraDistance, _adsBlend);
-            _follow.VerticalArmLength = Mathf.Lerp(_verticalArmLength, _settings.AdsVerticalArmLength, _adsBlend);
-            _follow.ShoulderOffset = Vector3.Lerp(_shoulderOffset, _settings.AdsShoulderOffset, _adsBlend);
-
-            AimPoint = GetAimPoint();
-        }
-
-        /// <summary>카메라 정면이 가리키는 지점.</summary>
         public Vector3 GetAimPoint()
         {
             Transform view = _camera.transform;
-            if (Physics.Raycast(view.position, view.forward, out RaycastHit hit, _settings.AimDistance, _settings.AimLayer, QueryTriggerInteraction.Ignore))
-            {
-                return hit.point;
-            }
-
-            return view.position + view.forward * _settings.AimDistance;
+            _aimPoint = Physics.Raycast(view.position, view.forward, out RaycastHit hit, _settings.AimDistance, _settings.AimLayer, QueryTriggerInteraction.Ignore) ? hit.point : view.position + view.forward * _settings.AimDistance;
+            return _aimPoint;
         }
 
 #if UNITY_EDITOR
@@ -93,7 +58,7 @@ namespace Project02.Player
             if (_camera == null) return;   // 소유자가 아니면 조준점이 없다
 
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(_camera.transform.position, AimPoint);
+            Gizmos.DrawLine(_camera.transform.position, _aimPoint);
         }
 #endif
     }

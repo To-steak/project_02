@@ -31,14 +31,15 @@ namespace Project02.Client
             Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
 #endif
             PlayerController controller = owner.Controller;
-            controller.Restore(server);
+            PlayerSimulation sim = controller.Simulation;
+            PlayerStepUtil.Restore(sim, server, controller.transform);
 
             for (int tick = server.Tick + 1; tick < clock.Tick; tick++)
             {
                 if (!owner.InputHistory.TryGetValue(tick, out InputPayload input)) break;
 
-                controller.Step(input, SimulationClock.DeltaTime, out _);
-                owner.StateHistory.SetValue(tick, controller.Capture(tick));
+                PlayerStepUtil.Step(sim, input, controller.OwnerClientId, SimulationClock.DeltaTime, controller.transform, out _);
+                owner.StateHistory.SetValue(tick, sim.State);
             }
         }
 

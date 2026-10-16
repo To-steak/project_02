@@ -12,14 +12,14 @@ namespace Project02.Player
 
         [SerializeField] private SOLevelTable _table;
         [SerializeField] private Health _health;
-        [SerializeField] private PlayerLocomotion _locomotion;
+        [SerializeField] private PlayerController _controller;
 
         public SOLevelTable Table => _table;
 
         protected override void OnNetworkPostSpawn()
         {
             Level.OnValueChanged += OnLevelChanged;
-            ApplyLevel(Level.Value);   // Join이 OnNetworkSpawn에서 넣은 값. 처음 값은 콜백이 안 불리니 직접
+            ApplyLevel(Level.Value);
         }
 
         public override void OnNetworkDespawn()
@@ -36,10 +36,13 @@ namespace Project02.Player
             if (IsServer)
             {
                 _health.Max.Value = stats.MaxHp;
-                _health.Current.Value = stats.MaxHp;   // 레벨업 시 완전 회복 (기존 동작)
+                _health.Current.Value = stats.MaxHp;
             }
 
-            _locomotion.SetMaxEnergy(stats.MaxMp);
+            // 예측에 필요하므로 모든 피어에서 (기존 SetMaxEnergy와 같음: 최대치로 회복)
+            PlayerSimulation sim = _controller.Simulation;
+            sim.MaxEnergy = stats.MaxMp;
+            sim.State.Stamina = new StaminaState { Energy = stats.MaxMp, IsExhausted = false };
         }
     }
 }

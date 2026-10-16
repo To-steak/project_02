@@ -2532,7 +2532,6 @@ GameObject:
   - component: {fileID: 6345587166369566394}
   - component: {fileID: 636833016071899220}
   - component: {fileID: 8287365391867684976}
-  - component: {fileID: 6994583281908749333}
   - component: {fileID: 1634119094165126537}
   - component: {fileID: 8005297123998042264}
   - component: {fileID: 3124304013075138114}
@@ -2708,7 +2707,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
   PlayerSettings: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
-  PlayerInput: {fileID: 6994583281908749333}
   PlayerAnimation: {fileID: 8484388241333897775}
   PlayerLocomotion: {fileID: 1634119094165126537}
   PlayerCamera: {fileID: 8005297123998042264}
@@ -2766,18 +2764,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerServer
   ShowTopMostFoldoutHeaderGroup: 1
   _controller: {fileID: 6006245556683299649}
---- !u!114 &6994583281908749333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3352041741525735007}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ebda480fcfd764e91d6d824c42fb80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputs
 --- !u!114 &1634119094165126537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2883,7 +2869,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _table: {fileID: 11400000, guid: c961a6c3d4caea94f910d5f2beca8524, type: 2}
   _health: {fileID: 2456796616233262538}
-  _locomotion: {fileID: 1634119094165126537}
+  _controller: {fileID: 6006245556683299649}
 --- !u!1 &3371726832865955048
 GameObject:
   m_ObjectHideFlags: 0

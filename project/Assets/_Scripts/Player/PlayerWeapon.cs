@@ -4,6 +4,7 @@ using UnityEngine.Animations.Rigging;
 
 namespace Project02.Player
 {
+    // 프록시: 장착 무기의 설정 조회 + 뷰 생성 + IK. 발사 상태는 PlayerSim
     public class PlayerWeapon : MonoBehaviour
     {
         public WeaponView View => _view;
@@ -11,7 +12,6 @@ namespace Project02.Player
         public Vector3 Muzzle => _view != null ? _view.Muzzle : Origin;
         public Vector3 Origin => _origin.position;
         public bool HasWeapon => _settings != null;
-        public WeaponState State => _state;
 
         [SerializeField] private SOCatalog _catalog;
         [SerializeField] private Transform _origin;
@@ -23,12 +23,6 @@ namespace Project02.Player
 
         private SOWeapon _settings;
         private WeaponView _view;
-        private WeaponState _state;
-
-        public bool TryFire(in InputPayload input, bool isRunning, ulong ownerId, float deltaTime, out ShotInfo shot)
-        {
-            return WeaponFire.TryFire(_settings, ref _state, input, isRunning, ownerId, deltaTime, out shot);
-        }
 
         public static Vector3 GetDirection(Vector3 from, Vector3 aimPoint, Vector2 spread)
         {
@@ -45,7 +39,6 @@ namespace Project02.Player
             }
 
             _settings = _catalog.Get(id);
-            _state = default;
 
             bool hasView = createView && _settings != null && _settings.Prefab != null;
             if (hasView)
@@ -63,11 +56,6 @@ namespace Project02.Player
             {
                 _rigBuilder.Build();
             }
-        }
-
-        public void Restore(in WeaponState state)
-        {
-            _state = state;
         }
     }
 }

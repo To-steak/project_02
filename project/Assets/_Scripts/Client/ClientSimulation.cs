@@ -34,16 +34,27 @@ namespace Project02.Client
             if (Instance == this) Instance = null;
         }
 
-        // 등록 (Authoring MonoBehaviour가 NGO 생명주기에서 부른다)
         public void Register(PlayerOwner owner)
         {
             _world.Local = owner;
             _world.Clock = ClockSystem.Create();
+            _world.Input = default;
+            _world.Camera = default;
+
+            InputService.Instance.Actions.Enable();
         }
 
         public void Unregister(PlayerOwner owner)
         {
-            if (_world.Local == owner) _world.Local = null;
+            if (_world.Local != owner) return;
+
+            _world.Local = null;
+
+            InputService input = InputService.Instance;
+            if (input != null)
+            {
+                input.Actions.Disable();
+            }
         }
 
         public void Register(EnemyRemote enemy) => _world.Enemies[enemy.NetworkObjectId] = enemy;
@@ -55,14 +66,18 @@ namespace Project02.Client
             if (world.Local == null) return;
 
             float frameTime = Time.deltaTime;
+            InputService input = InputService.Instance;
 
-            // 1. 카메라 (Iceberg 값은 진입점에서 꺼내 넘긴다)
-            CameraSystem.Update(world, InputService.Instance.MouseSensitivity, frameTime);
+            // 1. 입력 샘플
+            InputSampleSystem.Sample(ref world.Input, input.Actions);
 
-            // 2. 리컨사일
+            // 2. 카메라
+            CameraSystem.Update(world, input.MouseSensitivity, frameTime);
+
+            // 3. 리컨사일
             ReconcileSystem.Process(world);
 
-            // 3~4. 예측 시계 → 예측
+            // 4~5. 예측 시계 → 예측
             int ticks = ClockSystem.Advance(ref world.Clock, frameTime);
             for (int i = 0; i < ticks; i++)
             {

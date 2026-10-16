@@ -7,12 +7,11 @@ namespace Project02.Client
     {
         public static void Present(ClientWorld world, float frameTime)
         {
-            PlayerController controller = world.Local.Controller;
-            PlayerCamera camera = controller.PlayerCamera;
-            PlayerLocomotion locomotion = controller.PlayerLocomotion;
+            PlayerSimulation sim = world.Local.Controller.Simulation;
+            ref CameraState camera = ref world.Camera;
 
             float alpha = Mathf.Clamp01(world.Clock.Accumulator / world.Clock.Interval);
-            world.Local.View.Present(camera.Yaw, camera.Pitch, camera.AimPoint, controller.PlayerInput.MoveInput, locomotion.Movement, locomotion.IsRunning, alpha, frameTime);
+            world.Local.View.Present(camera.Yaw, camera.Pitch, camera.AimPoint, world.Input.Move, sim.State.Movement, sim.IsRunning, alpha, frameTime);
         }
     }
 }

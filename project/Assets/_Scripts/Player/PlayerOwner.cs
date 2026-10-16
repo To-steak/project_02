@@ -33,9 +33,6 @@ namespace Project02.Player
             InputHistory.Clear();
             StateHistory.Clear();
 
-            _controller.PlayerInput.Initialize();
-            _controller.PlayerInput.Active();
-            _controller.PlayerInput.Enable();
             _controller.PlayerCamera.Initialize(_controller.PlayerSettings);
             _controller.PlayerVisual.Initialize(transform.position, _controller.PlayerSettings);
 
@@ -49,10 +46,11 @@ namespace Project02.Player
                 return;
             }
 
-            ClientSimulation.Instance?.Unregister(this);
+            if (ClientSimulation.Instance != null)
+            {
+                ClientSimulation.Instance.Unregister(this);
+            }
 
-            _controller.PlayerInput.Inactive();
-            _controller.PlayerInput.Disable();
             _controller.PlayerCamera.Release();
         }
 
@@ -83,8 +81,7 @@ namespace Project02.Player
             GUI.Label(new Rect(xPos, 30, width, height), $"reconcile: {DEBUG_ReconcileCount}", style);
             GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
             GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
-            GUI.Label(new Rect(xPos, 110, width, height), $"energy: {_controller.PlayerLocomotion.Energy:F1}", style);
-            GUI.Label(new Rect(xPos, 130, width, height), $"yaw: {_controller.PlayerCamera.Yaw:F1}", style);
+            GUI.Label(new Rect(xPos, 110, width, height), $"energy: {_controller.Simulation.State.Stamina.Energy:F1}", style);
         }
 #endif
     }

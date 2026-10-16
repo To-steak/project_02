@@ -1,5 +1,4 @@
 using Project02.Player;
-using UnityEngine;
 
 namespace Project02.Client
 {
@@ -8,23 +7,41 @@ namespace Project02.Client
         public static void Tick(ClientWorld world, float deltaTime)
         {
             PlayerOwner owner = world.Local;
+            PlayerController controller = owner.Controller;
+            PlayerSimulation sim = controller.Simulation;
             int tick = world.Clock.Tick;
 
-            PlayerController controller = owner.Controller;
-            PlayerCamera camera = controller.PlayerCamera;
+            ref InputState state = ref world.Input;
+            ref CameraState camera = ref world.Camera;
 
-            Vector3 aimPoint = camera.AimPoint;
-            InputPayload input = controller.PlayerInput.Capture(tick, camera.Yaw, camera.Pitch, aimPoint);
+            // 1. 이번 틱 입력 확정 + 래치 소비 (숨은 부수효과 없이 여기서 명시적으로)
+            InputPayload input = new InputPayload
+            {
+                Tick = tick,
+                MoveInput = state.Move,
+                RunInput = state.Run,
+                JumpInput = state.JumpPressed,
+                YawInput = camera.Yaw,
+                PitchInput = camera.Pitch,
+                AttackInput = state.Attack,
+                AttackPressed = state.AttackPressed,
+                AimInput = state.Aim,
+                AimPoint = camera.AimPoint,
+            };
+            state.JumpPressed = false;
+            state.AttackPressed = false;
             owner.InputHistory.SetValue(tick, input);
 
-            if (controller.Step(input, deltaTime, out ShotInfo shot))
+            // 2. 시뮬레이션
+            if (PlayerStepUtil.Step(sim, input, controller.OwnerClientId, deltaTime, controller.transform, out ShotInfo shot))
             {
-                owner.View.OnFired(shot, aimPoint);
-                camera.AddRecoil(controller.PlayerWeapon.View.RollRecoil(shot.Stance));
+                owner.View.OnFired(shot, input.AimPoint);
+                camera.Recoil += controller.PlayerWeapon.View.RollRecoil(shot.Stance);
             }
 
-            owner.StateHistory.SetValue(tick, controller.Capture(tick));
-            owner.View.OnTick(controller.PlayerLocomotion.Movement);
+            // 3. 기록
+            owner.StateHistory.SetValue(tick, sim.State);
+            owner.View.OnTick(sim.State.Movement);
 
             SendInputs(owner, tick);
         }

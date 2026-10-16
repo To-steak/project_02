@@ -56,7 +56,8 @@ namespace Project02.Player
             input.AttackPressed |= _carryAttack;
             _carryJump = _carryAttack = false;
 
-            if (_controller.Step(input, deltaTime, out ShotInfo shot))
+            PlayerSimulation sim = _controller.Simulation;
+            if (PlayerStepUtil.Step(sim, input, OwnerClientId, deltaTime, _controller.transform, out ShotInfo shot))
             {
                 Fire(input, shot);
             }
@@ -64,7 +65,7 @@ namespace Project02.Player
             _controller.Pitch.Value = input.PitchInput;
             StatePayload payload = new StatePayload
             {
-                State = _controller.Capture(input.Tick),
+                State = sim.State,
                 InputBuffer = (sbyte)Mathf.Clamp(_latestTick - _consumedTick, sbyte.MinValue, sbyte.MaxValue),
             };
             _controller.PlayerOwner.StateRPC(payload);
@@ -138,7 +139,7 @@ namespace Project02.Player
             SOWeapon data = weapon.Settings;
             SOBullet bullet = data.Bullet;
 
-            MovementState movement = _controller.PlayerLocomotion.Movement;
+            MovementState movement = _controller.Simulation.State.Movement;
             Vector3 origin = WeaponFire.GetOrigin(movement, input.YawInput, _controller.PlayerSettings.FireOriginOffset);
             Vector3 direction = PlayerWeapon.GetDirection(origin, input.AimPoint, shot.Spread);
             float damage = bullet.Damage * data.WeaponCoefficient;

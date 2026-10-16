@@ -3,55 +3,18 @@ using UnityEngine;
 
 namespace Project02.Player
 {
+    // Authoring: 이동 설정 + 기즈모. 상태는 PlayerSim
     public class PlayerLocomotion : MonoBehaviour
     {
-        public MovementState Movement => _movement;
-        public StaminaState Stamina => _stamina;
-        public float Energy => _stamina.Energy;
-        public bool IsRunning { get; private set; }
+        public SOMovement Settings => _settings;
 
         [SerializeField] private SOMovement _settings;
-
-        private MovementState _movement;
-        private StaminaState _stamina;
-        private float _maxEnergy;
-
-        public void Initialize()
-        {
-            _movement = new MovementState { Position = transform.position };
-        }
-
-        public void SetMaxEnergy(float value)
-        {
-            _maxEnergy = value;
-            _stamina = new StaminaState { Energy = value, IsExhausted = false };
-        }
-
-        public void Restore(in MovementState movement, in StaminaState stamina)
-        {
-            _movement = movement;
-            _stamina = stamina;
-            transform.position = _movement.Position;
-        }
-
-        public void Simulate(InputPayload payload, float deltaTime)
-        {
-            PlayerMovement.Step(_settings, ref _movement, ref _stamina, payload, _maxEnergy, deltaTime, out bool isRunning);
-            IsRunning = isRunning;
-            transform.SetPositionAndRotation(_movement.Position, Quaternion.Euler(0f, payload.YawInput, 0f));
-        }
 
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (_settings != null)
-            {
-                DrawCapsule();
-            }
-        }
+            if (_settings == null) return;
 
-        private void DrawCapsule()
-        {
             float radius = _settings.Profile.Radius;
             Vector3 position = transform.position;
             LayerMask layer = _settings.Profile.GroundLayer | _settings.Profile.ObstacleLayer;
@@ -76,12 +39,6 @@ namespace Project02.Player
             Gizmos.DrawLine(step + Vector3.forward * radius, step + Vector3.left * radius);
             Gizmos.DrawLine(step + Vector3.left * radius, step + Vector3.back * radius);
             Gizmos.DrawLine(step + Vector3.back * radius, step + Vector3.right * radius);
-
-            if (Application.isPlaying)
-            {
-                Gizmos.color = _movement.IsGrounded ? Color.yellow : Color.gray;
-                Gizmos.DrawLine(position, position + Vector3.down * (radius * 0.5f));
-            }
         }
 #endif
     }
