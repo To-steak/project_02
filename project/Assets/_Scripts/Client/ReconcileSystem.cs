@@ -11,24 +11,20 @@ namespace Project02.Client
         private const float BLOOM_THRESHOLD = 0.1f;
         private const float BUFFER_SMOOTHING = 0.1f;
 
-        public static void Process(PlayerOwner owner, ref ClientClock clock)
+        public static void Process(ClientWorld world)
         {
+            PlayerOwner owner = world.Local;
             if (!owner.HasPendingState) return;
+
             StatePayload payload = owner.PendingState;
             owner.HasPendingState = false;
 
+            ref ClientClock clock = ref world.Clock;
             clock.SmoothedBuffer = Mathf.Lerp(clock.SmoothedBuffer, payload.InputBuffer, BUFFER_SMOOTHING);
 
             PlayerSimulationState server = payload.State;
-            if (!owner.StateHistory.TryGetValue(server.Tick, out PlayerSimulationState predicted))
-            {
-                return;
-            }
-
-            if (!IsMispredicted(predicted, server))
-            {
-                return;
-            }
+            if (!owner.StateHistory.TryGetValue(server.Tick, out PlayerSimulationState predicted)) return;
+            if (!IsMispredicted(predicted, server)) return;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             owner.DEBUG_ReconcileCount++;
@@ -39,10 +35,7 @@ namespace Project02.Client
 
             for (int tick = server.Tick + 1; tick < clock.Tick; tick++)
             {
-                if (!owner.InputHistory.TryGetValue(tick, out InputPayload input))
-                {
-                    break;
-                }
+                if (!owner.InputHistory.TryGetValue(tick, out InputPayload input)) break;
 
                 controller.Step(input, SimulationClock.DeltaTime, out _);
                 owner.StateHistory.SetValue(tick, controller.Capture(tick));

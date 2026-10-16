@@ -5,8 +5,11 @@ namespace Project02.Client
 {
     public static class PredictSystem
     {
-        public static void Tick(PlayerOwner owner, int tick, float deltaTime)
+        public static void Tick(ClientWorld world, float deltaTime)
         {
+            PlayerOwner owner = world.Local;
+            int tick = world.Clock.Tick;
+
             PlayerController controller = owner.Controller;
             PlayerCamera camera = controller.PlayerCamera;
 
@@ -32,11 +35,7 @@ namespace Project02.Client
             int count = 0;
             for (int i = 0; i < InputBundle.CAPACITY; i++)
             {
-                if (!owner.InputHistory.TryGetValue(tick - i, out InputPayload input))
-                {
-                    break;
-                }
-                
+                if (!owner.InputHistory.TryGetValue(tick - i, out InputPayload input)) break;
                 bundle.SetPayload(count++, input);
             }
 

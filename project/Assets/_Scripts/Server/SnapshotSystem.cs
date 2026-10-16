@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Project02.Enemy;
 using Unity.Collections;
 using Unity.Netcode;
@@ -11,23 +10,22 @@ namespace Project02.Server
         public const string MESSAGE = "EnemySnapshot";
         private const int SNAPSHOT_SIZE = 32;   // 8 + 12 + 4 + 1 + 4 + 1 = 30, 여유 2
 
-        public static void Send(int tick, List<EnemyController> enemies)
+        public static void Send(ServerWorld world, NetworkManager network)
         {
-            NetworkManager manager = NetworkManager.Singleton;
-            if (manager.ConnectedClientsIds.Count == 0) return;
+            if (network.ConnectedClientsIds.Count == 0) return;
 
-            int size = sizeof(int) + sizeof(ushort) + enemies.Count * SNAPSHOT_SIZE;
+            int size = sizeof(int) + sizeof(ushort) + world.Enemies.Count * SNAPSHOT_SIZE;
             Debug.Assert(size < 1200, "warning : a lots of enemy!");
 
             using FastBufferWriter writer = new FastBufferWriter(size, Allocator.Temp);
-            writer.WriteValueSafe(tick);
-            writer.WriteValueSafe((ushort)enemies.Count);
-            foreach (EnemyController enemy in enemies)
+            writer.WriteValueSafe(world.Clock.Tick);
+            writer.WriteValueSafe((ushort)world.Enemies.Count);
+            foreach (EnemyController enemy in world.Enemies)
             {
                 writer.WriteNetworkSerializable(enemy.Capture());
             }
 
-            manager.CustomMessagingManager.SendNamedMessageToAll(MESSAGE, writer, NetworkDelivery.Unreliable);
+            network.CustomMessagingManager.SendNamedMessageToAll(MESSAGE, writer, NetworkDelivery.Unreliable);
         }
     }
 }

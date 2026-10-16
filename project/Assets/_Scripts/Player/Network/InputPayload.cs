@@ -19,6 +19,7 @@ namespace Project02.Player
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref Tick);
+            
             serializer.SerializeValue(ref MoveInput);
             serializer.SerializeValue(ref RunInput);
             serializer.SerializeValue(ref JumpInput);
