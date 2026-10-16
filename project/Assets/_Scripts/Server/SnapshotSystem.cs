@@ -22,7 +22,15 @@ namespace Project02.Server
             writer.WriteValueSafe((ushort)world.Enemies.Count);
             foreach (EnemyController enemy in world.Enemies)
             {
-                writer.WriteNetworkSerializable(enemy.Capture());
+                EnemySimulation sim = enemy.Simulation;
+                EnemySnapshot snapshot = new EnemySnapshot
+                {
+                    ObjectId = enemy.NetworkObjectId,
+                    Movement = sim.Movement,
+                    Yaw = sim.Rotation.eulerAngles.y,
+                    StateId = sim.StateId,
+                };
+                writer.WriteNetworkSerializable(snapshot);
             }
 
             network.CustomMessagingManager.SendNamedMessageToAll(MESSAGE, writer, NetworkDelivery.Unreliable);

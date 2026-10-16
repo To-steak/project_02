@@ -65,7 +65,7 @@ namespace Project02.Server
             DamageSystem.Process(world.Hits);
 
             // 7. 적
-            for (int i = world.Enemies.Count - 1; i >= 0; i--) world.Enemies[i].Tick(deltaTime);
+            EnemySystem.Tick(world, deltaTime);
 
             // 8. 사망: IsDead인 적 → world.Rewards + Despawn
             DeathSystem.Process(world);

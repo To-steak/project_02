@@ -1,50 +1,41 @@
+using Project02.Server;
 using UnityEngine;
 
 namespace Project02.Enemy
 {
-    public class BattleState : IEnemyState
+    // 타깃 추적. 공격 범위 밖이면 달려가고, 전투 범위를 벗어나면 배회로
+    public static class BattleState
     {
-        public void Enter(EnemyController enemy)
+        public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
         {
-            // throw new System.NotImplementedException();
-        }
+            SOEnemy settings = sim.Settings;
 
-        public void Exit(EnemyController enemy)
-        {
-            // throw new System.NotImplementedException();
-        }
-
-        public void Tick(EnemyController enemy, float dt)
-        {
-            SOEnemy settings = enemy.Settings;
-
-            if (!enemy.TryGetTarget(out Transform target, out _))
+            if (!EnemyTargetUtil.TryGetTarget(world, sim, out Vector3 target))
             {
-                if (enemy.TryFindClosestPlayer(settings.PerceptionRange, out ulong next))
+                if (EnemyTargetUtil.TryFindClosest(world, sim.Movement.Position, settings.PerceptionRange, out ulong next))
                 {
-                    enemy.TargetClientId = next;
+                    sim.TargetClientId = next;
                     return;
                 }
 
-                enemy.ChangeState(EnemyStateId.General);
+                EnemyFsm.Change(sim, EnemyStateId.General);
                 return;
             }
 
-            Vector3 direction = target.position - enemy.Position;
+            Vector3 direction = target - sim.Movement.Position;
             direction.y = 0.0f;
             float distance = direction.magnitude;
             if (distance > settings.BattleRange)
             {
-                enemy.ChangeState(EnemyStateId.General);
+                EnemyFsm.Change(sim, EnemyStateId.General);
                 return;
             }
 
             if (distance > settings.AttackRange)
             {
-                enemy.MoveInput = new Vector2(direction.x, direction.z).normalized;
-                enemy.MoveSpeed = settings.RunSpeed;
+                sim.MoveInput = new Vector2(direction.x, direction.z).normalized;
+                sim.MoveSpeed = settings.RunSpeed;
             }
-
         }
     }
 }

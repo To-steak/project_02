@@ -1,20 +1,12 @@
+using Project02.Server;
+
 namespace Project02.Enemy
 {
-    public class GroggyState : IEnemyState
+    public static class GroggyState
     {
-        public void Enter(EnemyController enemy)
+        public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
         {
-            throw new System.NotImplementedException();
-        }
 
-        public void Exit(EnemyController enemy)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Tick(EnemyController enemy, float dt)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

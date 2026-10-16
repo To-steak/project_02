@@ -1,0 +1,46 @@
+using Project02.Server;
+
+namespace Project02.Enemy
+{
+    // 유틸: 상태 전환과 분기. 상태를 추가하면 여기 switch에 case를 넣는다
+    public static class EnemyFsm
+    {
+        public static void Reset(EnemySimulation sim)
+        {
+            sim.StateId = EnemyStateId.General;
+            sim.StateTime = 0.0f;
+            Enter(sim, EnemyStateId.General);
+        }
+
+        public static void Change(EnemySimulation sim, EnemyStateId next)
+        {
+            Exit(sim, sim.StateId);
+            sim.StateId = next;
+            sim.StateTime = 0.0f;
+            Enter(sim, next);
+        }
+
+        public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
+        {
+            switch (sim.StateId)
+            {
+                case EnemyStateId.General: GeneralState.Tick(world, sim, deltaTime); break;
+                case EnemyStateId.Battle: BattleState.Tick(world, sim, deltaTime); break;
+                    // 미구현: Notice, Attack, Groggy, Defend, Die → 아무것도 안 함 (제자리)
+            }
+        }
+
+        private static void Enter(EnemySimulation sim, EnemyStateId id)
+        {
+            switch (id)
+            {
+                case EnemyStateId.General: GeneralState.Enter(sim); break;
+            }
+        }
+
+        private static void Exit(EnemySimulation sim, EnemyStateId id)
+        {
+            // 아직 Exit이 필요한 상태 없음
+        }
+    }
+}

@@ -7,7 +7,7 @@ namespace Project02.Enemy
 {
     public class EnemyRemote : NetworkBehaviour
     {
-        public const int BUFFER_SIZE = 32; // 32 tick = 640ms
+        public const int BUFFER_SIZE = 32;
         public readonly TickBuffer<EnemySnapshot> Snapshots = new(BUFFER_SIZE);
 
         public override void OnNetworkSpawn()

@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 using Unity.Netcode;
 using Project02.Server;
 using Project02.Character;
@@ -8,206 +7,59 @@ using Project02.Navigation;
 
 namespace Project02.Enemy
 {
+    // Authoring: 설정·그리드 주입, 등록, 기즈모. 상태는 EnemySimulation, 행동은 EnemySystem
     public class EnemyController : NetworkBehaviour
     {
-        public EnemyStateId CurrentStateId { get; private set; }
-        public float StateTime;
-        public ulong? TargetClientId;
-        public Vector2 MoveInput;
-        public float MoveSpeed;
-        public SOEnemy Settings => _settings;
-        public Vector3 Position => _movement.Position;
+        public readonly EnemySimulation Simulation = new();
         public Health Health => _health;
 
         [SerializeField] private SOEnemy _settings;
         [SerializeField] private Health _health;
 
-        private readonly List<int> _path = new();
-
-        private MovementState _movement;
-        private Quaternion _rotation;
-
-        private PathGrid _grid;
-        private float _timer;
-        private int _waypoint;
-
-        private const float WANDER_INTERVAL = 1.0f;  // 도착 후 다음 배회까지 대기 시간
-        private const float ARRIVE_THRESHOLD = 0.2f; // 도착 판정 거리 (진동 방지)
-
-        private static readonly IEnemyState[] _states =
+        private void Awake()
         {
-        new GeneralState(),
-        new NoticeState(),
-        new BattleState(),
-        new AttackState(),
-        new GroggyState(),
-        new DefendState(),
-        new DieState()
-        };
+            Simulation.Settings = _settings;
+        }
 
+        // EnemySpawner가 Spawn 전에 부른다 (Awake 이후)
         public void InjectGrid(PathGrid grid)
         {
             Debug.Assert(grid.Profile == _settings.Profile, $"{name}: 그리드 프로필과 적 프로필이 다름", this);
-            _grid = grid;
+            Simulation.Grid = grid;
         }
 
         protected override void OnNetworkPostSpawn()
         {
+            if (!IsServer) return;   // 클라는 EnemyRemote가 맡는다
+
             // TODO: Object Pool에서 나오면 초기화
-            _path.Clear();
-            _waypoint = 0;
-            _movement = new MovementState { Position = transform.position };
-            _rotation = transform.rotation;
-            _timer = 0.0f;
+            EnemySimulation sim = Simulation;
+            sim.Movement = new MovementState { Position = transform.position };
+            sim.Rotation = transform.rotation;
+            sim.MoveInput = Vector2.zero;
+            sim.MoveSpeed = 0.0f;
+            sim.Path.Clear();
+            sim.Waypoint = 0;
+            sim.WanderTimer = 0.0f;
+            EnemyFsm.Reset(sim);
 
-            if (IsServer)
-            {
-                TargetClientId = null;
-                CurrentStateId = EnemyStateId.General;
-                StateTime = 0.0f;
-                _states[(int)EnemyStateId.General].Enter(this);
-
-                ServerSimulation.Instance.Register(this);
-            }
+            ServerSimulation.Instance.Register(this);
         }
 
         public override void OnNetworkDespawn()
         {
-            if (IsServer)
+            if (IsServer && ServerSimulation.Instance != null)
             {
                 ServerSimulation.Instance.Unregister(this);
             }
         }
 
-        public void Tick(float deltaTime)
-        {
-            if (_health.IsDead) return;
-
-            StateTime += deltaTime;
-
-            MoveInput = Vector2.zero;
-            MoveSpeed = 0.0f;
-            _states[(int)CurrentStateId].Tick(this, deltaTime);   // 상태 머신이 입력을 정함
-
-            EnemyMovement.Step(_settings, ref _movement, ref _rotation, MoveInput, MoveSpeed, deltaTime);
-            transform.SetPositionAndRotation(_movement.Position, _rotation);   // 출력만
-        }
-
-        internal Vector2 WanderInput(float time)
-        {
-            if (_waypoint >= _path.Count)
-            {
-                _timer += time;
-                if (_timer >= WANDER_INTERVAL)
-                {
-                    _timer = 0.0f;
-                    Wander();
-                }
-            }
-
-            if (_waypoint < _path.Count)
-            {
-                Vector3 direction = _grid.ConvertWorldCoord(_path[_waypoint]) - _movement.Position;
-                direction.y = 0.0f;
-                if (direction.sqrMagnitude < ARRIVE_THRESHOLD * ARRIVE_THRESHOLD)
-                {
-                    _waypoint++;
-                }
-                else
-                {
-                    return new Vector2(direction.x, direction.z).normalized;
-                }
-            }
-
-            return Vector2.zero;
-        }
-
-        private void Wander()
-        {
-            _path.Clear();
-            _waypoint = 0;
-
-            if (!_grid.TryConvertCellCoord(_movement.Position, out int startX, out int startZ))
-            {
-                return;
-            }
-
-            if (!_grid.TryGetRandomCell(out int goalX, out int goalZ))
-            {
-                return;
-            }
-
-            if (PathFinder.TryFindPath(_grid, startX, startZ, goalX, goalZ, _path))
-            {
-                PathFinder.Smooth(_grid, _path);
-                _waypoint = _path.Count > 1 ? 1 : 0;
-            }
-        }
-
-        internal void ChangeState(EnemyStateId nextStateId)
-        {
-            _states[(int)CurrentStateId].Exit(this);
-            CurrentStateId = nextStateId;
-            StateTime = 0.0f;
-            _states[(int)nextStateId].Enter(this);
-        }
-
-        internal bool TryGetTarget(out Transform target, out Health health)
-        {
-            target = null;
-            health = null;
-
-            if (!TargetClientId.HasValue || !NetworkManager.ConnectedClients.TryGetValue(TargetClientId.Value, out var client) || client.PlayerObject == null)
-            {
-                return false;
-            }
-
-            target = client.PlayerObject.transform;
-            _ = client.PlayerObject.TryGetComponent(out health);
-
-            return health != null && !health.IsDead;
-        }
-
-        internal bool TryFindClosestPlayer(float range, out ulong clientId)
-        {
-            clientId = default;
-            float best = range * range;
-            bool found = false;
-
-            foreach (var client in NetworkManager.ConnectedClientsList)
-            {
-                var player = client.PlayerObject;
-                if (player == null || !player.TryGetComponent(out Health health) || health.IsDead)
-                {
-                    continue;
-                }
-
-                Vector3 offset = player.transform.position - _movement.Position;
-                offset.y = 0.0f;
-                float sqr = offset.sqrMagnitude;
-                if (sqr <= best)
-                {
-                    best = sqr;
-                    clientId = client.ClientId;
-                    found = true;
-                }
-            }
-
-            return found;
-        }
-
-        internal EnemySnapshot Capture() => new EnemySnapshot
-        {
-            ObjectId = NetworkObjectId,
-            Movement = _movement,
-            Yaw = _rotation.eulerAngles.y,
-            StateId = CurrentStateId,
-        };
-
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            UnityEditor.Handles.Label(transform.position + Vector3.up * 2.0f, $"{CurrentStateId}  target:{TargetClientId?.ToString() ?? "-"}");
+            EnemySimulation sim = Simulation;
+            string target = sim.TargetClientId.HasValue ? sim.TargetClientId.Value.ToString() : "-";
+            UnityEditor.Handles.Label(transform.position + Vector3.up * 2.0f, $"{sim.StateId}  target:{target}");
 
             if (_settings != null)
             {
@@ -217,23 +69,23 @@ namespace Project02.Enemy
                 DrawRange(_settings.AttackRange, new Color(1.0f, 0.25f, 0.25f));
             }
 
-            if (_grid == null || _waypoint >= _path.Count)
+            if (sim.Grid == null || sim.Waypoint >= sim.Path.Count)
             {
                 return;
             }
 
             Gizmos.color = Color.cyan;
-            for (int i = _waypoint; i < _path.Count; i++)
+            for (int i = sim.Waypoint; i < sim.Path.Count; i++)
             {
-                Vector3 point = _grid.ConvertWorldCoord(_path[i]) + Vector3.up * 0.2f;
+                Vector3 point = sim.Grid.ConvertWorldCoord(sim.Path[i]) + Vector3.up * 0.2f;
                 Gizmos.DrawSphere(point, 0.08f);
 
-                Vector3 previous = i == _waypoint ? transform.position : _grid.ConvertWorldCoord(_path[i - 1]) + Vector3.up * 0.2f;
+                Vector3 previous = i == sim.Waypoint ? transform.position : sim.Grid.ConvertWorldCoord(sim.Path[i - 1]) + Vector3.up * 0.2f;
                 Gizmos.DrawLine(previous, point);
             }
 
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.8f);
-            DrawCircle(transform.position, ARRIVE_THRESHOLD);
+            DrawCircle(transform.position, EnemyNavigation.ARRIVE_THRESHOLD);
         }
 
         private void DrawCapsule()
@@ -265,7 +117,7 @@ namespace Project02.Enemy
 
             if (Application.isPlaying)
             {
-                Gizmos.color = _movement.IsGrounded ? Color.yellow : Color.gray;
+                Gizmos.color = Simulation.Movement.IsGrounded ? Color.yellow : Color.gray;
                 Gizmos.DrawLine(position, position + Vector3.down * (radius * 0.5f));
             }
         }

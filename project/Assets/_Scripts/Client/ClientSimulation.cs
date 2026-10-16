@@ -115,7 +115,6 @@ namespace Project02.Client
             _world.Enemies.Clear();
         }
 
-        // NGO가 아무 때나 부른다 → 기록만 (deferment)
         private void OnSnapshot(ulong senderId, FastBufferReader reader)
         {
             reader.ReadValueSafe(out int tick);
@@ -128,7 +127,7 @@ namespace Project02.Client
                 reader.ReadNetworkSerializable(out EnemySnapshot snapshot);
                 if (_world.Enemies.TryGetValue(snapshot.ObjectId, out EnemyRemote enemy))
                 {
-                    enemy.Record(tick, snapshot);
+                    enemy.Snapshots.SetValue(tick, snapshot);
                 }
             }
         }

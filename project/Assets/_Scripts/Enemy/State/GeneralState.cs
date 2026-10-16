@@ -1,28 +1,25 @@
+using Project02.Server;
+
 namespace Project02.Enemy
 {
-    public class GeneralState : IEnemyState
+    public static class GeneralState
     {
-        public void Enter(EnemyController enemy)
+        public static void Enter(EnemySimulation sim)
         {
-            enemy.TargetClientId = null;
+            sim.TargetClientId = null;
         }
 
-        public void Exit(EnemyController enemy)
+        public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
         {
-            // throw new System.NotImplementedException();
-        }
-
-        public void Tick(EnemyController enemy, float dt)
-        {
-            if (enemy.TryFindClosestPlayer(enemy.Settings.PerceptionRange, out ulong clientId))
+            if (EnemyTargetUtil.TryFindClosest(world, sim.Movement.Position, sim.Settings.PerceptionRange, out ulong clientId))
             {
-                enemy.TargetClientId = clientId;
-                enemy.ChangeState(EnemyStateId.Battle);
+                sim.TargetClientId = clientId;
+                EnemyFsm.Change(sim, EnemyStateId.Battle);
                 return;
             }
 
-            enemy.MoveInput = enemy.WanderInput(dt);
-            enemy.MoveSpeed = enemy.Settings.WalkSpeed;
+            sim.MoveInput = EnemyNavigation.WanderInput(sim, deltaTime);
+            sim.MoveSpeed = sim.Settings.WalkSpeed;
         }
     }
 }
