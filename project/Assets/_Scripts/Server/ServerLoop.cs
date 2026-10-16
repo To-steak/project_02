@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Project02.Server
 {
+    [DefaultExecutionOrder(-100)]
     public class ServerLoop : MonoBehaviour
     {
         public static ServerLoop Instance { get; private set; }
@@ -40,7 +41,7 @@ namespace Project02.Server
 
             // 클라 World가 같은 프로세스에 있으면 transform은 클라 표시가 쓴다 (호스트)
             _world.WriteTransforms = !network.IsClient;
-            
+
             ref ServerClock clock = ref _world.Clock;
             clock.Accumulator += Time.deltaTime;
 

@@ -9,6 +9,8 @@ using UnityEngine;
 namespace Project02.Client
 {
     // World 진입점: ClientWorld를 소유하고, 시스템을 정해진 순서로 돌린다
+    // 호스트: 같은 프레임에 ClientLoop(입력 → 예측 → 입력 전송)가 ServerLoop(소비 → 시뮬 → 송신)보다 먼저
+    [DefaultExecutionOrder(-200)]
     public class ClientLoop : MonoBehaviour
     {
         public static ClientLoop Instance { get; private set; }
@@ -75,7 +77,7 @@ namespace Project02.Client
 
             // 2. 카메라
             CameraSystem.Update(world, input.MouseSensitivity, frameTime);
-            
+
             // 3. 리컨사일 (뒤처졌으면 시계 재동기화)
             NetworkManager network = NetworkManager.Singleton;
             float rttMs = network.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId);

@@ -72,5 +72,42 @@ namespace Project02.Service
                 Debug.Log($"[{nameof(ServerLauncher)}] migrated {legacy} → {savePath}");
             }
         }
+
+#if UNITY_EDITOR
+        // 3단계 테스트용. 4단계에서 ConnectionService.StartSinglePlayer(slot)로 대체
+        private const string TEST_HOST_USER_ID = "00000000000000000000000000000001";
+        private const string TEST_HOST_NICKNAME = "Host";
+
+        [ContextMenu("Open Host (Slot 0, test)")]
+        private void OpenHostForTest()
+        {
+            string savePath = SavePaths.Slot(0);
+            ProgressService.OpenResult result = ProgressService.Instance.Open(savePath);
+            if (result is ProgressService.OpenResult.Corrupt or ProgressService.OpenResult.Unsupported)
+            {
+                Debug.LogError($"[{nameof(ServerLauncher)}] cannot open save ({result}): {savePath}", this);
+                return;
+            }
+
+            NetworkManager networkManager = NetworkManager.Singleton;
+
+            // 호스트 자신도 ConnectionApproval을 거친다 → payload 필요
+            ConnectPayload payload = new ConnectPayload { UserId = TEST_HOST_USER_ID, Nickname = TEST_HOST_NICKNAME };
+            networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(payload));
+
+            // 외부 접속 차단: 루프백에만 바인딩
+            networkManager.GetComponent<UnityTransport>().SetConnectionData("127.0.0.1", NetworkDefaults.Port, "127.0.0.1");
+
+            if (!networkManager.StartHost())
+            {
+                Debug.LogError($"[{nameof(ServerLauncher)}] failed to start host", this);
+                ProgressService.Instance.Close();
+                return;
+            }
+
+            // targetFrameRate는 건드리지 않는다 (SettingsService 값 유지)
+            networkManager.SceneManager.LoadScene(_firstScene, LoadSceneMode.Single);
+        }
+#endif
     }
 }
