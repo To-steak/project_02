@@ -1,4 +1,5 @@
 using Project02.Client;
+using Project02.Core;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -6,19 +7,20 @@ namespace Project02.Player
 {
     public class PlayerOwner : NetworkBehaviour
     {
-        internal PlayerView View => _view;
-        internal PlayerController Controller => _controller;
-        internal readonly InputPayload[] InputHistory = new InputPayload[BUFFER_SIZE];
-        internal readonly PlayerSimulationState[] StateHistory = new PlayerSimulationState[BUFFER_SIZE];
-        internal StatePayload PendingState;
-        internal bool HasPendingState;
-        internal int LatestServerTick = -1;
-        internal int ReconcileCount;
-        internal const int BUFFER_SIZE = 1024;
-        internal const int BUFFER_MASK = BUFFER_SIZE - 1;
+        public PlayerView View => _view;
+        public PlayerController Controller => _controller;
+
+        public readonly TickBuffer<InputPayload> InputHistory = new(BUFFER_SIZE);
+        public readonly TickBuffer<PlayerSimulationState> StateHistory = new(BUFFER_SIZE);
+
+        public StatePayload PendingState;
+        public bool HasPendingState;
+        public int LatestServerTick = -1;
 
         [SerializeField] private PlayerController _controller;
         [SerializeField] private PlayerView _view;
+
+        private const int BUFFER_SIZE = 1024;
 
         public override void OnNetworkSpawn()
         {
@@ -27,6 +29,9 @@ namespace Project02.Player
             {
                 return;
             }
+
+            InputHistory.Clear();
+            StateHistory.Clear();
 
             _controller.PlayerInput.Initialize();
             _controller.PlayerInput.Active();
@@ -62,6 +67,7 @@ namespace Project02.Player
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public int DEBUG_ReconcileCount;
         private void OnGUI()
         {
             GUIStyle style = new GUIStyle(GUI.skin.label);
@@ -74,7 +80,7 @@ namespace Project02.Player
             float xPos = Screen.width - width - paddingRight;
             float fps = 1.0f / Time.unscaledDeltaTime;
 
-            GUI.Label(new Rect(xPos, 30, width, height), $"reconcile: {ReconcileCount}", style);
+            GUI.Label(new Rect(xPos, 30, width, height), $"reconcile: {DEBUG_ReconcileCount}", style);
             GUI.Label(new Rect(xPos, 70, width, height), $"rtt: {NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId)}ms", style);
             GUI.Label(new Rect(xPos, 90, width, height), $"fps: {fps:F1}", style);
             GUI.Label(new Rect(xPos, 110, width, height), $"energy: {_controller.PlayerLocomotion.Energy:F1}", style);

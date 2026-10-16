@@ -1,4 +1,5 @@
 using Project02.Character;
+using Project02.Core;
 using Project02.Server;
 using Project02.Service;
 using Project02.Weapon;
@@ -11,7 +12,7 @@ namespace Project02.Player
     {
         [SerializeField] private PlayerController _controller;
 
-        private readonly InputPayload[] _inputBuffer = new InputPayload[BUFFER_SIZE];
+        private readonly TickBuffer<InputPayload> _inputBuffer = new(BUFFER_SIZE);
         private InputPayload _lastInput;
         private int _consumedTick = -1;
         private int _latestTick = -1;
@@ -21,14 +22,6 @@ namespace Project02.Player
 
         private const int START_BUFFER = 2;
         private const int BUFFER_SIZE = 64;
-
-        private void Awake()
-        {
-            for (int i = 0; i < BUFFER_SIZE; i++)
-            {
-                _inputBuffer[i].Tick = -1;
-            }
-        }
 
         public override void OnNetworkSpawn()
         {
@@ -48,8 +41,11 @@ namespace Project02.Player
         {
             if (!_started)
             {
-                // 첫 입력들이 몇 개 쌓일 때까지 기다림. 바로 시작하면 버퍼가 0이라 곧바로 굶음
-                if (_latestTick - _consumedTick < START_BUFFER) return;
+                if (_latestTick - _consumedTick < START_BUFFER)
+                {
+                    return;
+                }
+
                 _started = true;
             }
 
@@ -75,10 +71,9 @@ namespace Project02.Player
         private InputPayload Dequeue()
         {
             int tick = _consumedTick + 1;
-            InputPayload slot = _inputBuffer[tick & BUFFER_SIZE - 1];
 
             InputPayload input;
-            if (slot.Tick == tick)
+            if (_inputBuffer.TryGetValue(tick, out InputPayload slot))
             {
                 input = slot;
                 _lastInput = slot;
@@ -103,13 +98,13 @@ namespace Project02.Player
                 InputPayload payload = bundle[i];
                 if (payload.Tick <= _consumedTick)
                 {
-                    int index = payload.Tick & BUFFER_SIZE - 1;
-                    bool lateForDuplicatedTick = _inputBuffer[index].Tick != payload.Tick && payload.Tick > _consumedTick - BUFFER_SIZE;
+                    bool lateForDuplicatedTick = !_inputBuffer.TryGetValue(payload.Tick, out _)
+                                                 && payload.Tick > _consumedTick - BUFFER_SIZE;
                     if (lateForDuplicatedTick)
                     {
                         _carryJump |= payload.JumpInput;
                         _carryAttack |= payload.AttackPressed;
-                        _inputBuffer[index] = payload;
+                        _inputBuffer.SetValue(payload.Tick, payload);
                     }
                     continue;
                 }
@@ -119,7 +114,7 @@ namespace Project02.Player
                     Resync(payload.Tick);
                 }
 
-                _inputBuffer[payload.Tick & BUFFER_SIZE - 1] = payload;
+                _inputBuffer.SetValue(payload.Tick, payload);
                 if (payload.Tick > _latestTick)
                 {
                     _latestTick = payload.Tick;
@@ -129,11 +124,7 @@ namespace Project02.Player
 
         private void Resync(int tick)
         {
-            for (int i = 0; i < BUFFER_SIZE; i++)
-            {
-                _inputBuffer[i].Tick = -1;
-            }
-
+            _inputBuffer.Clear();
             _carryJump = _carryAttack = false;
             _consumedTick = tick - 1;
             _latestTick = tick - 1;

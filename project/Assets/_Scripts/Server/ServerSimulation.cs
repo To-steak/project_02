@@ -4,6 +4,7 @@ using Project02.Enemy;
 using Unity.Netcode;
 using UnityEngine;
 using Project02.Service;
+using Project02.Core;
 
 namespace Project02.Server
 {

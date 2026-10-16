@@ -1,5 +1,6 @@
 using Project02.Character;
 using Project02.Client;
+using Project02.Core;
 using Unity.Netcode;
 
 namespace Project02.Enemy
@@ -7,13 +8,7 @@ namespace Project02.Enemy
     public class EnemyRemote : NetworkBehaviour
     {
         public const int BUFFER_SIZE = 32; // 32 tick = 640ms
-        public const int BUFFER_MASK = BUFFER_SIZE - 1;
-
-        public readonly EnemySnapshot[] Snapshots = new EnemySnapshot[BUFFER_SIZE];
-        public readonly int[] Ticks = new int[BUFFER_SIZE];
-
-        public EnemyStateId ViewStateId;
-        public MovementState ViewMovement;
+        public readonly TickBuffer<EnemySnapshot> Snapshots = new(BUFFER_SIZE);
 
         public override void OnNetworkSpawn()
         {
@@ -23,11 +18,7 @@ namespace Project02.Enemy
                 return;
             }
 
-            for (int i = 0; i < Ticks.Length; i++)
-            {
-                Ticks[i] = -1;
-            }
-
+            Snapshots.Clear();
             ClientSimulation.Instance.Register(this);
         }
 
@@ -43,8 +34,7 @@ namespace Project02.Enemy
 
         public void Record(int tick, in EnemySnapshot snapshot)
         {
-            Snapshots[tick & BUFFER_MASK] = snapshot;
-            Ticks[tick & BUFFER_MASK] = tick;
+            Snapshots.SetValue(tick, snapshot);
         }
     }
 }

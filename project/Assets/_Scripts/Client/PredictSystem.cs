@@ -12,7 +12,7 @@ namespace Project02.Client
 
             Vector3 aimPoint = camera.AimPoint;
             InputPayload input = controller.PlayerInput.Capture(tick, camera.Yaw, camera.Pitch, aimPoint);
-            owner.InputHistory[tick & PlayerOwner.BUFFER_MASK] = input;
+            owner.InputHistory.SetValue(tick, input);
 
             if (controller.Step(input, deltaTime, out ShotInfo shot))
             {
@@ -20,7 +20,7 @@ namespace Project02.Client
                 camera.AddRecoil(controller.PlayerWeapon.View.RollRecoil(shot.Stance));
             }
 
-            owner.StateHistory[tick & PlayerOwner.BUFFER_MASK] = controller.Capture(tick);
+            owner.StateHistory.SetValue(tick, controller.Capture(tick));
             owner.View.OnTick(controller.PlayerLocomotion.Movement);
 
             SendInputs(owner, tick);
@@ -28,12 +28,19 @@ namespace Project02.Client
 
         private static void SendInputs(PlayerOwner owner, int tick)
         {
-            int count = Mathf.Min(InputBundle.CAPACITY, tick + 1);
-            InputBundle bundle = new InputBundle { Count = (byte)count };
-            for (int i = 0; i < count; i++)
+            InputBundle bundle = default;
+            int count = 0;
+            for (int i = 0; i < InputBundle.CAPACITY; i++)
             {
-                bundle.Set(i, owner.InputHistory[(tick - i) & PlayerOwner.BUFFER_MASK]);
+                if (!owner.InputHistory.TryGetValue(tick - i, out InputPayload input))
+                {
+                    break;
+                }
+                
+                bundle.SetPayload(count++, input);
             }
+
+            bundle.Count = (byte)count;
             owner.Controller.PlayerServer.InputRPC(bundle);
         }
     }

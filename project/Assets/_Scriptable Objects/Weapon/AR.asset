@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71bf878200f6fba4fb00a1e47a61fb98, type: 3}
-  m_Name: WeaponData
+  m_Name: AR
   m_EditorClassIdentifier: GameWeapon::WeaponData
   DisplayName: Default Name
   WeaponCoefficient: 1
@@ -19,13 +19,13 @@ MonoBehaviour:
   CriticalChance: 0
   HipSpread: 3
   MaxSpread: 6
-  SpreadPerShot: 0.5
+  SpreadPerShot: 5
   SpreadRecovery: 8
   AdsSpreadMultiplier: 0.3
   IdleSpreadMultiplier: 1
   WalkSpreadMultiplier: 1.5
   RunSpreadMultiplier: 2.5
-  RecoilHorizontal: 0.3
+  RecoilHorizontal: 1
   RecoilVertical: 1
   AdsRecoilMultiplier: 0.6
   AdsZoom: 1.2
@@ -54,8 +54,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  NoiseRange: 30
-  ShakeRandom: 0
+  NoiseRange: 3
+  ShakeRandom: 0.1
   IsSuppressed: 0
-  RapidFireTick: 20
+  RapidFireTick: 6
   SpreadRecoveryDelayTick: 40

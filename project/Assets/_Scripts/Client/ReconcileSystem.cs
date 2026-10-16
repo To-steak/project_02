@@ -1,3 +1,4 @@
+using Project02.Core;
 using Project02.Player;
 using UnityEngine;
 
@@ -19,13 +20,18 @@ namespace Project02.Client
             clock.SmoothedBuffer = Mathf.Lerp(clock.SmoothedBuffer, payload.InputBuffer, BUFFER_SMOOTHING);
 
             PlayerSimulationState server = payload.State;
-            PlayerSimulationState predicted = owner.StateHistory[server.Tick & PlayerOwner.BUFFER_MASK];
-            if (predicted.Tick != server.Tick) return;
+            if (!owner.StateHistory.TryGetValue(server.Tick, out PlayerSimulationState predicted))
+            {
+                return;
+            }
 
-            if (!IsMispredicted(predicted, server)) return;
+            if (!IsMispredicted(predicted, server))
+            {
+                return;
+            }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            owner.ReconcileCount++;
+            owner.DEBUG_ReconcileCount++;
             Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
 #endif
             PlayerController controller = owner.Controller;
@@ -33,8 +39,13 @@ namespace Project02.Client
 
             for (int tick = server.Tick + 1; tick < clock.Tick; tick++)
             {
-                controller.Step(owner.InputHistory[tick & PlayerOwner.BUFFER_MASK], SimulationClock.DeltaTime, out _);
-                owner.StateHistory[tick & PlayerOwner.BUFFER_MASK] = controller.Capture(tick);
+                if (!owner.InputHistory.TryGetValue(tick, out InputPayload input))
+                {
+                    break;
+                }
+
+                controller.Step(input, SimulationClock.DeltaTime, out _);
+                owner.StateHistory.SetValue(tick, controller.Capture(tick));
             }
         }
 

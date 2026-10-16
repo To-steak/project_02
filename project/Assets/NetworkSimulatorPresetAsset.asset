@@ -15,6 +15,6 @@ MonoBehaviour:
   <Name>k__BackingField: 
   <Description>k__BackingField: 
   <PacketDelayMs>k__BackingField: 200
-  <PacketJitterMs>k__BackingField: 12
-  <PacketLossInterval>k__BackingField: 0
-  <PacketLossPercent>k__BackingField: 2
+  <PacketJitterMs>k__BackingField: 50
+  <PacketLossInterval>k__BackingField: 10
+  <PacketLossPercent>k__BackingField: 0

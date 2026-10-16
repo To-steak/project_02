@@ -19,7 +19,7 @@ namespace Project02.Player
             _ => throw new IndexOutOfRangeException(nameof(index))
         };
 
-        public void Set(int index, in InputPayload payload)
+        public void SetPayload(int index, in InputPayload payload)
         {
             switch (index)
             {

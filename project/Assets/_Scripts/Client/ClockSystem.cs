@@ -1,4 +1,5 @@
 using UnityEngine;
+using Project02.Core;
 
 namespace Project02.Client
 {

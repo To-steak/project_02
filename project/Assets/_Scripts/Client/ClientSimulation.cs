@@ -4,6 +4,7 @@ using Project02.Player;
 using Project02.Server;
 using Unity.Netcode;
 using UnityEngine;
+using Project02.Core;
 
 namespace Project02.Client
 {
@@ -81,9 +82,9 @@ namespace Project02.Client
 
         private void LateUpdate()
         {
-            float frameTime = Time.deltaTime;
+            float time = Time.deltaTime;
 
-            InterpolationSystem.Advance(ref _interp, frameTime);
+            InterpolationSystem.Advance(ref _interp, time);
             foreach (EnemyRemote enemy in _enemies.Values)
             {
                 InterpolationSystem.Present(enemy, _interp.RenderTick);
@@ -91,7 +92,7 @@ namespace Project02.Client
 
             if (_local == null) return;
             float alpha = Mathf.Clamp01(_clock.Accumulator / _clock.Interval);
-            ViewSystem.Present(_local, alpha, frameTime);
+            ViewSystem.Present(_local, alpha, time);
         }
 
         private void OnClientStarted()
@@ -111,7 +112,6 @@ namespace Project02.Client
             reader.ReadValueSafe(out int tick);
             reader.ReadValueSafe(out ushort count);
 
-            if (_interp.HasTick && tick <= _interp.LatestTick - EnemyRemote.BUFFER_SIZE) return;
             InterpolationSystem.Receive(ref _interp, tick);
 
             for (int i = 0; i < count; i++)
@@ -135,6 +135,8 @@ namespace Project02.Client
             GUI.Label(new Rect(x, 150, 300, 20), $"tick: {_clock.Tick}", style);
             GUI.Label(new Rect(x, 170, 300, 20), $"buffer: {_clock.SmoothedBuffer:F2}", style);
             GUI.Label(new Rect(x, 190, 300, 20), $"interval: {_clock.Interval * 1000.0f:F2}ms", style);
+            GUI.Label(new Rect(x, 210, 300, 20), $"latest: {_interp.LatestTick} render: {_interp.RenderTick:F2}", style);
+            GUI.Label(new Rect(x, 230, 300, 20), $"delay: {_interp.LatestTick - _interp.RenderTick:F2} ticks", style);
         }
 #endif
     }

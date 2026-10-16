@@ -12,16 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d753d2ed93e8e4942bb49e3c895205a3, type: 3}
   m_Name: Player Settings
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSettings
-  WalkSpeed: 1
-  RunSpeed: 3
-  JumpSpeed: 5
-  Profile: {fileID: 11400000, guid: b73b04e323199b746b64906f6bbe9f63, type: 2}
   RotationSpeed: 1
   PitchSpeed: 1
   MinPitch: -30
   MaxPitch: 40
-  LevelTable: {fileID: 11400000, guid: c961a6c3d4caea94f910d5f2beca8524, type: 2}
-  RunCost: 10
-  JumpCost: 15
-  RegenMp: 5
-  RecoveryRatio: 1
+  AimLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  AimDistance: 1000
+  AdsCameraDistance: 2
+  AdsVerticalArmLength: 0.74
+  AdsShoulderOffset: {x: 0.74, y: 0, z: 0}
+  AdsSpeed: 8
+  RecoilSpeed: 20
+  TurnSpeed: 720
+  MaxMuzzleOffset: 2
+  FireOriginOffset: {x: 0, y: 0.74, z: 0}
