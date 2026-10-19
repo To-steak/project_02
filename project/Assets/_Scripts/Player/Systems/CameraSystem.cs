@@ -8,7 +8,7 @@ namespace Project02.Client
     {
         public static void Update(ClientWorld world, float sensitivity, float frameTime)
         {
-            PlayerOwner owner = world.Local;
+            PlayerOwnerAuthoring owner = world.Local;
             SOPlayer settings = owner.Settings;
             ref CameraState camera = ref world.Camera;
             ref InputState input = ref world.Input;

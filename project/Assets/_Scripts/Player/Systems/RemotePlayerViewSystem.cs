@@ -11,14 +11,14 @@ namespace Project02.Client
         public static void Present(ClientWorld world, float frameTime)
         {
             float renderTick = world.Interp.RenderTick;
-            foreach (PlayerRemote player in world.Players.Values)
+            foreach (PlayerRemoteAuthoring player in world.Players.Values)
             {
                 PresentPose(player, renderTick, frameTime);
                 PresentFires(player, renderTick);
             }
         }
 
-        private static void PresentPose(PlayerRemote player, float renderTick, float frameTime)
+        private static void PresentPose(PlayerRemoteAuthoring player, float renderTick, float frameTime)
         {
             if (!SnapshotUtil.TrySample(player.Snapshots, renderTick, out PlayerSnapshot from, out PlayerSnapshot to, out float t)) return;
 
@@ -27,7 +27,7 @@ namespace Project02.Client
             float pitch = Mathf.Lerp(from.Pitch, to.Pitch, t);
             player.transform.SetPositionAndRotation(position, Quaternion.Euler(0.0f, yaw, 0.0f));
 
-            PlayerVisual visual = player.Visual;
+            PlayerBodyView visual = player.Visual;
             visual.ApplyPitch(pitch);
             visual.AimAtPitch(pitch);
 
@@ -36,13 +36,13 @@ namespace Project02.Client
             float verticalSpeed = Mathf.Lerp(from.Movement.VerticalSpeed, to.Movement.VerticalSpeed, t);
             Vector2 move = Vector2.Lerp(from.Move, to.Move, t);
 
-            PlayerAnimation animation = player.Animation;
+            PlayerAnimatorView animation = player.Animation;
             animation.SetAirborne(nearest.Movement.IsGrounded, verticalSpeed);
             animation.SetMoveBlendTree(move, nearest.IsRunning, frameTime);
         }
 
         // 그리는 시점이 발사 틱에 도달했을 때 재생 (몸과 총알의 시점을 맞춤)
-        private static void PresentFires(PlayerRemote player, float renderTick)
+        private static void PresentFires(PlayerRemoteAuthoring player, float renderTick)
         {
             List<RemoteFire> fires = player.Network.Fires;
             WeaponView view = player.Weapon.View;

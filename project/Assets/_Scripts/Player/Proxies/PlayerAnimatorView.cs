@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Project02.Player
 {
     // 프록시: 애니메이터 파라미터 쓰기. 소유자는 ViewSystem, 원격은 InterpolationSystem이 부른다
-    public class PlayerAnimation : MonoBehaviour
+    public class PlayerAnimatorView : MonoBehaviour
     {
         [SerializeField] private Animator _animator;
 

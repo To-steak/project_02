@@ -16,11 +16,11 @@ namespace Project02.Enemy
             if (EnemyTargetUtil.TryFindClosest(world, sim.Movement.Position, sim.Settings.PerceptionRange, out ulong clientId))
             {
                 sim.TargetClientId = clientId;
-                EnemyFsm.Change(sim, EnemyStateId.Battle, tick);
+                EnemyFsmUtil.Change(sim, EnemyStateId.Battle, tick);
                 return;
             }
 
-            sim.MoveInput = EnemyNavigation.WanderInput(sim, tick);
+            sim.MoveInput = EnemyNavigationUtil.WanderInput(sim, tick);
             sim.MoveSpeed = sim.Settings.WalkSpeed;
         }
     }

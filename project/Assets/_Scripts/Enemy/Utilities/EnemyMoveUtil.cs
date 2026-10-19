@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Project02.Enemy
 {
-    public static class EnemyMovement
+    public static class EnemyMoveUtil
     {
         public static void Step(SOEnemy settings, ref MovementState movement, ref Quaternion rotation, Vector2 input, float speed, float deltaTime)
         {

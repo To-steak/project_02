@@ -38,7 +38,7 @@ namespace Project02.Server
 
                 // 2. 적: 쏜 사람이 보던 시점으로 되감아 판정 (벽보다 가까운 것만)
                 float sampleTick = tick - projectile.Lag;
-                if (TryHitEnemies(world.Enemies, sampleTick, projectile.Position, direction, maxDistance, out EnemyController target, out float distance))
+                if (TryHitEnemies(world.Enemies, sampleTick, projectile.Position, direction, maxDistance, out EnemyServerAuthoring target, out float distance))
                 {
                     int damage = projectile.GetDamage(traveled + distance);
                     world.Hits.Add(new HitInfo(target.Health, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
@@ -59,13 +59,13 @@ namespace Project02.Server
         }
 
         // 선분 [start, start + direction * maxDistance] 위에서 가장 먼저 닿는 적
-        private static bool TryHitEnemies(List<EnemyController> enemies, float sampleTick, Vector3 start, Vector3 direction, float maxDistance,
-                                          out EnemyController target, out float distance)
+        private static bool TryHitEnemies(List<EnemyServerAuthoring> enemies, float sampleTick, Vector3 start, Vector3 direction, float maxDistance,
+                                          out EnemyServerAuthoring target, out float distance)
         {
             target = null;
             distance = maxDistance;
 
-            foreach (EnemyController enemy in enemies)
+            foreach (EnemyServerAuthoring enemy in enemies)
             {
                 if (enemy.Health.IsDead) continue;
 

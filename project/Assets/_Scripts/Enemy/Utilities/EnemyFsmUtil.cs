@@ -3,7 +3,7 @@ using Project02.Server;
 namespace Project02.Enemy
 {
     // 유틸: 상태 전환과 분기. 상태를 추가하면 여기 switch에 case를 넣는다
-    public static class EnemyFsm
+    public static class EnemyFsmUtil
     {
         public static void Reset(EnemySimulation sim, int tick)
         {

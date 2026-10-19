@@ -7,7 +7,7 @@ namespace Project02.Server
     {
         public static void Process(ServerWorld world)
         {
-            foreach (PlayerServer player in world.Players)
+            foreach (PlayerServerAuthoring player in world.Players)
             {
                 PlayerProgression progression = player.Progression;
 

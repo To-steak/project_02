@@ -8,7 +8,7 @@ namespace Project02.Server
     {
         public static void Tick(ServerWorld world, float deltaTime)
         {
-            foreach (EnemyController enemy in world.Enemies)
+            foreach (EnemyServerAuthoring enemy in world.Enemies)
             {
                 if (enemy.Health.IsDead) continue;   // DeathSystem이 같은 틱에 치운다
 
@@ -17,10 +17,10 @@ namespace Project02.Server
                 // 1. 상태 머신이 이번 틱 이동 입력을 정한다
                 sim.MoveInput = Vector2.zero;
                 sim.MoveSpeed = 0.0f;
-                EnemyFsm.Tick(world, sim, deltaTime);
+                EnemyFsmUtil.Tick(world, sim, deltaTime);
 
                 // 2. 이동
-                EnemyMovement.Step(sim.Settings, ref sim.Movement, ref sim.Rotation, sim.MoveInput, sim.MoveSpeed, deltaTime);
+                EnemyMoveUtil.Step(sim.Settings, ref sim.Movement, ref sim.Rotation, sim.MoveInput, sim.MoveSpeed, deltaTime);
 
                 // 3. 출력 (규칙 7): 클라가 없는 프로세스에서만. 클라가 있으면 EnemyViewSystem이 쓴다
                 if (world.WriteTransforms)

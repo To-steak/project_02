@@ -8,15 +8,15 @@ namespace Project02.Service
     {
         public static ProjectileVisualService Instance { get; private set; }
 
-        [SerializeField] private Bullet _prefab;
+        [SerializeField] private BulletView _prefab;
         [SerializeField] private int _defaultCapacity = 64;
         [SerializeField] private int _maxSize = 256;
 
-        private ObjectPool<Bullet> _pool;
+        private ObjectPool<BulletView> _pool;
 
         private void Awake()
         {
-            _pool = new ObjectPool<Bullet>(
+            _pool = new ObjectPool<BulletView>(
                 createFunc: () => Instantiate(_prefab, transform).Inject(_pool),
                 actionOnGet: bullet => bullet.gameObject.SetActive(true),
                 actionOnRelease: bullet => bullet.gameObject.SetActive(false),

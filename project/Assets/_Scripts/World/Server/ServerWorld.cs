@@ -9,7 +9,7 @@ namespace Project02.Server
     {
         // Singleton Components
         public ServerClock Clock;
-        public readonly List<EnemyController> Despawns = new();   // DeathSystem이 쌓고 DespawnSystem이 Step 끝에 처리
+        public readonly List<EnemyServerAuthoring> Despawns = new();   // DeathSystem이 쌓고 DespawnSystem이 Step 끝에 처리
         public readonly List<Projectile> Projectiles = new();
         public readonly List<HitInfo> Hits = new();
         public readonly List<RewardInfo> Rewards = new();
@@ -17,7 +17,7 @@ namespace Project02.Server
         public bool WriteTransforms;   // 이 프로세스에 클라 World가 없을 때만 true (전용 서버 디버그용)
 
         // Entities
-        public readonly List<PlayerServer> Players = new();
-        public readonly List<EnemyController> Enemies = new();
+        public readonly List<PlayerServerAuthoring> Players = new();
+        public readonly List<EnemyServerAuthoring> Enemies = new();
     }
 }

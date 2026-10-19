@@ -18,7 +18,7 @@ namespace Project02.Enemy
                     return;
                 }
                 
-                EnemyFsm.Change(sim, EnemyStateId.General, world.Clock.Tick);
+                EnemyFsmUtil.Change(sim, EnemyStateId.General, world.Clock.Tick);
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace Project02.Enemy
             float distance = direction.magnitude;
             if (distance > settings.BattleRange)
             {
-                EnemyFsm.Change(sim, EnemyStateId.General, world.Clock.Tick);
+                EnemyFsmUtil.Change(sim, EnemyStateId.General, world.Clock.Tick);
                 return;
             }
 

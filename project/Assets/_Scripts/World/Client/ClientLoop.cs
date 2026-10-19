@@ -36,7 +36,7 @@ namespace Project02.Client
             if (Instance == this) Instance = null;
         }
 
-        public void Register(PlayerOwner owner)
+        public void Register(PlayerOwnerAuthoring owner)
         {
             _world.Local = owner;
             _world.Clock = ClockSystem.Create();
@@ -46,7 +46,7 @@ namespace Project02.Client
             InputService.Instance.Actions.Enable();
         }
 
-        public void Unregister(PlayerOwner owner)
+        public void Unregister(PlayerOwnerAuthoring owner)
         {
             if (_world.Local != owner) return;
 
@@ -59,10 +59,10 @@ namespace Project02.Client
             }
         }
 
-        public void Register(PlayerRemote player) => _world.Players[player.NetworkObjectId] = player;
-        public void Unregister(PlayerRemote player) => _world.Players.Remove(player.NetworkObjectId);
-        public void Register(EnemyRemote enemy) => _world.Enemies[enemy.NetworkObjectId] = enemy;
-        public void Unregister(EnemyRemote enemy) => _world.Enemies.Remove(enemy.NetworkObjectId);
+        public void Register(PlayerRemoteAuthoring player) => _world.Players[player.NetworkObjectId] = player;
+        public void Unregister(PlayerRemoteAuthoring player) => _world.Players.Remove(player.NetworkObjectId);
+        public void Register(EnemyRemoteAuthoring enemy) => _world.Enemies[enemy.NetworkObjectId] = enemy;
+        public void Unregister(EnemyRemoteAuthoring enemy) => _world.Enemies.Remove(enemy.NetworkObjectId);
 
         private void Update()
         {
@@ -92,7 +92,7 @@ namespace Project02.Client
             }
 
             // 6. 루트 transform 출력 (리컨사일·예측 루프 밖에서 1회)
-            PlayerOwner owner = world.Local;
+            PlayerOwnerAuthoring owner = world.Local;
             PlayerStepUtil.WriteTransform(owner.transform, owner.Simulation);
         }
 
@@ -135,7 +135,7 @@ namespace Project02.Client
             for (int i = 0; i < enemyCount; i++)
             {
                 reader.ReadNetworkSerializable(out EnemySnapshot snapshot);
-                if (_world.Enemies.TryGetValue(snapshot.ObjectId, out EnemyRemote enemy))
+                if (_world.Enemies.TryGetValue(snapshot.ObjectId, out EnemyRemoteAuthoring enemy))
                 {
                     enemy.Snapshots.SetValue(tick, snapshot);
                 }
@@ -145,7 +145,7 @@ namespace Project02.Client
             for (int i = 0; i < playerCount; i++)
             {
                 reader.ReadNetworkSerializable(out PlayerSnapshot snapshot);
-                if (_world.Players.TryGetValue(snapshot.ObjectId, out PlayerRemote player))
+                if (_world.Players.TryGetValue(snapshot.ObjectId, out PlayerRemoteAuthoring player))
                 {
                     player.Snapshots.SetValue(tick, snapshot);
                 }

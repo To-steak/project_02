@@ -3,15 +3,15 @@ using UnityEngine.Pool;
 
 namespace Project02.Weapon
 {
-    public class Bullet : MonoBehaviour
+    public class BulletView : MonoBehaviour
     {
-        private IObjectPool<Bullet> _pool;
+        private IObjectPool<BulletView> _pool;
         private Vector3 _target;
         private float _speed;
         private const float MIN_DISTANCE = 0.001f; // 1mm
         private const float MIN_DISTANCE_SQR = MIN_DISTANCE * MIN_DISTANCE;
 
-        public Bullet Inject(IObjectPool<Bullet> pool)
+        public BulletView Inject(IObjectPool<BulletView> pool)
         {
             _pool = pool;
 

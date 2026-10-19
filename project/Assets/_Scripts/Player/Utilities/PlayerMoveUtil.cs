@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Project02.Player
 {
-    public static class PlayerMovement
+    public static class PlayerMoveUtil
     {
         public static void Step(SOMovement settings, ref MovementState movement, ref StaminaState stamina, in InputPayload input, float deltaTime, out bool isRunning)
         {

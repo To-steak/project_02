@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Project02.Player
 {
-    public class PlayerVisual : MonoBehaviour
+    public class PlayerBodyView : MonoBehaviour
     {
         [SerializeField] private Transform _presentation;
         [SerializeField] private Transform _model;

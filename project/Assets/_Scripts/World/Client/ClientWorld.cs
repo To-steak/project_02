@@ -13,8 +13,8 @@ namespace Project02.Client
         public CameraState Camera;
 
         // Entities
-        public PlayerOwner Local;
-        public readonly Dictionary<ulong, PlayerRemote> Players = new();   // 원격 플레이어 (NetworkObjectId)
-        public readonly Dictionary<ulong, EnemyRemote> Enemies = new();
+        public PlayerOwnerAuthoring Local;
+        public readonly Dictionary<ulong, PlayerRemoteAuthoring> Players = new();   // 원격 플레이어 (NetworkObjectId)
+        public readonly Dictionary<ulong, EnemyRemoteAuthoring> Enemies = new();
     }
 }

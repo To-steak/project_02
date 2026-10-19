@@ -12,7 +12,7 @@ namespace Project02.Enemy
             if (!sim.TargetClientId.HasValue) return false;
 
             ulong clientId = sim.TargetClientId.Value;
-            foreach (PlayerServer player in world.Players)
+            foreach (PlayerServerAuthoring player in world.Players)
             {
                 if (player.OwnerClientId != clientId) continue;
 
@@ -31,7 +31,7 @@ namespace Project02.Enemy
             float best = range * range;
             bool found = false;
 
-            foreach (PlayerServer player in world.Players)
+            foreach (PlayerServerAuthoring player in world.Players)
             {
                 if (player.Health.IsDead) continue;
 

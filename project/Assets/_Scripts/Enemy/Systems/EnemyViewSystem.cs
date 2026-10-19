@@ -9,7 +9,7 @@ namespace Project02.Client
         public static void Present(ClientWorld world)
         {
             float renderTick = world.Interp.RenderTick;
-            foreach (EnemyRemote enemy in world.Enemies.Values)
+            foreach (EnemyRemoteAuthoring enemy in world.Enemies.Values)
             {
                 if (!SnapshotUtil.TrySample(enemy.Snapshots, renderTick, out EnemySnapshot from, out EnemySnapshot to, out float t)) continue;
 

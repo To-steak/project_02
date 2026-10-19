@@ -13,7 +13,7 @@ namespace Project02.Server
 
         public static void Tick(ServerWorld world, float deltaTime)
         {
-            foreach (PlayerServer player in world.Players)
+            foreach (PlayerServerAuthoring player in world.Players)
             {
                 InputQueue queue = player.Inputs;
 
@@ -132,10 +132,10 @@ namespace Project02.Server
             SOBullet bullet = data.Bullet;
 
             MovementState movement = sim.State.Movement;
-            Vector3 origin = WeaponFire.GetOrigin(movement, input.YawInput, settings.FireOriginOffset);
-            Vector3 direction = PlayerWeapon.GetDirection(origin, input.AimPoint, shot.Spread);
+            Vector3 origin = WeaponFireUtil.GetOrigin(movement, input.YawInput, settings.FireOriginOffset);
+            Vector3 direction = PlayerWeaponView.GetDirection(origin, input.AimPoint, shot.Spread);
             float damage = bullet.Damage * data.WeaponCoefficient;
-            bool isCritical = WeaponFire.RollCritical(ownerId, input.Tick, data.CriticalChance);
+            bool isCritical = WeaponFireUtil.RollCritical(ownerId, input.Tick, data.CriticalChance);
 
             float lag = input.ViewTick < 0.0f ? 1.0f : Mathf.Clamp(serverTick - input.ViewTick, 1.0f, MAX_LAG_TICKS);
 

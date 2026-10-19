@@ -13,7 +13,7 @@ namespace Project02.Client
 
         public static void Process(ClientWorld world, float rttTicks)
         {
-            PlayerOwner owner = world.Local;
+            PlayerOwnerAuthoring owner = world.Local;
             PlayerNetwork network = owner.Network;
             if (!network.HasPendingState) return;
 
@@ -63,7 +63,7 @@ namespace Project02.Client
         }
 
         // 서버 상태에서 다시 시작하고, 입력이 서버에 '미래'로 도착하도록 RTT + 목표 버퍼만큼 앞으로
-        private static void Resync(PlayerOwner owner, ref ClientClock clock, in PlayerSimulationState server, float rttTicks)
+        private static void Resync(PlayerOwnerAuthoring owner, ref ClientClock clock, in PlayerSimulationState server, float rttTicks)
         {
             int lead = Mathf.CeilToInt(rttTicks + ClockSystem.TARGET_BUFFER) + 1;
 

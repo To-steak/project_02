@@ -8,7 +8,7 @@ namespace Project02.Server
     public static class SessionSystem
     {
         // 스폰 시 1회 (ServerLoop.Register에서). 스폰 메시지에 실리도록 즉시 처리
-        public static void Join(PlayerServer player, SessionService session)
+        public static void Join(PlayerServerAuthoring player, SessionService session)
         {
             ulong clientId = player.OwnerClientId;
 
@@ -27,7 +27,7 @@ namespace Project02.Server
 
                 foreach (ulong clientId in reward.ClientIds)
                 {
-                    if (TryFindPlayer(world, clientId, out PlayerServer player))
+                    if (TryFindPlayer(world, clientId, out PlayerServerAuthoring player))
                     {
                         ApplyExp(player.Progression, session.GetExp(clientId));
                     }
@@ -43,9 +43,9 @@ namespace Project02.Server
             progression.Level.Value = progression.Table.GetLevel(exp);
         }
 
-        private static bool TryFindPlayer(ServerWorld world, ulong clientId, out PlayerServer player)
+        private static bool TryFindPlayer(ServerWorld world, ulong clientId, out PlayerServerAuthoring player)
         {
-            foreach (PlayerServer candidate in world.Players)
+            foreach (PlayerServerAuthoring candidate in world.Players)
             {
                 if (candidate.OwnerClientId == clientId)
                 {

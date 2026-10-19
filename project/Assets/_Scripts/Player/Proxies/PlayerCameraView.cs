@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Project02.Player
 {
     // 프록시: CameraState → Cinemachine, 조준 레이캐스트. 상태는 ClientWorld.Camera
-    public class PlayerCamera : MonoBehaviour
+    public class PlayerCameraView : MonoBehaviour
     {
         [Tooltip("프리팹에서 비활성으로 둘 것. Tracking Target은 PlayerVisual의 LookPos")]
         [SerializeField] private CinemachineCamera _cmCamera;

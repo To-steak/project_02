@@ -6,7 +6,7 @@ using UnityEngine.Animations.Rigging;
 namespace Project02.Player
 {
     // 프록시: 장착 무기의 설정 조회 + 뷰 생성 + IK. 발사 상태는 PlayerSim
-    public class PlayerWeapon : NetworkBehaviour
+    public class PlayerWeaponView : NetworkBehaviour
     {
         public SOCatalog Catalog => _catalog;
         public WeaponView View => _view;

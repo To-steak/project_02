@@ -7,7 +7,7 @@ namespace Project02.Client
     {
         public static void Tick(ClientWorld world, float deltaTime)
         {
-            PlayerOwner owner = world.Local;
+            PlayerOwnerAuthoring owner = world.Local;
             PlayerSimulation sim = owner.Simulation;
             int tick = world.Clock.Tick;
 
@@ -47,7 +47,7 @@ namespace Project02.Client
             SendInputs(owner, tick);
         }
 
-        private static void SendInputs(PlayerOwner owner, int tick)
+        private static void SendInputs(PlayerOwnerAuthoring owner, int tick)
         {
             InputBundle bundle = default;
             int count = 0;

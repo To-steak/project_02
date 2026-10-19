@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Project02.Enemy
 {
-    public static class EnemyNavigation
+    public static class EnemyNavigationUtil
     {
         public const int WANDER_INTERVAL_TICKS = 50;   // 1초 (50Hz). 도착 후 다음 배회까지 대기
         public const float ARRIVE_THRESHOLD = 0.2f;

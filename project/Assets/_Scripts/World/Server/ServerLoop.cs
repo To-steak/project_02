@@ -21,18 +21,18 @@ namespace Project02.Server
         private void Awake() => Instance = this;
         private void OnDestroy() { if (Instance == this) Instance = null; }
 
-        public void Register(PlayerServer player)
+        public void Register(PlayerServerAuthoring player)
         {
             _world.Players.Add(player);
             SessionSystem.Join(player, SessionService.Instance);
         }
-        public void Register(EnemyController enemy)
+        public void Register(EnemyServerAuthoring enemy)
         {
             _world.Enemies.Add(enemy);
-            EnemyFsm.Reset(enemy.Simulation, _world.Clock.Tick);
+            EnemyFsmUtil.Reset(enemy.Simulation, _world.Clock.Tick);
         }
-        public void Unregister(PlayerServer player) => _world.Players.Remove(player);
-        public void Unregister(EnemyController enemy) => _world.Enemies.Remove(enemy);
+        public void Unregister(PlayerServerAuthoring player) => _world.Players.Remove(player);
+        public void Unregister(EnemyServerAuthoring enemy) => _world.Enemies.Remove(enemy);
 
         private void Update()
         {

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Project02.Player
 {
     // Authoring (클라 World, 소유자): 등록, 예측 사본과 이력 소유. RPC는 PlayerNetwork
-    public class PlayerOwner : NetworkBehaviour
+    public class PlayerOwnerAuthoring : NetworkBehaviour
     {
         public readonly PlayerSimulation Simulation = new();   // 예측 사본
         public readonly TickBuffer<InputPayload> InputHistory = new(BUFFER_SIZE);
@@ -14,16 +14,16 @@ namespace Project02.Player
 
         public PlayerNetwork Network => _network;
         public PlayerView View => _view;
-        public PlayerCamera Camera => _camera;
+        public PlayerCameraView Camera => _camera;
         public SOPlayer Settings => _settings;
 
         [SerializeField] private PlayerNetwork _network;
         [SerializeField] private PlayerView _view;
-        [SerializeField] private PlayerCamera _camera;
-        [SerializeField] private PlayerVisual _visual;
+        [SerializeField] private PlayerCameraView _camera;
+        [SerializeField] private PlayerBodyView _visual;
         [SerializeField] private PlayerProgression _progression;
         [SerializeField] private PlayerLocomotion _locomotion;   // SOMovement
-        [SerializeField] private PlayerWeapon _weapon;           // SOCatalog
+        [SerializeField] private PlayerWeaponView _weapon;           // SOCatalog
         [SerializeField] private SOPlayer _settings;
 
         private const int BUFFER_SIZE = 1024;

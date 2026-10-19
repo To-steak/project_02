@@ -8,14 +8,14 @@ namespace Project02.Player
     {
         public static bool Step(PlayerSimulation sim, in InputPayload input, ulong ownerId, float deltaTime, out ShotInfo shot)
         {
-            PlayerMovement.Step(sim.Movement, ref sim.State.Movement, ref sim.State.Stamina, input, deltaTime, out bool isRunning);
+            PlayerMoveUtil.Step(sim.Movement, ref sim.State.Movement, ref sim.State.Stamina, input, deltaTime, out bool isRunning);
             sim.IsRunning = isRunning;
             sim.State.Tick = input.Tick;
             sim.Yaw = input.YawInput;
             sim.Pitch = input.PitchInput;
             sim.Move = input.MoveInput;
 
-            return WeaponFire.TryFire(sim.Weapon, ref sim.State.Weapon, input, isRunning, ownerId, deltaTime, out shot);
+            return WeaponFireUtil.TryFire(sim.Weapon, ref sim.State.Weapon, input, isRunning, ownerId, deltaTime, out shot);
         }
 
         public static void Restore(PlayerSimulation sim, in PlayerSimulationState state)

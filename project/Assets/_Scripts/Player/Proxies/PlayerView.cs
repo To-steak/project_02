@@ -19,9 +19,9 @@ namespace Project02.Player
             }
         }
 
-        [SerializeField] private PlayerVisual _visual;
-        [SerializeField] private PlayerAnimation _animation;
-        [SerializeField] private PlayerWeapon _weapon;
+        [SerializeField] private PlayerBodyView _visual;
+        [SerializeField] private PlayerAnimatorView _animation;
+        [SerializeField] private PlayerWeaponView _weapon;
 
         private readonly List<FireEvent> _fired = new();
 

@@ -5,7 +5,7 @@ using Unity.Netcode;
 namespace Project02.Enemy
 {
     // Authoring: 클라 World 등록 + 스냅샷 버퍼. 표시는 EnemyViewSystem
-    public class EnemyRemote : NetworkBehaviour
+    public class EnemyRemoteAuthoring : NetworkBehaviour
     {
         public const int BUFFER_SIZE = 32;
         public readonly TickBuffer<EnemySnapshot> Snapshots = new(BUFFER_SIZE);

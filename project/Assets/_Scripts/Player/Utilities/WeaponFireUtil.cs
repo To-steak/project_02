@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Project02.Player
 {
-    public static class WeaponFire
+    public static class WeaponFireUtil
     {
         private const uint CRITICAL_SALT = 0x68E31DA4u;
 

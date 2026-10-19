@@ -48,7 +48,7 @@ namespace Project02.Enemy
             }
 
             NetworkObject enemy = Instantiate(_enemyPrefab, _spawnPosition.position, Quaternion.identity);
-            enemy.GetComponent<EnemyController>().InjectGrid(_grid);
+            enemy.GetComponent<EnemyServerAuthoring>().InjectGrid(_grid);
             enemy.Spawn(destroyWithScene: true);
         }
     }

@@ -8,7 +8,7 @@ using Project02.Navigation;
 namespace Project02.Enemy
 {
     // Authoring: 설정·그리드 주입, 등록, 기즈모. 상태는 EnemySimulation, 행동은 EnemySystem
-    public class EnemyController : NetworkBehaviour
+    public class EnemyServerAuthoring : NetworkBehaviour
     {
         public readonly EnemySimulation Simulation = new();
         public readonly RewindTarget Rewind = new();
@@ -88,7 +88,7 @@ namespace Project02.Enemy
             }
 
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.8f);
-            DrawCircle(transform.position, EnemyNavigation.ARRIVE_THRESHOLD);
+            DrawCircle(transform.position, EnemyNavigationUtil.ARRIVE_THRESHOLD);
         }
 
         private void DrawCapsule()

@@ -46,7 +46,7 @@ namespace Project02.Server
             writer.WriteValueSafe((ushort)enemyCount);
             for (int i = 0; i < enemyCount; i++)
             {
-                EnemyController enemy = world.Enemies[enemyIndex + i];
+                EnemyServerAuthoring enemy = world.Enemies[enemyIndex + i];
                 EnemySimulation sim = enemy.Simulation;
                 EnemySnapshot snapshot = new EnemySnapshot
                 {
@@ -61,7 +61,7 @@ namespace Project02.Server
             writer.WriteValueSafe((ushort)playerCount);
             for (int i = 0; i < playerCount; i++)
             {
-                PlayerServer player = world.Players[playerIndex + i];
+                PlayerServerAuthoring player = world.Players[playerIndex + i];
                 PlayerSimulation sim = player.Simulation;
                 PlayerSnapshot snapshot = new PlayerSnapshot
                 {

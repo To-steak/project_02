@@ -12,10 +12,10 @@ namespace Project02.Server
 
     public readonly struct StateMessage
     {
-        public readonly PlayerServer Target;
+        public readonly PlayerServerAuthoring Target;
         public readonly StatePayload Payload;
 
-        public StateMessage(PlayerServer target, in StatePayload payload)
+        public StateMessage(PlayerServerAuthoring target, in StatePayload payload)
         {
             Target = target;
             Payload = payload;
@@ -24,12 +24,12 @@ namespace Project02.Server
 
     public readonly struct FireMessage
     {
-        public readonly PlayerServer Shooter;
+        public readonly PlayerServerAuthoring Shooter;
         public readonly int Tick;
         public readonly Vector3 AimPoint;
         public readonly Vector2 Spread;
 
-        public FireMessage(PlayerServer shooter, int tick, Vector3 aimPoint, Vector2 spread)
+        public FireMessage(PlayerServerAuthoring shooter, int tick, Vector3 aimPoint, Vector2 spread)
         {
             Shooter = shooter;
             Tick = tick;

@@ -8,7 +8,7 @@ namespace Project02.Server
     {
         public static void Process(ServerWorld world)
         {
-            foreach (EnemyController enemy in world.Enemies)
+            foreach (EnemyServerAuthoring enemy in world.Enemies)
             {
                 Health health = enemy.Health;
                 if (!health.IsDead) continue;

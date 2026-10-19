@@ -31,7 +31,7 @@ namespace Project02.Weapon
         public void SpawnBullet(Vector3 aimPoint, Vector2 spread)
         {
             Vector3 from = Muzzle;
-            Vector3 direction = PlayerWeapon.GetDirection(from, aimPoint, spread);
+            Vector3 direction = PlayerWeaponView.GetDirection(from, aimPoint, spread);
             float distance = Mathf.Min(Vector3.Distance(from, aimPoint), _data.Range);
             ProjectileVisualService.Instance.Fire(from, from + direction * distance, _data.Bullet.Velocity);
         }

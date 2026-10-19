@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Project02.Player
 {
     // Authoring (서버 World): 등록, 서버 사본 소유. RPC는 PlayerNetwork
-    public class PlayerServer : NetworkBehaviour
+    public class PlayerServerAuthoring : NetworkBehaviour
     {
         public readonly PlayerSimulation Simulation = new();   // 서버 권한 상태
         public readonly InputQueue Inputs = new();
@@ -20,7 +20,7 @@ namespace Project02.Player
         [SerializeField] private Health _health;
         [SerializeField] private PlayerProgression _progression;
         [SerializeField] private PlayerLocomotion _locomotion;   // SOMovement
-        [SerializeField] private PlayerWeapon _weapon;           // SOCatalog
+        [SerializeField] private PlayerWeaponView _weapon;           // SOCatalog
         [SerializeField] private SOPlayer _settings;             // FireOriginOffset
 
         public override void OnNetworkSpawn()
