@@ -54,7 +54,9 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
    (예: `StatSystem`의 `AppliedLevel != Level`).
    예측 대상 상태가 바뀌어야 하면 서버 상태(`*State`)에 넣어 `StatePayload`로 보내고 재조정에 맡긴다
    (예: `StaminaState.MaxEnergy`). 연출만 바꾸는 콜백(무기 모델 생성 등)은 허용.
-
+19. **Authoring끼리 서로 참조하지 않는다.** 엔티티의 RPC·NetworkVariable은 `*Network` 하나에 모은다
+    (`PlayerNetwork`). RPC 처리기는 그 안의 수신함에 기록만 하고, 각 World의 시스템이 비운다.
+    참조는 Authoring → Network/Proxy, Proxy → Network 한 방향만 둔다.
 ---
 
 ## 3. 시간

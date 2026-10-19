@@ -8,7 +8,6 @@ namespace Project02.Server
     {
         public const int CAPACITY = 64;
 
-        public readonly List<InputBundle> Received = new();
         public readonly TickBuffer<InputPayload> Buffer = new(CAPACITY);
 
         public InputPayload LastInput;       // 입력이 비면 복제할 원본
