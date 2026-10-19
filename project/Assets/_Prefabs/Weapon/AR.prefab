@@ -1724,7 +1724,6 @@ MonoBehaviour:
   _rightGrip: {fileID: 2933945917302640351}
   _leftGrip: {fileID: 1045339474033071433}
   _impulse: {fileID: 2330498194942817427}
-  _shakeRandom: 0.03
 --- !u!114 &2330498194942817427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1739,7 +1738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseSource
   ImpulseDefinition:
     ImpulseChannel: 1
-    ImpulseShape: 2
+    ImpulseShape: 1
     CustomImpulseShape:
       serializedVersion: 2
       m_Curve: []

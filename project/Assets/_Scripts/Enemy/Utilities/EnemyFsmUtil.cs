@@ -2,8 +2,9 @@ using Project02.World;
 
 namespace Project02.Enemy
 {
-    // 유틸: 상태 전환과 분기. 상태를 추가하면 여기 switch에 case를 넣는다
-    public static class EnemyFsmUtil
+    // 유틸: 상태 전환과 분기. 상태별 동작은 EnemyFsmUtil.<상태>.cs (partial, private)
+    // 상태를 추가하면: 파일 EnemyFsmUtil.<상태>.cs + 아래 switch에 case
+    public static partial class EnemyFsmUtil
     {
         public static void Reset(EnemySimulation sim, int tick)
         {
@@ -27,9 +28,9 @@ namespace Project02.Enemy
         {
             switch (sim.StateId)
             {
-                case EnemyStateId.General: GeneralState.Tick(world, sim, deltaTime); break;
-                case EnemyStateId.Battle: BattleState.Tick(world, sim, deltaTime); break;
-                    // 미구현: Notice, Attack, Groggy, Defend, Die → 아무것도 안 함 (제자리)
+
+                case EnemyStateId.General: TickGeneral(world, sim); break;
+                case EnemyStateId.Battle: TickBattle(world, sim); break;
             }
         }
 
@@ -37,7 +38,7 @@ namespace Project02.Enemy
         {
             switch (id)
             {
-                case EnemyStateId.General: GeneralState.Enter(sim); break;
+                case EnemyStateId.General: EnterGeneral(sim); break;
             }
         }
 

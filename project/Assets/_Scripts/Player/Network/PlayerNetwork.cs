@@ -15,7 +15,8 @@ namespace Project02.Player
         // ── 동기화 값 (서버만 쓴다) ──
         public readonly NetworkVariable<int> EquippedWeapon = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public readonly NetworkVariable<FixedString64Bytes> Nickname = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
+        public readonly NetworkVariable<int> Level = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);   // SessionSystem이 경험치로 정한다. 스탯 반영은 StatSystem
+        
         // ── 수신함: 서버 (ServerPlayerSystem이 비운다) ──
         public readonly List<InputBundle> ReceivedInputs = new();
 

@@ -45,12 +45,19 @@ namespace Project02.Player
             return movement.Position + Quaternion.Euler(0.0f, yaw, 0.0f) * offset;
         }
 
+        // 조준점을 향한 방향에 탄 퍼짐을 더한다. 서버 판정(ServerPlayerSystem)과 연출(WeaponView)이 같은 식을 쓴다
+        public static Vector3 GetDirection(Vector3 from, Vector3 aimPoint, Vector2 spread)
+        {
+            Quaternion look = Quaternion.LookRotation(aimPoint - from);
+            return look * Quaternion.Euler(-spread.y, spread.x, 0.0f) * Vector3.forward;
+        }
+        
         public static bool RollCritical(ulong ownerId, int tick, float chance)
         {
             uint hash = Hash((uint)ownerId * 0x9E3779B9u ^ (uint)tick ^ CRITICAL_SALT);
             return (hash & 0xFFFFFF) / 16777216.0f < chance;   // 하위 24비트로 0~1
         }
-        
+
         private static FireStance GetStance(in InputPayload input, bool value)
         {
             if (input.AimInput)

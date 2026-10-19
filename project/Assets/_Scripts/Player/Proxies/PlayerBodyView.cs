@@ -1,9 +1,12 @@
 using UnityEngine;
+using Project02.Character;
 
 namespace Project02.Player
 {
+    // 프록시: 몸체 위치 보간, 회전, 조준 IK 목표. 에디터에서는 충돌 캡슐도 그린다
     public class PlayerBodyView : MonoBehaviour
     {
+        [SerializeField] private SOPlayer _settings;   // TurnSpeed, Movement.Profile(기즈모)
         [SerializeField] private Transform _presentation;
         [SerializeField] private Transform _model;
 
@@ -17,11 +20,8 @@ namespace Project02.Player
         private const float MIN_FACE_SQR = 0.01f;
         private const float AIM_TARGET_DISTANCE = 2f;
 
-        private SOPlayer _settings;
-
-        public void Initialize(Vector3 position, SOPlayer settings)
+        public void Initialize(Vector3 position)
         {
-            _settings = settings;
             _previous = _current = position;
             _presentation.rotation = transform.rotation;
         }
@@ -85,6 +85,37 @@ namespace Project02.Player
             Gizmos.color = Color.blue;
             Gizmos.DrawLine(_lookPos.position, _aimTarget.position);
             Gizmos.DrawWireSphere(_aimTarget.position, 0.05f);
+        }
+
+        // 충돌 캡슐(겹치면 빨강)과 올라설 수 있는 최대 턱 높이(마젠타)
+        private void OnDrawGizmosSelected()
+        {
+            if (_settings == null || _settings.Movement == null) return;
+
+            CharacterProfile profile = _settings.Movement.Profile;
+            float radius = profile.Radius;
+            Vector3 position = transform.position;
+            LayerMask layer = profile.GroundLayer | profile.ObstacleLayer;
+
+            CharacterPhysics.GetCapsule(position, radius, profile.Height, out Vector3 bottom, out Vector3 top);
+
+            bool overlapped = Physics.CheckCapsule(bottom, top, radius, layer, QueryTriggerInteraction.Ignore);
+            Gizmos.color = overlapped ? Color.red : Color.blue;
+
+            Gizmos.DrawWireSphere(bottom, radius);
+            Gizmos.DrawWireSphere(top, radius);
+
+            Gizmos.DrawLine(bottom + Vector3.right * radius, top + Vector3.right * radius);
+            Gizmos.DrawLine(bottom + Vector3.left * radius, top + Vector3.left * radius);
+            Gizmos.DrawLine(bottom + Vector3.forward * radius, top + Vector3.forward * radius);
+            Gizmos.DrawLine(bottom + Vector3.back * radius, top + Vector3.back * radius);
+
+            Vector3 step = position + Vector3.up * profile.StepHeight;
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(step + Vector3.right * radius, step + Vector3.forward * radius);
+            Gizmos.DrawLine(step + Vector3.forward * radius, step + Vector3.left * radius);
+            Gizmos.DrawLine(step + Vector3.left * radius, step + Vector3.back * radius);
+            Gizmos.DrawLine(step + Vector3.back * radius, step + Vector3.right * radius);
         }
 #endif
     }

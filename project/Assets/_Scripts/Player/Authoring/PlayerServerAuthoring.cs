@@ -10,18 +10,15 @@ namespace Project02.Player
     {
         public readonly PlayerSimulation Simulation = new();   // 서버 권한 상태
         public readonly InputQueue Inputs = new();
+        public int AppliedLevel;   // 마지막으로 스탯에 반영한 레벨. StatSystem이 Network.Level과 비교한다
 
         public PlayerNetwork Network => _network;
         public Health Health => _health;
-        public PlayerProgression Progression => _progression;
         public SOPlayer Settings => _settings;
 
         [SerializeField] private PlayerNetwork _network;
         [SerializeField] private Health _health;
-        [SerializeField] private PlayerProgression _progression;
-        [SerializeField] private PlayerLocomotion _locomotion;   // SOMovement
-        [SerializeField] private PlayerWeaponView _weapon;           // SOCatalog
-        [SerializeField] private SOPlayer _settings;             // FireOriginOffset
+        [SerializeField] private SOPlayer _settings;
 
         public override void OnNetworkSpawn()
         {
@@ -34,10 +31,10 @@ namespace Project02.Player
             if (!IsServer) return;
 
             // 스폰 시 1회 (Authoring). Join이 넣은 Level, PlayerNetwork의 EquippedWeapon이 이미 있다
-            SOLevelTable.Row stats = _progression.Table.Get(_progression.Level.Value);
-            PlayerSpawnUtil.Initialize(Simulation, transform.position, _locomotion.Settings, _weapon.Catalog, _network.EquippedWeapon.Value, stats);
-            PlayerStatUtil.ApplyHealth(_health, stats);
-            _progression.AppliedLevel = _progression.Level.Value;
+            int level = _network.Level.Value;
+            PlayerSpawnUtil.Initialize(Simulation, transform.position, _settings, _network.EquippedWeapon.Value, level);
+            PlayerStatUtil.ApplyHealth(_health, _settings.LevelTable.Get(level));
+            AppliedLevel = level;
         }
 
         public override void OnNetworkDespawn()

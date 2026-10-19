@@ -1,6 +1,5 @@
 using UnityEngine;
 using Project02.Character;
-using Project02.Weapon;
 
 namespace Project02.Player
 {
@@ -8,16 +7,16 @@ namespace Project02.Player
     // 호출처: PlayerServerAuthoring(서버 사본), PlayerOwnerAuthoring(예측 사본)의 OnNetworkPostSpawn
     public static class PlayerSpawnUtil
     {
-        public static void Initialize(PlayerSimulation sim, Vector3 position, SOMovement movement, SOCatalog catalog, int equippedId, in SOLevelTable.Row stats)
+        public static void Initialize(PlayerSimulation sim, Vector3 position, SOPlayer settings, int equippedId, int level)
         {
-            sim.Movement = movement;
-            sim.Catalog = catalog;
+            sim.Movement = settings.Movement;
+            sim.Catalog = settings.Catalog;
 
             sim.State = default;
             sim.State.Movement = new MovementState { Position = position };
 
             PlayerEquipUtil.Apply(sim, equippedId);
-            PlayerStatUtil.ApplyStamina(sim, stats);
+            PlayerStatUtil.ApplyStamina(sim, settings.LevelTable.Get(level));
         }
     }
 }

@@ -21,9 +21,6 @@ namespace Project02.Player
         [SerializeField] private PlayerView _view;
         [SerializeField] private PlayerCameraView _camera;
         [SerializeField] private PlayerBodyView _visual;
-        [SerializeField] private PlayerProgression _progression;
-        [SerializeField] private PlayerLocomotion _locomotion;   // SOMovement
-        [SerializeField] private PlayerWeaponView _weapon;           // SOCatalog
         [SerializeField] private SOPlayer _settings;
 
         private const int BUFFER_SIZE = 1024;
@@ -37,7 +34,7 @@ namespace Project02.Player
             StateHistory.Clear();
 
             _camera.Initialize(_settings);
-            _visual.Initialize(transform.position, _settings);
+            _visual.Initialize(transform.position);
 
             ClientLoop.Instance.Register(this);
         }
@@ -47,8 +44,7 @@ namespace Project02.Player
             if (!enabled) return;   // 소유자만
 
             // 스폰 시 1회 (Authoring). 서버 사본과 같은 값으로 시작해야 첫 예측이 맞는다
-            SOLevelTable.Row stats = _progression.Table.Get(_progression.Level.Value);
-            PlayerSpawnUtil.Initialize(Simulation, transform.position, _locomotion.Settings, _weapon.Catalog, _network.EquippedWeapon.Value, stats);
+            PlayerSpawnUtil.Initialize(Simulation, transform.position, _settings, _network.EquippedWeapon.Value, _network.Level.Value);
         }
 
         public override void OnNetworkDespawn()

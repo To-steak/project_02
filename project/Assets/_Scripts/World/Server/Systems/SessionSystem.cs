@@ -14,8 +14,7 @@ namespace Project02.World
 
             string nickname = session.GetNickname(clientId) ?? $"Player#{clientId}";
             player.Network.Nickname.Value = new FixedString64Bytes(nickname);
-
-            ApplyExp(player.Progression, session.GetExp(clientId));
+            ApplyExp(player, session.GetExp(clientId));
         }
 
         // 매 틱 (Step). 보상 지급 → 받은 플레이어의 레벨 갱신
@@ -29,7 +28,7 @@ namespace Project02.World
                 {
                     if (TryFindPlayer(world, clientId, out PlayerServerAuthoring player))
                     {
-                        ApplyExp(player.Progression, session.GetExp(clientId));
+                        ApplyExp(player, session.GetExp(clientId));
                     }
                 }
             }
@@ -38,9 +37,9 @@ namespace Project02.World
         }
 
         // 경험치 → 레벨. 값이 같으면 NetworkVariable이 변경 콜백을 부르지 않는다
-        private static void ApplyExp(PlayerProgression progression, int exp)
+        private static void ApplyExp(PlayerServerAuthoring player, int exp)
         {
-            progression.Level.Value = progression.Table.GetLevel(exp);
+            player.Network.Level.Value = player.Settings.LevelTable.GetLevel(exp);
         }
 
         private static bool TryFindPlayer(ServerWorld world, ulong clientId, out PlayerServerAuthoring player)

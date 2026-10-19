@@ -133,7 +133,7 @@ namespace Project02.Player
 
             MovementState movement = sim.State.Movement;
             Vector3 origin = WeaponFireUtil.GetOrigin(movement, input.YawInput, settings.FireOriginOffset);
-            Vector3 direction = PlayerWeaponView.GetDirection(origin, input.AimPoint, shot.Spread);
+            Vector3 direction = WeaponFireUtil.GetDirection(origin, input.AimPoint, shot.Spread);
             float damage = bullet.Damage * data.WeaponCoefficient;
             bool isCritical = WeaponFireUtil.RollCritical(ownerId, input.Tick, data.CriticalChance);
 

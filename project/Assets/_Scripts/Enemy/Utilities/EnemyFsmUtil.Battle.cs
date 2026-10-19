@@ -3,10 +3,10 @@ using Project02.World;
 
 namespace Project02.Enemy
 {
-    // 타깃 추적. 공격 범위 밖이면 달려가고, 전투 범위를 벗어나면 배회로
-    public static class BattleState
+    // 타깃 추적. 공격 범위 밖이면 달려가고, 전투 범위를 벗어나면 General로
+    public static partial class EnemyFsmUtil
     {
-        public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
+        private static void TickBattle(ServerWorld world, EnemySimulation sim)
         {
             SOEnemy settings = sim.Settings;
 
@@ -17,8 +17,8 @@ namespace Project02.Enemy
                     sim.TargetClientId = next;
                     return;
                 }
-                
-                EnemyFsmUtil.Change(sim, EnemyStateId.General, world.Clock.Tick);
+
+                Change(sim, EnemyStateId.General, world.Clock.Tick);
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace Project02.Enemy
             float distance = direction.magnitude;
             if (distance > settings.BattleRange)
             {
-                EnemyFsmUtil.Change(sim, EnemyStateId.General, world.Clock.Tick);
+                Change(sim, EnemyStateId.General, world.Clock.Tick);
                 return;
             }
 
