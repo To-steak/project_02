@@ -7,9 +7,9 @@ using UnityEngine.SceneManagement;
 
 namespace Project02.Service
 {
-    public class ConnectionService : MonoBehaviour
+    public class ConnectService : MonoBehaviour
     {
-        public static ConnectionService Instance { get; private set; }
+        public static ConnectService Instance { get; private set; }
 
         public event Action<ConnectState> StateChanged;
 

@@ -2756,7 +2756,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GamePlayer::PlayerAPI.PlayerWeapon
   ShowTopMostFoldoutHeaderGroup: 1
   _network: {fileID: 2635111233502250170}
-  _catalog: {fileID: 11400000, guid: 2c59e0085a081264aad3a624b4c8b4ba, type: 2}
+  _player: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
   _origin: {fileID: 4223344401908020589}
   _socket: {fileID: 6089265958232188399}
   _rigBuilder: {fileID: 5194364054784885374}

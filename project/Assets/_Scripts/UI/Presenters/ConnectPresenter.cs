@@ -10,12 +10,12 @@ namespace Project02.UI
 
         [SerializeField] private ConnectPanel _view;
 
-        private ConnectionService _service;
+        private ConnectService _service;
         private bool _nicknameRequired;
 
         private void OnEnable()
         {
-            _service = ConnectionService.Instance;
+            _service = ConnectService.Instance;
 
             _view.ConnectClicked += OnConnectClicked;
             _view.BackClicked += OnBackClicked;

@@ -37,7 +37,7 @@ namespace Project02.Player
             if (PlayerStepUtil.Step(sim, input, owner.OwnerClientId, deltaTime, out ShotInfo shot))
             {
                 owner.View.OnFired(shot, input.AimPoint);
-                camera.Recoil += WeaponFeedback.RollRecoil(sim.Weapon, shot.Stance);   // 발사 성공 = sim.Weapon != null
+                camera.Recoil += WeaponFeedbackUtil.RollRecoil(sim.Weapon, shot.Stance);   // 발사 성공 = sim.Weapon != null
             }
 
             // 3. 기록

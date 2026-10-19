@@ -25,7 +25,7 @@ namespace Project02.Weapon
 
         public void Shake(FireStance stance)
         {
-            Shake(WeaponFeedback.StanceMultiplier(_data, stance), _data.ShakeRandom);
+            Shake(WeaponFeedbackUtil.StanceMultiplier(_data, stance), _data.ShakeRandom);
         }
 
         public void SpawnBullet(Vector3 aimPoint, Vector2 spread)
