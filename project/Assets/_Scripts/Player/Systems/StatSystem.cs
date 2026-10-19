@@ -1,6 +1,7 @@
-using Project02.Player;
+using Project02.Combat;
+using Project02.World;
 
-namespace Project02.Server
+namespace Project02.Player
 {
     // 레벨이 바뀐 플레이어의 스탯 반영 (콜백 대신 질의: AppliedLevel != Level)
     public static class StatSystem

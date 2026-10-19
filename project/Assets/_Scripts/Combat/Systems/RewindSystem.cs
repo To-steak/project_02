@@ -1,6 +1,7 @@
 using Project02.Enemy;
+using Project02.World;
 
-namespace Project02.Server
+namespace Project02.Combat
 {
     public static class RewindSystem
     {

@@ -1,7 +1,7 @@
-using Project02.Core;
 using UnityEngine;
+using Project02.Core;
 
-namespace Project02.Client
+namespace Project02.World
 {
     // 유틸(순수): RenderTick 앞뒤 스냅샷 찾기. 유실된 틱은 건너뛰고 가장 가까운 것을 쓴다
     public static class SnapshotUtil

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Project02.Character;
-using Project02.Player;
-using Project02.Weapon;
 using UnityEngine;
+using Project02.Character;
+using Project02.Weapon;
+using Project02.World;
 
-namespace Project02.Server
+namespace Project02.Player
 {
     public static class ServerPlayerSystem
     {

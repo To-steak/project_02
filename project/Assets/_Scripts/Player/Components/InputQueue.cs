@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Project02.Core;
-using Project02.Player;
 
-namespace Project02.Server
+namespace Project02.Player
 {
     public sealed class InputQueue
     {

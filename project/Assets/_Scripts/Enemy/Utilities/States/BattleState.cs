@@ -1,5 +1,5 @@
-using Project02.Server;
 using UnityEngine;
+using Project02.World;
 
 namespace Project02.Enemy
 {

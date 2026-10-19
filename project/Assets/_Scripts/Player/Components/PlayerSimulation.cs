@@ -1,10 +1,10 @@
-using Project02.Weapon;
 using UnityEngine;
+using Project02.Weapon;
 
 namespace Project02.Player
 {
     // 컴포넌트(데이터): 플레이어 시뮬레이션 상태. World마다 하나씩 소유한다
-    // PlayerServer.Simulation = 서버 권한 / PlayerOwner.Simulation = 예측 사본
+    // PlayerServerAuthoring.Simulation = 서버 권한 / PlayerOwnerAuthoring.Simulation = 예측 사본
     public sealed class PlayerSimulation
     {
         // 설정 (Authoring이 채운다)

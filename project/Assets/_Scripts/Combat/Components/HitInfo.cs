@@ -1,6 +1,4 @@
-using Project02.Combat;
-
-namespace Project02.Server
+namespace Project02.Combat
 {
     public readonly struct HitInfo
     {

@@ -11,6 +11,6 @@ namespace Project02.Player
         [SerializeField] private SOLevelTable _table;
 
         public SOLevelTable Table => _table;
-        public int AppliedLevel;   // 서버: 마지막으로 스탯에 반영한 레벨 (PlayerServer 스폰, StatSystem)
+        public int AppliedLevel;   // 서버: 마지막으로 스탯에 반영한 레벨 (PlayerServerAuthoring 스폰, StatSystem)
     }
 }

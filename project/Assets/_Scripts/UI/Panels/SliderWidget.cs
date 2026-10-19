@@ -3,9 +3,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Project02.View
+namespace Project02.UI
 {
-    public class SliderView : MonoBehaviour
+    public class SliderWidget : MonoBehaviour
     {
         public event Action<int> Changed;
 

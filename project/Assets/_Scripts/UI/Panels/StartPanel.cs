@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Project02.View
+namespace Project02.UI
 {
-    public class StartView : MonoBehaviour
+    public class StartPanel : MonoBehaviour
     {
         public event Action SingleClicked;
         public event Action MultiClicked;

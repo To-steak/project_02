@@ -1,12 +1,11 @@
+using Unity.Netcode;
+using UnityEngine;
 using Project02.Core;
 using Project02.Enemy;
 using Project02.Player;
-using Project02.Server;
 using Project02.Service;
-using Unity.Netcode;
-using UnityEngine;
 
-namespace Project02.Client
+namespace Project02.World
 {
     // World 진입점: ClientWorld를 소유하고, 시스템을 정해진 순서로 돌린다
     // 호스트: 같은 프레임에 ClientLoop(입력 → 예측 → 입력 전송)가 ServerLoop(소비 → 시뮬 → 송신)보다 먼저

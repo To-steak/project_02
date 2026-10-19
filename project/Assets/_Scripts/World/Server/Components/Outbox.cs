@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Project02.Player;
 using UnityEngine;
+using Project02.Player;
 
-namespace Project02.Server
+namespace Project02.World
 {
     public sealed class Outbox
     {

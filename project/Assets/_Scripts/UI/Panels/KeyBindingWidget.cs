@@ -1,14 +1,14 @@
 using System;
-using Project02.Service;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Project02.Service;
 
-namespace Project02.View
+namespace Project02.UI
 {
     /// <summary>키 바인딩 버튼들. 리바인딩이 끝나면 바인딩 오버라이드 JSON을 알린다.</summary>
-    public class KeyBindingView : MonoBehaviour
+    public class KeyBindingWidget : MonoBehaviour
     {
         [Serializable]
         public class RebindEntry
@@ -34,14 +34,14 @@ namespace Project02.View
                 var action = Asset.FindAction(item.Action?.Trim());
                 if (action == null)
                 {
-                    Debug.LogError($"[{nameof(KeyBindingView)}] no action: '{item.Action}'", this);
+                    Debug.LogError($"[{nameof(KeyBindingWidget)}] no action: '{item.Action}'", this);
                     continue;
                 }
 
                 item.BindingIndex = FindBindingIndex(action, item.CompositePart?.Trim());
                 if (item.BindingIndex < 0)
                 {
-                    Debug.LogError($"[{nameof(KeyBindingView)}] no binding: {item.Action} / Part='{item.CompositePart}'", this);
+                    Debug.LogError($"[{nameof(KeyBindingWidget)}] no binding: {item.Action} / Part='{item.CompositePart}'", this);
                     continue;
                 }
 

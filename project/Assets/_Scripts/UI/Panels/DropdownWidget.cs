@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace Project02.View
+namespace Project02.UI
 {
-    public class DropdownView : MonoBehaviour
+    public class DropdownWidget : MonoBehaviour
     {
         public event Action<int> Changed;
 

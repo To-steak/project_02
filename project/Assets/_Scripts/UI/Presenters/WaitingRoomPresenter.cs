@@ -1,12 +1,11 @@
-using Project02.Service;
-using Project02.View;
 using UnityEngine;
+using Project02.Service;
 
-namespace Project02.Presenter
+namespace Project02.UI
 {
     public class WaitingRoomPresenter : MonoBehaviour
     {
-        [SerializeField] private WaitingRoomView _view;
+        [SerializeField] private WaitingRoomPanel _view;
 
         private void OnEnable()
         {

@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Project02.View
+namespace Project02.UI
 {
-    public class WaitingRoomView : MonoBehaviour
+    public class WaitingRoomPanel : MonoBehaviour
     {
         public event Action TutorialClicked;
         public event Action TestClicked;

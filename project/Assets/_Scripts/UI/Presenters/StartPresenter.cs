@@ -1,14 +1,13 @@
 using System;
-using Project02.View;
 using UnityEngine;
 
-namespace Project02.Presenter
+namespace Project02.UI
 {
     public class StartPresenter : MonoBehaviour
     {
         public event Action Closed;
 
-        [SerializeField] private StartView _view;
+        [SerializeField] private StartPanel _view;
         [SerializeField] private ConnectPresenter _connect;
 
         private void OnEnable()

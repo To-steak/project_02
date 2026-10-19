@@ -1,7 +1,7 @@
-using Project02.Weapon;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using Project02.Weapon;
 
 namespace Project02.Player
 {

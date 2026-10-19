@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Project02.Combat;
 using UnityEngine;
 
-namespace Project02.Server
+namespace Project02.Combat
 {
     public static class DamageSystem
     {

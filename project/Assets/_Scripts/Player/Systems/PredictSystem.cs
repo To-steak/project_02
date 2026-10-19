@@ -1,7 +1,7 @@
-using Project02.Player;
 using Project02.Weapon;
+using Project02.World;
 
-namespace Project02.Client
+namespace Project02.Player
 {
     public static class PredictSystem
     {

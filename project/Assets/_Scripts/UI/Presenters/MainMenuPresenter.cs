@@ -1,11 +1,10 @@
-using Project02.View;
 using UnityEngine;
 
-namespace Project02.Presenter
+namespace Project02.UI
 {
     public class MainMenuPresenter : MonoBehaviour
     {
-        [SerializeField] private MainMenuView _view;
+        [SerializeField] private MainMenuPanel _view;
         [SerializeField] private StartPresenter _start;
         [SerializeField] private SettingsPresenter _settings;
 

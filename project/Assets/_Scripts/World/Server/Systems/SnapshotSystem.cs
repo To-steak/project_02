@@ -1,10 +1,10 @@
-using Project02.Enemy;
-using Project02.Player;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using Project02.Enemy;
+using Project02.Player;
 
-namespace Project02.Server
+namespace Project02.World
 {
     // 매 틱 끝. 엔티티가 많으면 여러 메시지로 나눈다. 각 메시지는 독립:
     // [int Tick][ushort 적 수][EnemySnapshot…][ushort 플레이어 수][PlayerSnapshot…]

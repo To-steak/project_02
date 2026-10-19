@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Project02.View
+namespace Project02.UI
 {
-    public class MainMenuView : MonoBehaviour
+    public class MainMenuPanel : MonoBehaviour
     {
         public event Action StartClicked;
         public event Action SettingsClicked;

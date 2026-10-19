@@ -1,7 +1,7 @@
-using Project02.Player;
 using UnityEngine;
+using Project02.World;
 
-namespace Project02.Client
+namespace Project02.Player
 {
     public static class ViewSystem
     {

@@ -1,6 +1,6 @@
-using Project02.Character;
 using Unity.Netcode;
 using UnityEngine;
+using Project02.Character;
 
 namespace Project02.Player
 {

@@ -1,11 +1,13 @@
+using Unity.Netcode;
+using UnityEngine;
+using Project02.Combat;
 using Project02.Core;
 using Project02.Enemy;
 using Project02.Player;
 using Project02.Service;
-using Unity.Netcode;
-using UnityEngine;
+using Project02.Weapon;
 
-namespace Project02.Server
+namespace Project02.World
 {
     [DefaultExecutionOrder(-100)]
     public class ServerLoop : MonoBehaviour

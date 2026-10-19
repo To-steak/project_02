@@ -1,4 +1,4 @@
-namespace Project02.Server
+namespace Project02.World
 {
     public static class NetSendSystem
     {

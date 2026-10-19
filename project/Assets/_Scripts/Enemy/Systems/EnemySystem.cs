@@ -1,7 +1,8 @@
-using Project02.Enemy;
 using UnityEngine;
+using Project02.Combat;
+using Project02.World;
 
-namespace Project02.Server
+namespace Project02.Enemy
 {
     // 서버의 적 틱: 상태 머신 → 이동 → transform 출력
     public static class EnemySystem

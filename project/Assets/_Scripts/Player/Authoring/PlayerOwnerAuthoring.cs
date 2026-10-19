@@ -1,7 +1,7 @@
-using Project02.Client;
-using Project02.Core;
 using Unity.Netcode;
 using UnityEngine;
+using Project02.Core;
+using Project02.World;
 
 namespace Project02.Player
 {

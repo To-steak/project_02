@@ -1,7 +1,7 @@
-using Project02.Enemy;
 using UnityEngine;
+using Project02.World;
 
-namespace Project02.Client
+namespace Project02.Enemy
 {
     // 원격 적 표시: RenderTick 시점의 위치·회전
     public static class EnemyViewSystem

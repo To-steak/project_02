@@ -1,7 +1,7 @@
 using UnityEngine;
 using Project02.Core;
 
-namespace Project02.Client
+namespace Project02.World
 {
     public static class ClockSystem
     {

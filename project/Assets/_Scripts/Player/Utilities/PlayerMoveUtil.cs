@@ -1,5 +1,5 @@
-using Project02.Character;
 using UnityEngine;
+using Project02.Character;
 
 namespace Project02.Player
 {

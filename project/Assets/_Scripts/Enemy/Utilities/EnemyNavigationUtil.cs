@@ -1,5 +1,5 @@
-using Project02.Navigation;
 using UnityEngine;
+using Project02.Navigation;
 
 namespace Project02.Enemy
 {

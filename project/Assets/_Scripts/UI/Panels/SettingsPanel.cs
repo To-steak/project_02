@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Project02.View
+namespace Project02.UI
 {
-    public class SettingsView : MonoBehaviour
+    public class SettingsPanel : MonoBehaviour
     {
         public event Action SaveClicked;
         public event Action ResetClicked;

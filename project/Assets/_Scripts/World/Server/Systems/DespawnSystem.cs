@@ -1,4 +1,4 @@
-namespace Project02.Server
+namespace Project02.World
 {
     // Step 맨 끝: 큐에 쌓인 엔티티를 Despawn. 순회 중인 world.Enemies를 수정하지 않는다
     public static class DespawnSystem

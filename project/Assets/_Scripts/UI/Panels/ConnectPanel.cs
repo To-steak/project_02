@@ -1,12 +1,12 @@
 using System;
-using Project02.Service;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Project02.Service;
 
-namespace Project02.View
+namespace Project02.UI
 {
-    public class ConnectView : MonoBehaviour
+    public class ConnectPanel : MonoBehaviour
     {
         public event Action<string, string> ConnectClicked; // address, nickname
         public event Action BackClicked;

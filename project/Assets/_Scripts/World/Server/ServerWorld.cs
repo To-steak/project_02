@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using Project02.Combat;
 using Project02.Enemy;
 using Project02.Player;
 using Project02.Weapon;
 
-namespace Project02.Server
+namespace Project02.World
 {
     public sealed class ServerWorld
     {

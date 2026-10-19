@@ -1,8 +1,8 @@
+using Unity.Collections;
 using Project02.Player;
 using Project02.Service;
-using Unity.Collections;
 
-namespace Project02.Server
+namespace Project02.World
 {
     // 세션(Iceberg) ↔ 플레이어 엔티티 사이의 유일한 통로
     public static class SessionSystem

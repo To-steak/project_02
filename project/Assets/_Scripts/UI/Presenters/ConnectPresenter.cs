@@ -1,15 +1,14 @@
 using System;
-using Project02.Service;
-using Project02.View;
 using UnityEngine;
+using Project02.Service;
 
-namespace Project02.Presenter
+namespace Project02.UI
 {
     public class ConnectPresenter : MonoBehaviour
     {
         public event Action Closed;
 
-        [SerializeField] private ConnectView _view;
+        [SerializeField] private ConnectPanel _view;
 
         private ConnectionService _service;
         private bool _nicknameRequired;

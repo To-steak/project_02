@@ -1,9 +1,9 @@
 using UnityEngine;
 using Unity.Netcode;
-using Project02.Server;
 using Project02.Character;
 using Project02.Combat;
 using Project02.Navigation;
+using Project02.World;
 
 namespace Project02.Enemy
 {

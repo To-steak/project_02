@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Project02.Client
+namespace Project02.World
 {
     public static class InputSampleSystem
     {

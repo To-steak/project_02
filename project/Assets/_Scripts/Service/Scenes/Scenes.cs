@@ -1,22 +1,25 @@
-public enum WorldId
+namespace Project02.Service
 {
-    Tutorial,
-    Test
-}
-
-public static class Scenes
-{
-    public const string MainMenu = "MAIN MENU";
-    public const string WaitingRoom = "WAITING ROOM";
-
-    public static bool TryGetWorld(WorldId world, out string scene)
+    public enum WorldId
     {
-        scene = world switch
+        Tutorial,
+        Test
+    }
+
+    public static class Scenes
+    {
+        public const string MainMenu = "MAIN MENU";
+        public const string WaitingRoom = "WAITING ROOM";
+
+        public static bool TryGetWorld(WorldId world, out string scene)
         {
-            WorldId.Tutorial => "TUTORIAL WORLD",
-            WorldId.Test => "TEST WORLD",
-            _ => null
-        };
-        return scene != null;
+            scene = world switch
+            {
+                WorldId.Tutorial => "TUTORIAL WORLD",
+                WorldId.Test => "TEST WORLD",
+                _ => null
+            };
+            return scene != null;
+        }
     }
 }

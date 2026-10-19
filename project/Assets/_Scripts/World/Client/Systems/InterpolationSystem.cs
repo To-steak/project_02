@@ -1,7 +1,7 @@
-using Project02.Core;
 using UnityEngine;
+using Project02.Core;
 
-namespace Project02.Client
+namespace Project02.World
 {
     // 보간 시계만 관리. 무엇을 그릴지는 *ViewSystem이 정한다
     public static class InterpolationSystem

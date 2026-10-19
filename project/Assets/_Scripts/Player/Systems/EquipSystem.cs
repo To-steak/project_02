@@ -1,6 +1,6 @@
-using Project02.Player;
+using Project02.World;
 
-namespace Project02.Server
+namespace Project02.Player
 {
     // 장착 변경 반영 (콜백 대신 질의: WeaponState.EquippedId != EquippedWeapon)
     public static class EquipSystem

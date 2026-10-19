@@ -1,6 +1,7 @@
-using Project02.Player;
-using Project02.Server;
 using UnityEngine;
+using Project02.Combat;
+using Project02.Player;
+using Project02.World;
 
 namespace Project02.Enemy
 {

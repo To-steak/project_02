@@ -1,33 +1,32 @@
 using System;
 using System.Collections.Generic;
-using Project02.Service;
-using Project02.View;
 using UnityEngine;
+using Project02.Service;
 
-namespace Project02.Presenter
+namespace Project02.UI
 {
     public class SettingsPresenter : MonoBehaviour
     {
         public event Action Closed;
 
-        [SerializeField] private SettingsView _view;
+        [SerializeField] private SettingsPanel _view;
 
         [Header("Graphics")]
-        [SerializeField] private DropdownView _resolution;
-        [SerializeField] private DropdownView _windowMode;
-        [SerializeField] private DropdownView _frameRate;
+        [SerializeField] private DropdownWidget _resolution;
+        [SerializeField] private DropdownWidget _windowMode;
+        [SerializeField] private DropdownWidget _frameRate;
 
         [Header("Audio")]
-        [SerializeField] private SliderView _masterVolume;
-        [SerializeField] private SliderView _musicVolume;
-        [SerializeField] private SliderView _sfxVolume;
+        [SerializeField] private SliderWidget _masterVolume;
+        [SerializeField] private SliderWidget _musicVolume;
+        [SerializeField] private SliderWidget _sfxVolume;
 
         [Header("Control")]
-        [SerializeField] private SliderView _mouseSensitivity;
-        [SerializeField] private KeyBindingView _keyBinding;
+        [SerializeField] private SliderWidget _mouseSensitivity;
+        [SerializeField] private KeyBindingWidget _keyBinding;
 
         [Header("Language")]
-        [SerializeField] private DropdownView _language;
+        [SerializeField] private DropdownWidget _language;
 
         private const int VOLUME_MIN = 0;
         private const int VOLUME_MAX = 100;

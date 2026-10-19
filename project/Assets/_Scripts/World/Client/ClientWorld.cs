@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Project02.Enemy;
 using Project02.Player;
 
-namespace Project02.Client
+namespace Project02.World
 {
     public sealed class ClientWorld
     {

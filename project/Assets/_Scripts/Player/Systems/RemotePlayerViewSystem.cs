@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Project02.Player;
-using Project02.Weapon;
 using UnityEngine;
+using Project02.Weapon;
+using Project02.World;
 
-namespace Project02.Client
+namespace Project02.Player
 {
     // 원격 플레이어 표시: 자세(위치·회전·pitch), 애니메이션, 발사 연출
     public static class RemotePlayerViewSystem

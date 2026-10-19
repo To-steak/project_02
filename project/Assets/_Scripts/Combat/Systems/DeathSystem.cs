@@ -1,7 +1,7 @@
-using Project02.Combat;
 using Project02.Enemy;
+using Project02.World;
 
-namespace Project02.Server
+namespace Project02.Combat
 {
     // 죽은 적을 찾아(질의) 보상과 Despawn을 큐에 넣는다. 실제 Despawn은 DespawnSystem (Step 끝)
     public static class DeathSystem

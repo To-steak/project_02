@@ -1,4 +1,4 @@
-namespace Project02.Client
+namespace Project02.World
 {
     public struct ClientClock
     {

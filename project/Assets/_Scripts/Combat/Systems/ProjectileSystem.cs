@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using UnityEngine;
 using Project02.Character;
-using Project02.Combat;
 using Project02.Enemy;
 using Project02.Weapon;
-using UnityEngine;
+using Project02.World;
 
-namespace Project02.Server
+namespace Project02.Combat
 {
     // 투사체 이동 + 판정. 지형은 레이캐스트, 적은 쏜 사람 시점으로 되감은 캡슐
     public static class ProjectileSystem

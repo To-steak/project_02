@@ -1,16 +1,19 @@
-using Project02.Character;
 using UnityEngine;
+using Project02.Character;
 
-[CreateAssetMenu(fileName = "SOEnemy", menuName = "Scriptable Objects/SOEnemy")]
-public class SOEnemy : ScriptableObject
+namespace Project02.Enemy
 {
-    public CharacterProfile Profile;
-    public float WalkSpeed;
-    public float RunSpeed;
-    public float RotationSpeed;
-    public int RewardExp;
-    public int RewardGold;
-    public float PerceptionRange;
-    public float BattleRange;
-    public float AttackRange;
+    [CreateAssetMenu(fileName = "SOEnemy", menuName = "Scriptable Objects/SOEnemy")]
+    public class SOEnemy : ScriptableObject
+    {
+        public CharacterProfile Profile;
+        public float WalkSpeed;
+        public float RunSpeed;
+        public float RotationSpeed;
+        public int RewardExp;
+        public int RewardGold;
+        public float PerceptionRange;
+        public float BattleRange;
+        public float AttackRange;
+    }
 }
