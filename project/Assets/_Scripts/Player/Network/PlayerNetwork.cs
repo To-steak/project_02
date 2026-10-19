@@ -61,7 +61,7 @@ namespace Project02.Player
         }
 
         // 서버 → 다른 클라 (발사 연출)
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.ClientsAndHost, Delivery = RpcDelivery.Unreliable)]
         public void FireRPC(int tick, Vector3 aimPoint, Vector2 spread)
         {
             if (IsOwner) return;   // 소유자는 예측으로 이미 재생함
