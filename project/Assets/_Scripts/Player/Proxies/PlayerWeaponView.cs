@@ -5,18 +5,14 @@ using Project02.Weapon;
 
 namespace Project02.Player
 {
-    // 프록시: 장착 무기의 설정 조회 + 뷰 생성 + IK. 발사 상태는 PlayerSim
+    // 프록시: 장착 무기의 뷰 생성 + IK. 무기 설정의 정본은 PlayerSimulation.Weapon
     public class PlayerWeaponView : NetworkBehaviour
     {
-        public SOCatalog Catalog => _catalog;
         public WeaponView View => _view;
-        public SOWeapon Settings => _settings;
-        public Vector3 Muzzle => _view != null ? _view.Muzzle : Origin;
-        public Vector3 Origin => _origin.position;
-        public bool HasWeapon => _settings != null;
+        public Vector3 Muzzle => _view != null ? _view.Muzzle : _origin.position;
 
         [SerializeField] private PlayerNetwork _network;
-        [SerializeField] private SOCatalog _catalog;
+        [SerializeField] private SOPlayer _player;   // Catalog
         [SerializeField] private Transform _origin;
         [SerializeField] private Transform _socket;
 
@@ -24,7 +20,6 @@ namespace Project02.Player
         [SerializeField] private TwoBoneIKConstraint _rightHandIK;
         [SerializeField] private TwoBoneIKConstraint _leftHandIK;
 
-        private SOWeapon _settings;
         private WeaponView _view;
 
         protected override void OnNetworkPostSpawn()
@@ -40,12 +35,6 @@ namespace Project02.Player
 
         private void OnEquippedChanged(int previous, int current) => Equip(current, IsClient);
 
-        public static Vector3 GetDirection(Vector3 from, Vector3 aimPoint, Vector2 spread)
-        {
-            Quaternion look = Quaternion.LookRotation(aimPoint - from);
-            return look * Quaternion.Euler(-spread.y, spread.x, 0.0f) * Vector3.forward;
-        }
-
         private void Equip(int id, bool createView)
         {
             if (_view != null)
@@ -54,13 +43,13 @@ namespace Project02.Player
                 _view = null;
             }
 
-            _settings = _catalog.Get(id);
+            SOWeapon settings = _player.Catalog.Get(id);
 
-            bool hasView = createView && _settings != null && _settings.Prefab != null;
+            bool hasView = createView && settings != null && settings.Prefab != null;
             if (hasView)
             {
-                _view = Instantiate(_settings.Prefab, _socket);
-                _view.Initialize(_settings);
+                _view = Instantiate(settings.Prefab, _socket);
+                _view.Initialize(settings);
                 _rightHandIK.data.target = _view.RightGrip;
                 _leftHandIK.data.target = _view.LeftGrip;
             }
