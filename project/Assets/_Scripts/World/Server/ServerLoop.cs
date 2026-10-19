@@ -106,7 +106,7 @@ namespace Project02.World
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.magenta;
-            foreach (Weapon.Projectile projectile in _world.Projectiles)
+            foreach (Projectile projectile in _world.Projectiles)
             {
                 Gizmos.DrawRay(projectile.Position, projectile.Velocity * SimulationClock.DeltaTime);
             }

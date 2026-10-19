@@ -11,6 +11,7 @@ namespace Project02.Player
         public readonly PlayerSimulation Simulation = new();   // 예측 사본
         public readonly TickBuffer<InputPayload> InputHistory = new(BUFFER_SIZE);
         public readonly TickBuffer<PlayerSimulationState> StateHistory = new(BUFFER_SIZE);
+        public readonly TickBuffer<float> SendTimes = new(BUFFER_SIZE);   // 틱 → 그 틱 입력을 처음 보낸 시각(초). RTT 측정용
 
         public PlayerNetwork Network => _network;
         public PlayerView View => _view;
@@ -32,6 +33,7 @@ namespace Project02.Player
 
             InputHistory.Clear();
             StateHistory.Clear();
+            SendTimes.Clear();
 
             _camera.Initialize(_settings);
             _visual.Initialize(transform.position);

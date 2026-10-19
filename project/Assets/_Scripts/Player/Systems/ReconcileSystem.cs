@@ -10,8 +10,9 @@ namespace Project02.Player
         private const float ENERGY_THRESHOLD = 0.5f;
         private const float BLOOM_THRESHOLD = 0.1f;
         private const float BUFFER_SMOOTHING = 0.1f;
+        private const float RTT_SMOOTHING = 0.1f;
 
-        public static void Process(ClientWorld world, float rttTicks)
+        public static void Process(ClientWorld world, float fallbackRttTicks, float now)
         {
             PlayerOwnerAuthoring owner = world.Local;
             PlayerNetwork network = owner.Network;
@@ -23,14 +24,29 @@ namespace Project02.Player
             ref ClientClock clock = ref world.Clock;
             PlayerSimulationState server = payload.State;
 
-            // 0. 뒤처짐 복구: 서버가 이미 우리 현재 틱 이후까지 (복제 입력으로) 소비함 → 지금부터 보내는 입력은 서버에서 '과거'라 버려진다. 시계 팽창(최대 5%)으로는 못 따라잡으니 점프
+            // 왕복 시간 = (받은 시각 − 그 틱 입력을 보낸 시각) − 서버 버퍼에서 기다린 시간
+            if (owner.SendTimes.TryGetValue(server.Tick, out float sent))
+            {
+                float sample = (now - sent) / SimulationClock.DeltaTime - Mathf.Max(0, payload.InputBuffer);
+                sample = Mathf.Max(0.0f, sample);
+                clock.RttTicks = clock.RttTicks < 0.0f ? sample : Mathf.Lerp(clock.RttTicks, sample, RTT_SMOOTHING);
+            }
+            float rttTicks = clock.RttTicks >= 0.0f ? clock.RttTicks : fallbackRttTicks;   // 표본 전에는 Transport 값
+
+            // 0. 뒤처짐 복구 (기존 그대로, rttTicks 사용)
             if (server.Tick >= clock.Tick)
             {
                 Resync(owner, ref clock, server, rttTicks);
                 return;
             }
             clock.SmoothedBuffer = Mathf.Lerp(clock.SmoothedBuffer, payload.InputBuffer, BUFFER_SMOOTHING);
-
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (!world.Probe.PredictionEnabled)
+            {
+                PlayerStepUtil.Restore(owner.Simulation, server);   // 예측 끔: 서버 결과를 그대로 보여 준다
+                return;
+            }
+#endif
             if (!owner.StateHistory.TryGetValue(server.Tick, out PlayerSimulationState predicted)) return;
             if (!IsMispredicted(predicted, server)) return;
 
@@ -77,6 +93,7 @@ namespace Project02.Player
             PlayerStepUtil.Restore(owner.Simulation, server);
             owner.InputHistory.Clear();   // 건너뛴 구간의 기록은 의미 없음
             owner.StateHistory.Clear();
+            owner.SendTimes.Clear();
         }
     }
 }

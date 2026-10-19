@@ -17,6 +17,7 @@ namespace Project02.World
             Accumulator = 0.0f,
             Interval = SimulationClock.DeltaTime,
             SmoothedBuffer = TARGET_BUFFER,
+            RttTicks = -1.0f
         };
 
         public static int Advance(ref ClientClock clock, float frameTime)

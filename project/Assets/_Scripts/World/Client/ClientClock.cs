@@ -6,5 +6,6 @@ namespace Project02.World
         public float Accumulator;
         public float Interval;
         public float SmoothedBuffer;
+        public float RttTicks;
     }
 }

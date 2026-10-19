@@ -5,7 +5,7 @@ namespace Project02.Player
 {
     public static class PredictSystem
     {
-        public static void Tick(ClientWorld world, float deltaTime)
+        public static void Tick(ClientWorld world, float deltaTime, float now)
         {
             PlayerOwnerAuthoring owner = world.Local;
             PlayerSimulation sim = owner.Simulation;
@@ -32,12 +32,25 @@ namespace Project02.Player
             state.JumpPressed = false;
             state.AttackPressed = false;
             owner.InputHistory.SetValue(tick, input);
+            owner.SendTimes.SetValue(tick, now);   // 이 틱 입력이 처음 나가는 시각
 
             // 2. 시뮬레이션
-            if (PlayerStepUtil.Step(sim, input, owner.OwnerClientId, deltaTime, out ShotInfo shot))
+            bool predict = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            predict = world.Probe.PredictionEnabled;   // 디버그: 꺼지면 서버 결과만 보여 준다 (ReconcileSystem)
+#endif
+            if (predict)
             {
-                owner.View.OnFired(shot, input.AimPoint);
-                camera.Recoil += WeaponFeedbackUtil.RollRecoil(sim.Weapon, shot.Stance);   // 발사 성공 = sim.Weapon != null
+                if (PlayerStepUtil.Step(sim, input, owner.OwnerClientId, deltaTime, out ShotInfo shot))
+                {
+                    owner.View.OnFired(shot, input.AimPoint);
+                    camera.Recoil += WeaponFeedbackUtil.RollRecoil(sim.Weapon, shot.Stance);   // 발사 성공 = sim.Weapon != null
+                }
+            }
+            else
+            {
+                sim.Yaw = input.YawInput;     // 회전은 화면 표시용으로만 따라간다
+                sim.Pitch = input.PitchInput;
             }
 
             // 3. 기록

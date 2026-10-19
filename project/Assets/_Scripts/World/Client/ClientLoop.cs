@@ -4,6 +4,9 @@ using Project02.Core;
 using Project02.Enemy;
 using Project02.Player;
 using Project02.Service;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+using UnityEngine.InputSystem;
+#endif
 
 namespace Project02.World
 {
@@ -77,22 +80,32 @@ namespace Project02.World
             // 2. 카메라
             CameraSystem.Update(world, input.MouseSensitivity, frameTime);
 
-            // 3. 리컨사일 (뒤처졌으면 시계 재동기화)
+            // 3. 리컨사일 (뒤처졌으면 시계 재동기화). RTT는 직접 잰 값, 표본 전에는 Transport 값
             NetworkManager network = NetworkManager.Singleton;
-            float rttMs = network.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId);
-            ReconcileSystem.Process(world, rttMs / 1000.0f / SimulationClock.DeltaTime);
+            float now = Time.realtimeSinceStartup;
+            float transportRttMs = network.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId);
+            ReconcileSystem.Process(world, transportRttMs / 1000.0f / SimulationClock.DeltaTime, now);
 
             // 4~5. 예측 시계 → 예측
             int ticks = ClockSystem.Advance(ref world.Clock, frameTime);
             for (int i = 0; i < ticks; i++)
             {
-                PredictSystem.Tick(world, SimulationClock.DeltaTime);
+                PredictSystem.Tick(world, SimulationClock.DeltaTime, now);
                 world.Clock.Tick++;
             }
 
             // 6. 루트 transform 출력 (리컨사일·예측 루프 밖에서 1회)
             PlayerOwnerAuthoring owner = world.Local;
             PlayerStepUtil.WriteTransform(owner.transform, owner.Simulation);
+
+            // 7. (디버그) 지연 측정. F9: 예측 켜기/끄기
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (Keyboard.current != null && Keyboard.current.f9Key.wasPressedThisFrame)
+            {
+                LatencySystem.Toggle(world);
+            }
+            LatencySystem.Measure(world, owner.Simulation.State.Movement.Position, Time.realtimeSinceStartup);
+#endif
         }
 
         private void LateUpdate()
@@ -164,6 +177,12 @@ namespace Project02.World
             GUI.Label(new Rect(x, 190, 300, 20), $"interval: {_world.Clock.Interval * 1000.0f:F2}ms", style);
             GUI.Label(new Rect(x, 210, 300, 20), $"latest: {_world.Interp.LatestTick} render: {_world.Interp.RenderTick:F2}", style);
             GUI.Label(new Rect(x, 230, 300, 20), $"delay: {_world.Interp.LatestTick - _world.Interp.RenderTick:F2} ticks", style);
+
+            LatencyProbe probe = _world.Probe;
+            LatencySystem.Summarize(probe.Samples, out float median, out float p95, out float max);
+            GUI.Label(new Rect(x, 250, 300, 20), $"predict: {(probe.PredictionEnabled ? "ON" : "OFF")} (F9)  n={probe.Samples.Count}", style);
+            GUI.Label(new Rect(x, 270, 300, 20), $"delay med {median:F1} / p95 {p95:F1} / max {max:F1} ms", style);
+            GUI.Label(new Rect(x, 290, 300, 20), $"rtt (measured): {_world.Clock.RttTicks * SimulationClock.DeltaTime * 1000.0f:F0}ms", style);
         }
 #endif
     }
