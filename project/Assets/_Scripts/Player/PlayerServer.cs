@@ -1,17 +1,27 @@
+using Project02.Combat;
 using Project02.Server;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Project02.Player
 {
-    // Authoring + RPC 프록시: 서버 World 등록, 서버 사본 소유, 받은 입력을 쌓기만 한다
+    // Authoring (서버 World): 등록, 서버 사본 소유. RPC는 PlayerNetwork
     public class PlayerServer : NetworkBehaviour
     {
-        public PlayerController Controller => _controller;
         public readonly PlayerSimulation Simulation = new();   // 서버 권한 상태
         public readonly InputQueue Inputs = new();
 
-        [SerializeField] private PlayerController _controller;
+        public PlayerNetwork Network => _network;
+        public Health Health => _health;
+        public PlayerProgression Progression => _progression;
+        public SOPlayer Settings => _settings;
+
+        [SerializeField] private PlayerNetwork _network;
+        [SerializeField] private Health _health;
+        [SerializeField] private PlayerProgression _progression;
+        [SerializeField] private PlayerLocomotion _locomotion;   // SOMovement
+        [SerializeField] private PlayerWeapon _weapon;           // SOCatalog
+        [SerializeField] private SOPlayer _settings;             // FireOriginOffset
 
         public override void OnNetworkSpawn()
         {
@@ -23,12 +33,11 @@ namespace Project02.Player
         {
             if (!IsServer) return;
 
-            // 스폰 시 1회 (Authoring). Join이 넣은 Level, OnNetworkSpawn의 EquippedWeapon이 이미 있다
-            PlayerSpawnUtil.Initialize(Simulation, _controller);
-
-            PlayerProgression progression = _controller.PlayerProgression;
-            PlayerStatUtil.ApplyHealth(_controller.Health, progression.Table.Get(progression.Level.Value));
-            progression.AppliedLevel = progression.Level.Value;
+            // 스폰 시 1회 (Authoring). Join이 넣은 Level, PlayerNetwork의 EquippedWeapon이 이미 있다
+            SOLevelTable.Row stats = _progression.Table.Get(_progression.Level.Value);
+            PlayerSpawnUtil.Initialize(Simulation, transform.position, _locomotion.Settings, _weapon.Catalog, _network.EquippedWeapon.Value, stats);
+            PlayerStatUtil.ApplyHealth(_health, stats);
+            _progression.AppliedLevel = _progression.Level.Value;
         }
 
         public override void OnNetworkDespawn()
@@ -37,14 +46,6 @@ namespace Project02.Player
             {
                 ServerLoop.Instance.Unregister(this);
             }
-        }
-
-        // NGO가 아무 때나 부른다 → 기록만 (deferment)
-        [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
-        public void InputRPC(InputBundle bundle)
-        {
-            if (Inputs.Received.Count >= InputQueue.MAX_RECEIVED) return;
-            Inputs.Received.Add(bundle);
         }
     }
 }

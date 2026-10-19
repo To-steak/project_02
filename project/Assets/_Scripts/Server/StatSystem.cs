@@ -9,15 +9,14 @@ namespace Project02.Server
         {
             foreach (PlayerServer player in world.Players)
             {
-                PlayerController controller = player.Controller;
-                PlayerProgression progression = controller.PlayerProgression;
+                PlayerProgression progression = player.Progression;
 
                 int level = progression.Level.Value;
                 if (progression.AppliedLevel == level) continue;
 
                 SOLevelTable.Row stats = progression.Table.Get(level);
                 PlayerStatUtil.ApplyStamina(player.Simulation, stats);
-                PlayerStatUtil.ApplyHealth(controller.Health, stats);
+                PlayerStatUtil.ApplyHealth(player.Health, stats);
                 progression.AppliedLevel = level;
             }
         }

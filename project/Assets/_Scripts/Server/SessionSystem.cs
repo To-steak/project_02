@@ -10,13 +10,12 @@ namespace Project02.Server
         // 스폰 시 1회 (ServerLoop.Register에서). 스폰 메시지에 실리도록 즉시 처리
         public static void Join(PlayerServer player, SessionService session)
         {
-            PlayerController controller = player.Controller;
             ulong clientId = player.OwnerClientId;
 
             string nickname = session.GetNickname(clientId) ?? $"Player#{clientId}";
-            controller.Nickname.Value = new FixedString64Bytes(nickname);
+            player.Network.Nickname.Value = new FixedString64Bytes(nickname);
 
-            ApplyExp(controller.PlayerProgression, session.GetExp(clientId));
+            ApplyExp(player.Progression, session.GetExp(clientId));
         }
 
         // 매 틱 (Step). 보상 지급 → 받은 플레이어의 레벨 갱신
@@ -30,7 +29,7 @@ namespace Project02.Server
                 {
                     if (TryFindPlayer(world, clientId, out PlayerServer player))
                     {
-                        ApplyExp(player.Controller.PlayerProgression, session.GetExp(clientId));
+                        ApplyExp(player.Progression, session.GetExp(clientId));
                     }
                 }
             }

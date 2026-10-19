@@ -11,7 +11,7 @@ namespace Project02.Server
             {
                 PlayerSimulation sim = player.Simulation;
 
-                int desired = player.Controller.EquippedWeapon.Value;
+                int desired = player.Network.EquippedWeapon.Value;
                 if (sim.State.Weapon.EquippedId == desired) continue;
 
                 PlayerEquipUtil.Apply(sim, desired);

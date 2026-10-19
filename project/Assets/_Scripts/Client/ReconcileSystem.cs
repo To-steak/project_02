@@ -14,10 +14,11 @@ namespace Project02.Client
         public static void Process(ClientWorld world, float rttTicks)
         {
             PlayerOwner owner = world.Local;
-            if (!owner.HasPendingState) return;
+            PlayerNetwork network = owner.Network;
+            if (!network.HasPendingState) return;
 
-            StatePayload payload = owner.PendingState;
-            owner.HasPendingState = false;
+            StatePayload payload = network.PendingState;
+            network.HasPendingState = false;
 
             ref ClientClock clock = ref world.Clock;
             PlayerSimulationState server = payload.State;
@@ -37,7 +38,6 @@ namespace Project02.Client
             owner.DEBUG_ReconcileCount++;
             Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} max {predicted.Stamina.MaxEnergy:F0}/{server.Stamina.MaxEnergy:F0} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
 #endif
-            PlayerController controller = owner.Controller;
             PlayerSimulation sim = owner.Simulation;
             PlayerStepUtil.Restore(sim, server);
 
@@ -45,7 +45,7 @@ namespace Project02.Client
             {
                 if (!owner.InputHistory.TryGetValue(tick, out InputPayload input)) break;
 
-                PlayerStepUtil.Step(sim, input, controller.OwnerClientId, SimulationClock.DeltaTime, out _);
+                PlayerStepUtil.Step(sim, input, owner.OwnerClientId, SimulationClock.DeltaTime, out _);
                 owner.StateHistory.SetValue(tick, sim.State);
             }
         }

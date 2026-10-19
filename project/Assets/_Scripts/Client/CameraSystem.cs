@@ -8,8 +8,8 @@ namespace Project02.Client
     {
         public static void Update(ClientWorld world, float sensitivity, float frameTime)
         {
-            PlayerController controller = world.Local.Controller;
-            SOPlayer settings = controller.PlayerSettings;
+            PlayerOwner owner = world.Local;
+            SOPlayer settings = owner.Settings;
             ref CameraState camera = ref world.Camera;
             ref InputState input = ref world.Input;
 
@@ -28,10 +28,10 @@ namespace Project02.Client
             camera.AdsBlend = Mathf.MoveTowards(camera.AdsBlend, input.Aim ? 1.0f : 0.0f, settings.AdsSpeed * frameTime);
 
             // 4. 프록시 출력 → 조준점
-            SOWeapon weapon = world.Local.Simulation.Weapon;
+            SOWeapon weapon = owner.Simulation.Weapon;
             float zoom = weapon != null ? weapon.AdsZoom : 1.0f;
-            controller.PlayerCamera.Apply(camera.AdsBlend, zoom);
-            camera.AimPoint = controller.PlayerCamera.GetAimPoint();
+            owner.Camera.Apply(camera.AdsBlend, zoom);
+            camera.AimPoint = owner.Camera.GetAimPoint();
         }
     }
 }

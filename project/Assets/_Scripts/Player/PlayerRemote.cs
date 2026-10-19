@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Project02.Client;
 using Project02.Core;
 using Unity.Netcode;
@@ -6,17 +5,22 @@ using UnityEngine;
 
 namespace Project02.Player
 {
-    // Authoring + RPC 프록시: 원격 플레이어 등록, 스냅샷/발사 기록. 표시는 RemotePlayerViewSystem
+    // Authoring (클라 World, 원격): 등록, 스냅샷 버퍼. 발사 수신은 PlayerNetwork.Fires, 표시는 RemotePlayerViewSystem
     public class PlayerRemote : NetworkBehaviour
     {
         public const int BUFFER_SIZE = 32;   // 32틱 = 640ms
-        public const int MAX_FIRES = 16;   // 스냅샷이 끊겨 RenderTick이 멈춰도 무한히 쌓이지 않게
 
-        public PlayerController Controller => _controller;
         public readonly TickBuffer<PlayerSnapshot> Snapshots = new(BUFFER_SIZE);
-        public readonly List<RemoteFire> Fires = new();
 
-        [SerializeField] private PlayerController _controller;
+        public PlayerNetwork Network => _network;
+        public PlayerVisual Visual => _visual;
+        public PlayerAnimation Animation => _animation;
+        public PlayerWeapon Weapon => _weapon;
+
+        [SerializeField] private PlayerNetwork _network;
+        [SerializeField] private PlayerVisual _visual;
+        [SerializeField] private PlayerAnimation _animation;
+        [SerializeField] private PlayerWeapon _weapon;
 
         public override void OnNetworkSpawn()
         {
@@ -24,7 +28,6 @@ namespace Project02.Player
             if (!enabled) return;
 
             Snapshots.Clear();
-            Fires.Clear();
             ClientLoop.Instance.Register(this);
         }
 
@@ -36,15 +39,6 @@ namespace Project02.Player
             {
                 ClientLoop.Instance.Unregister(this);
             }
-        }
-
-        [Rpc(SendTo.ClientsAndHost)]
-        public void FireRPC(int tick, Vector3 aimPoint, Vector2 spread)
-        {
-            if (!enabled) return;   // 소유자는 예측으로 이미 재생함
-
-            if (Fires.Count >= MAX_FIRES) Fires.RemoveAt(0);   // 가장 오래된 것 버림
-            Fires.Add(new RemoteFire(tick, aimPoint, spread));
         }
     }
 }

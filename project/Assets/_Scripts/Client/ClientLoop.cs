@@ -93,7 +93,7 @@ namespace Project02.Client
 
             // 6. 루트 transform 출력 (리컨사일·예측 루프 밖에서 1회)
             PlayerOwner owner = world.Local;
-            PlayerStepUtil.WriteTransform(owner.Controller.transform, owner.Simulation);
+            PlayerStepUtil.WriteTransform(owner.transform, owner.Simulation);
         }
 
         private void LateUpdate()

@@ -8,7 +8,6 @@ namespace Project02.Client
         public static void Tick(ClientWorld world, float deltaTime)
         {
             PlayerOwner owner = world.Local;
-            PlayerController controller = owner.Controller;
             PlayerSimulation sim = owner.Simulation;
             int tick = world.Clock.Tick;
 
@@ -35,7 +34,7 @@ namespace Project02.Client
             owner.InputHistory.SetValue(tick, input);
 
             // 2. 시뮬레이션
-            if (PlayerStepUtil.Step(sim, input, controller.OwnerClientId, deltaTime, out ShotInfo shot))
+            if (PlayerStepUtil.Step(sim, input, owner.OwnerClientId, deltaTime, out ShotInfo shot))
             {
                 owner.View.OnFired(shot, input.AimPoint);
                 camera.Recoil += WeaponFeedback.RollRecoil(sim.Weapon, shot.Stance);   // 발사 성공 = sim.Weapon != null
@@ -59,7 +58,7 @@ namespace Project02.Client
             }
 
             bundle.Count = (byte)count;
-            owner.Controller.PlayerServer.InputRPC(bundle);
+            owner.Network.InputRPC(bundle);
         }
     }
 }

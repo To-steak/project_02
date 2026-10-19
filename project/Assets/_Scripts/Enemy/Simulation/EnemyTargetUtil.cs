@@ -16,8 +16,7 @@ namespace Project02.Enemy
             {
                 if (player.OwnerClientId != clientId) continue;
 
-                PlayerController controller = player.Controller;
-                if (controller.Health.IsDead) return false;
+                if (player.Health.IsDead) return false;
 
                 position = player.Simulation.State.Movement.Position;
                 return true;
@@ -34,8 +33,7 @@ namespace Project02.Enemy
 
             foreach (PlayerServer player in world.Players)
             {
-                PlayerController controller = player.Controller;
-                if (controller.Health.IsDead) continue;
+                if (player.Health.IsDead) continue;
 
                 Vector3 offset = player.Simulation.State.Movement.Position - origin;
                 offset.y = 0.0f;

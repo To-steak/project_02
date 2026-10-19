@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Project02.Character;
 using Project02.Player;
 using Project02.Weapon;
@@ -17,7 +18,7 @@ namespace Project02.Server
                 InputQueue queue = player.Inputs;
 
                 // 1. 수신: RPC가 쌓아 둔 번들을 버퍼로
-                Receive(queue);
+                Receive(queue, player.Network.ReceivedInputs);
 
                 // 2. 시작 대기: 버퍼가 START_BUFFER만큼 찰 때까지
                 if (!queue.Started)
@@ -30,20 +31,18 @@ namespace Project02.Server
                 InputPayload input = Consume(queue);
 
                 // 4. 시뮬레이션 (예측과 같은 함수)
-                PlayerController controller = player.Controller;
                 PlayerSimulation sim = player.Simulation;
                 if (PlayerStepUtil.Step(sim, input, player.OwnerClientId, deltaTime, out ShotInfo shot))
                 {
-                    world.Projectiles.Add(CreateProjectile(controller, sim, player.OwnerClientId, input, shot, world.Clock.Tick));
+                    world.Projectiles.Add(CreateProjectile(player.Settings, sim, player.OwnerClientId, input, shot, world.Clock.Tick));
                     world.Outbox.Fires.Add(new FireMessage(player, world.Clock.Tick, input.AimPoint, shot.Spread));
                 }
 
+                // 5. 출력: 클라가 없는 프로세스에서만 (호스트는 ClientLoop가 쓴다)
                 if (world.WriteTransforms)
                 {
-                    PlayerStepUtil.WriteTransform(controller.transform, sim);
+                    PlayerStepUtil.WriteTransform(player.transform, sim);
                 }
-
-                PlayerStepUtil.WriteTransform(controller.transform, sim);
 
                 // 6. 결과 기록 (송신은 NetSendSystem)
                 StatePayload payload = new StatePayload
@@ -55,7 +54,7 @@ namespace Project02.Server
             }
         }
 
-        private static void Receive(InputQueue queue)
+        private static void Receive(InputQueue queue, List<InputBundle> received)
         {
             foreach (InputBundle bundle in queue.Received)
             {
@@ -90,6 +89,7 @@ namespace Project02.Server
                 }
             }
 
+            received.Clear();
             queue.Received.Clear();
         }
 
@@ -127,13 +127,13 @@ namespace Project02.Server
             queue.LatestTick = tick - 1;
         }
 
-        private static Projectile CreateProjectile(PlayerController controller, PlayerSimulation sim, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)
+        private static Projectile CreateProjectile(SOPlayer settings, PlayerSimulation sim, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)
         {
             SOWeapon data = sim.Weapon;
             SOBullet bullet = data.Bullet;
 
             MovementState movement = sim.State.Movement;
-            Vector3 origin = WeaponFire.GetOrigin(movement, input.YawInput, controller.PlayerSettings.FireOriginOffset);
+            Vector3 origin = WeaponFire.GetOrigin(movement, input.YawInput, settings.FireOriginOffset);
             Vector3 direction = PlayerWeapon.GetDirection(origin, input.AimPoint, shot.Spread);
             float damage = bullet.Damage * data.WeaponCoefficient;
             bool isCritical = WeaponFire.RollCritical(ownerId, input.Tick, data.CriticalChance);

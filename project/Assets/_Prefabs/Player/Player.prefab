@@ -2525,9 +2525,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2456555958984313520}
-  - component: {fileID: 5971814544820326870}
   - component: {fileID: 8461194167124644958}
-  - component: {fileID: 6006245556683299649}
+  - component: {fileID: 5971814544820326870}
   - component: {fileID: 6345587166369566394}
   - component: {fileID: 636833016071899220}
   - component: {fileID: 8287365391867684976}
@@ -2538,6 +2537,7 @@ GameObject:
   - component: {fileID: 2456796616233262538}
   - component: {fileID: 7330228363150315847}
   - component: {fileID: 2910439071934825146}
+  - component: {fileID: 2635111233502250170}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -2562,32 +2562,6 @@ Transform:
   - {fileID: 8007186253786225165}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5971814544820326870
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3352041741525735007}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2724382985
-  InScenePlacedSourceGlobalObjectIdHash: 2724382985
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!114 &8461194167124644958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2646,7 +2620,7 @@ MonoBehaviour:
   m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &6006245556683299649
+--- !u!114 &5971814544820326870
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2655,21 +2629,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 3352041741525735007}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1332d09fe9a23d54795e216f580b4fca, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  ShowTopMostFoldoutHeaderGroup: 1
-  PlayerSettings: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
-  PlayerAnimation: {fileID: 8484388241333897775}
-  PlayerLocomotion: {fileID: 1634119094165126537}
-  PlayerCamera: {fileID: 8005297123998042264}
-  PlayerVisual: {fileID: 3124304013075138114}
-  PlayerServer: {fileID: 8287365391867684976}
-  PlayerOwner: {fileID: 6345587166369566394}
-  PlayerRemote: {fileID: 636833016071899220}
-  PlayerWeapon: {fileID: 7234265273799312356}
-  PlayerProgression: {fileID: 2910439071934825146}
-  Health: {fileID: 2456796616233262538}
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2724382985
+  InScenePlacedSourceGlobalObjectIdHash: 2724382985
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &6345587166369566394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2683,10 +2659,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project02.Player.PlayerOwner
   ShowTopMostFoldoutHeaderGroup: 1
-  HasPendingState: 0
-  LatestServerTick: -1
-  _controller: {fileID: 6006245556683299649}
+  _network: {fileID: 2635111233502250170}
   _view: {fileID: 7330228363150315847}
+  _camera: {fileID: 8005297123998042264}
+  _visual: {fileID: 3124304013075138114}
+  _progression: {fileID: 2910439071934825146}
+  _locomotion: {fileID: 1634119094165126537}
+  _weapon: {fileID: 7234265273799312356}
+  _settings: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
   DEBUG_ReconcileCount: 0
 --- !u!114 &636833016071899220
 MonoBehaviour:
@@ -2701,7 +2681,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project02.Player.PlayerRemote
   ShowTopMostFoldoutHeaderGroup: 1
-  _controller: {fileID: 6006245556683299649}
+  _network: {fileID: 2635111233502250170}
+  _visual: {fileID: 3124304013075138114}
+  _animation: {fileID: 8484388241333897775}
+  _weapon: {fileID: 7234265273799312356}
 --- !u!114 &8287365391867684976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2715,7 +2698,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerServer
   ShowTopMostFoldoutHeaderGroup: 1
-  _controller: {fileID: 6006245556683299649}
+  _network: {fileID: 2635111233502250170}
+  _health: {fileID: 2456796616233262538}
+  _progression: {fileID: 2910439071934825146}
+  _locomotion: {fileID: 1634119094165126537}
+  _weapon: {fileID: 7234265273799312356}
+  _settings: {fileID: 11400000, guid: c85fee96ad347734e85d2126ca05548c, type: 2}
 --- !u!114 &1634119094165126537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2770,6 +2758,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41474dc78133bd147a05b30c79bfcfaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GamePlayer::PlayerAPI.PlayerWeapon
+  ShowTopMostFoldoutHeaderGroup: 1
+  _network: {fileID: 2635111233502250170}
   _catalog: {fileID: 11400000, guid: 2c59e0085a081264aad3a624b4c8b4ba, type: 2}
   _origin: {fileID: 4223344401908020589}
   _socket: {fileID: 6089265958232188399}
@@ -2820,8 +2810,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project02.Player.PlayerProgression
   ShowTopMostFoldoutHeaderGroup: 1
   _table: {fileID: 11400000, guid: c961a6c3d4caea94f910d5f2beca8524, type: 2}
-  _health: {fileID: 2456796616233262538}
-  _controller: {fileID: 6006245556683299649}
+  AppliedLevel: 0
+--- !u!114 &2635111233502250170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3352041741525735007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 023683754ede8c3489c9781eda62ed12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project02.Player.PlayerNetwork
+  ShowTopMostFoldoutHeaderGroup: 1
+  HasPendingState: 0
+  LatestServerTick: -1
 --- !u!1 &3371726832865955048
 GameObject:
   m_ObjectHideFlags: 0

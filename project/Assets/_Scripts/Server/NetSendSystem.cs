@@ -9,13 +9,13 @@ namespace Project02.Server
             foreach (StateMessage message in outbox.States)
             {
                 if (message.Target == null) continue;   // Unity ==: 파괴된 객체 거름
-                message.Target.Controller.PlayerOwner.StateRPC(message.Payload);
+                message.Target.Network.StateRPC(message.Payload);
             }
 
             foreach (FireMessage message in outbox.Fires)
             {
                 if (message.Shooter == null) continue;
-                message.Shooter.Controller.PlayerRemote.FireRPC(message.Tick, message.AimPoint, message.Spread);
+                message.Shooter.Network.FireRPC(message.Tick, message.AimPoint, message.Spread);
             }
 
             outbox.States.Clear();
