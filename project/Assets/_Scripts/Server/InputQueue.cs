@@ -7,7 +7,6 @@ namespace Project02.Server
     public sealed class InputQueue
     {
         public const int CAPACITY = 64;
-        public const int MAX_RECEIVED = 16;
 
         public readonly List<InputBundle> Received = new();
         public readonly TickBuffer<InputPayload> Buffer = new(CAPACITY);

@@ -56,7 +56,7 @@ namespace Project02.Server
 
         private static void Receive(InputQueue queue, List<InputBundle> received)
         {
-            foreach (InputBundle bundle in queue.Received)
+            foreach (InputBundle bundle in received)
             {
                 for (int i = 0; i < bundle.Count; i++)
                 {
@@ -90,7 +90,6 @@ namespace Project02.Server
             }
 
             received.Clear();
-            queue.Received.Clear();
         }
 
         private static InputPayload Consume(InputQueue queue)
