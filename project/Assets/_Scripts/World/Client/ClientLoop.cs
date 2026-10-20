@@ -18,8 +18,15 @@ namespace Project02.World
         public static ClientLoop Instance { get; private set; }
 
         private readonly ClientWorld _world = new();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private readonly System.Text.StringBuilder _clockLog = new();
+        private bool _clockLogging;
+#endif
 
-        private void Awake() => Instance = this;
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         private void Start()
         {
@@ -105,6 +112,27 @@ namespace Project02.World
                 LatencySystem.Toggle(world);
             }
             LatencySystem.Measure(world, owner.Simulation.State.Movement.Position, Time.realtimeSinceStartup);
+
+            if (Keyboard.current != null && Keyboard.current.f10Key.wasPressedThisFrame)
+            {
+                _clockLogging = !_clockLogging;
+                if (_clockLogging)
+                {
+                    _clockLog.Clear().Append("time,buffer,interval_ms,rtt_ms\n");
+                }
+                else
+                {
+                    string path = System.IO.Path.Combine(Application.persistentDataPath, "clock_log.csv");
+                    System.IO.File.WriteAllText(path, _clockLog.ToString());
+                    Debug.Log($"clock log → {path}");
+                }
+            }
+
+            if (_clockLogging)
+            {
+                ClientClock clock = world.Clock;
+                _clockLog.Append($"{now:F3},{clock.SmoothedBuffer:F2},{clock.Interval * 1000.0f:F2},{clock.RttTicks * SimulationClock.DeltaTime * 1000.0f:F0}\n");
+            }
 #endif
         }
 

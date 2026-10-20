@@ -59,8 +59,7 @@ namespace Project02.Combat
         }
 
         // 선분 [start, start + direction * maxDistance] 위에서 가장 먼저 닿는 적
-        private static bool TryHitEnemies(List<EnemyServerAuthoring> enemies, float sampleTick, Vector3 start, Vector3 direction, float maxDistance,
-                                          out EnemyServerAuthoring target, out float distance)
+        private static bool TryHitEnemies(List<EnemyServerAuthoring> enemies, float sampleTick, Vector3 start, Vector3 direction, float maxDistance, out EnemyServerAuthoring target, out float distance)
         {
             target = null;
             distance = maxDistance;
@@ -75,6 +74,14 @@ namespace Project02.Combat
                 CharacterPhysics.GetCapsule(position, rewind.Radius, rewind.Height, out Vector3 bottom, out Vector3 top);
                 if (TryIntersectCapsule(start, direction, distance, bottom, top, rewind.Radius, out float hit))
                 {
+#if UNITY_EDITOR
+                    // 지연 보상 시각화: 빨강 = 서버의 현재 위치, 초록 = 쏜 사람이 보던 위치(판정), 노랑 = 탄 경로
+                    CharacterPhysics.GetCapsule(enemy.Simulation.Movement.Position, rewind.Radius, rewind.Height, out Vector3 nowBottom, out Vector3 nowTop);
+                    DrawCapsule(nowBottom, nowTop, rewind.Radius, Color.red);
+                    DrawCapsule(bottom, top, rewind.Radius, Color.green);
+                    Debug.DrawLine(start, start + direction * hit, Color.yellow, DRAW_SECONDS);
+                    Debug.DrawLine(position, enemy.Simulation.Movement.Position, Color.white, DRAW_SECONDS);   // 되감은 거리
+#endif
                     distance = hit;   // 줄여 가며 찾으므로 다음 후보는 더 가까워야 통과
                     target = enemy;
                 }
@@ -143,5 +150,23 @@ namespace Project02.Combat
             hitDistance = s * maxDistance;
             return true;
         }
+        
+#if UNITY_EDITOR
+        private const float DRAW_SECONDS = 3.0f;
+
+        // 축 + 위아래 십자로 캡슐 윤곽을 대략 그린다
+        private static void DrawCapsule(Vector3 bottom, Vector3 top, float radius, Color color)
+        {
+            Debug.DrawLine(bottom, top, color, DRAW_SECONDS);
+            foreach (Vector3 axis in new[] { Vector3.right, Vector3.forward })
+            {
+                Vector3 r = axis * radius;
+                Debug.DrawLine(bottom - r, top - r, color, DRAW_SECONDS);
+                Debug.DrawLine(bottom + r, top + r, color, DRAW_SECONDS);
+                Debug.DrawLine(top - r, top + r, color, DRAW_SECONDS);
+                Debug.DrawLine(bottom - r, bottom + r, color, DRAW_SECONDS);
+            }
+        }
+#endif
     }
 }
