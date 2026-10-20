@@ -13,6 +13,9 @@ namespace Project02.World
         public float StartTime = -1.0f;
         public Vector3 StartPosition;
         public readonly List<float> Samples = new();   // ms
+        public Vector3 LastPosition;
+        public float StillSince;
+        public int Rejected;
     }
 }
 #endif

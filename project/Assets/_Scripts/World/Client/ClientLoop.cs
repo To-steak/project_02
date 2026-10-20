@@ -183,6 +183,7 @@ namespace Project02.World
             GUI.Label(new Rect(x, 250, 300, 20), $"predict: {(probe.PredictionEnabled ? "ON" : "OFF")} (F9)  n={probe.Samples.Count}", style);
             GUI.Label(new Rect(x, 270, 300, 20), $"delay med {median:F1} / p95 {p95:F1} / max {max:F1} ms", style);
             GUI.Label(new Rect(x, 290, 300, 20), $"rtt (measured): {_world.Clock.RttTicks * SimulationClock.DeltaTime * 1000.0f:F0}ms", style);
+            GUI.Label(new Rect(x, 310, 300, 20), $"still {Time.realtimeSinceStartup - probe.StillSince:F2}s  rejected {probe.Rejected}", style);
         }
 #endif
     }
