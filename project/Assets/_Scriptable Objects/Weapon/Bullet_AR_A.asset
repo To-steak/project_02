@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: Bullet_AR_A
   m_EditorClassIdentifier: GameWeapon::BulletData
   Damage: 1
-  Velocity: 10
-  Lifespan: 2
+  Velocity: 8
