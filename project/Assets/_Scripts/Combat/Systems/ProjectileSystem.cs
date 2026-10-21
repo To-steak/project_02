@@ -41,7 +41,7 @@ namespace Project02.Combat
                 if (TryHitTargets(world.Hittables, projectile.Team, tick, sampleTick, projectile.Position, direction, maxDistance, out Health target, out float distance))
                 {
                     int damage = projectile.GetDamage(traveled + distance);
-                    world.Hits.Add(new HitInfo(target, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
+                    world.Hits.Add(new HitInfo(target, DamageInfo.From(projectile.Source, damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
                     projectiles.RemoveAt(i);
                     continue;
                 }
