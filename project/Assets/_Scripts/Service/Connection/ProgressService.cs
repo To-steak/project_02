@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Project02.Service
@@ -25,22 +26,38 @@ namespace Project02.Service
         private SaveFile _file;
         private readonly Dictionary<string, PlayerProgress> _players = new();
 
-        // 보상은 메모리에만 반영하고(_dirty), 주기·접속 종료·Close·앱 종료 때 파일에 쓴다 (틱 안에서 파일 I/O 하지 않음)
+        // 보상은 메모리에만 반영하고(_dirty), 주기·접속 종료·서버 정지·Close·앱 종료 때 파일에 쓴다 (틱 안에서 파일 I/O 하지 않음)
         private bool _dirty;
         private float _nextSaveTime;
         private const float SAVE_INTERVAL = 10.0f;   // 크래시 시 최대 이만큼의 진행도를 잃는다
 
+        private NetworkManager _networkManager;   // 같은 Services 오브젝트에 있다
+
         private void Awake()
         {
+            _networkManager = GetComponent<NetworkManager>();
+            _networkManager.OnServerStopped += OnServerStopped;
+
             Instance = this;
         }
 
         private void OnDestroy()
         {
+            if (_networkManager != null)
+            {
+                _networkManager.OnServerStopped -= OnServerStopped;
+            }
+
             if (Instance == this)
             {
                 Instance = null;
             }
+        }
+
+        // 호스트(싱글 → 메뉴)와 전용 서버의 Shutdown을 한 곳에서 잡는다. 파일은 닫지 않는다 (닫는 것은 여는 쪽의 몫)
+        private void OnServerStopped(bool wasHost)
+        {
+            Flush();
         }
 
         private void Update()
