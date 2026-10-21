@@ -21,12 +21,16 @@ namespace Project02.World
 
         private const int MAX_TICKS_PER_FRAME = 5;
 
+        // Tick(...) 실행 중 표시. 틱 도중 Register는 순회 중인 목록을 바꾸므로 막는다 (ECS_RULES 규칙 4)
+        private bool _ticking;
+
         private void Awake() => Instance = this;
         private void OnDestroy() { if (Instance == this) Instance = null; }
 
         // 종류 목록(Players, Enemies)과 묶음 목록(Hittables, Mortals)은 여기서만 함께 바꾼다
         public void Register(PlayerServerAuthoring player)
         {
+            Debug.Assert(!_ticking, "틱 도중 등록 금지: 순회 중인 목록이 바뀐다 (ECS_RULES 규칙 4)");
             _world.Players.Add(player);
 
             // 플레이어는 맞을 수 있는 대상이다 (PvE: 나중에 적의 공격을 받는다).
@@ -38,6 +42,7 @@ namespace Project02.World
         }
         public void Register(EnemyServerAuthoring enemy)
         {
+            Debug.Assert(!_ticking, "틱 도중 등록 금지: 순회 중인 목록이 바뀐다 (ECS_RULES 규칙 4)");
             _world.Enemies.Add(enemy);
             _world.Hittables.Add(new HitTarget(Team.Enemy, enemy.Rewind, enemy.Health));
 
@@ -46,6 +51,9 @@ namespace Project02.World
 
             EnemyFsmUtil.Reset(enemy.Simulation, _world.Clock.Tick);
         }
+
+        // Unregister에는 틱 가드를 두지 않는다: 틱 마지막 단계인 DespawnSystem의 Despawn()이
+        // OnNetworkDespawn → Unregister를 부르는 것이 정상 흐름이다 (모든 순회가 끝난 뒤라 안전)
         public void Unregister(PlayerServerAuthoring player)
         {
             _world.Players.Remove(player);
@@ -91,7 +99,16 @@ namespace Project02.World
             while (clock.Accumulator >= SimulationClock.DeltaTime && ticks < MAX_TICKS_PER_FRAME)
             {
                 clock.Accumulator -= SimulationClock.DeltaTime;
-                Tick(_world, network, _projectileHitLayer, SimulationClock.DeltaTime);
+                _ticking = true;
+                try
+                {
+                    Tick(_world, network, _projectileHitLayer, SimulationClock.DeltaTime);
+                }
+                finally
+                {
+                    // 틱 안에서 예외가 나도 가드가 켜진 채 남지 않게 한다
+                    _ticking = false;
+                }
                 clock.Tick++;
                 ticks++;
             }

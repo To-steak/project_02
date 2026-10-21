@@ -8,6 +8,8 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 
 용어 일부는 아래 강연에서 빌려 왔고, 뜻은 0장에 풀어 두었다.
 
+이 문서는 코드를 쓰는 규칙만 다룬다. 저장 정책, 작업 절차, 회귀 확인은 [README](./README.md)에 있다.
+
 참고: [Overwatch Gameplay Architecture and Netcode (GDC 2017, Tim Ford)](https://gdcvault.com/play/1024001/-Overwatch-Gameplay-Architecture-and)
 
 ---
@@ -23,7 +25,7 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 |---|---|---|
 | 데이터와 로직을 나눈다 | 상태는 필드만 있는 객체(Component)에, 동작은 필드 없는 함수 모음(System)에 둔다. 같은 상태에 같은 함수를 돌리면 같은 결과가 나온다 | 서버와 클라가 같은 `PlayerStepUtil.Step`을 돌려 예측이 맞는다 |
 | 하나뿐인 데이터는 World에 둔다 (Singleton Component) | 시계, 입력, 처리 대기 목록처럼 엔티티마다가 아니라 세상에 하나인 값. 전역 변수 대신 World의 필드로 두고 System에 인자로 넘긴다 | `world.Clock`, `world.Hits` |
-| 큰 부수효과는 미뤄서 한 곳에서 한다 | 데미지·스폰·전송을 그 자리에서 하지 않고 목록에 적어 두면, 실제 처리는 System 하나가 정해진 순서로 한다. "언제, 어디서 일어나나"가 한 곳에 모인다 | 투사체는 `world.Hits.Add(...)`만 하고, `DamageSystem`이 처리한다 |
+| 큰 부수효과는 미뤄서 한 곳에서 한다 | 데미지·디스폰·전송을 그 자리에서 하지 않고 목록에 적어 두면, 실제 처리는 System 하나가 정해진 순서로 한다. "언제, 어디서 일어나나"가 한 곳에 모인다 | 투사체는 `world.Hits.Add(...)`만 하고, `DamageSystem`이 처리한다 |
 | 공용 계산은 Utility로 뺀다 | 여러 System이 같은 계산을 쓰면 인자만 받는 함수로 빼서 공유한다 | `WeaponFireUtil.GetDirection`을 서버 판정과 연출이 같이 쓴다 |
 | 큰 기존 시스템은 건드리지 않는다 (Iceberg, 빙산) | 물 위로는 작은 입구만 보이고 아래는 큰 덩어리라는 비유. 그 내부는 ECS 규칙을 적용하지 않고, ECS 쪽에서 부르는 입구만 정한다 | 저장(`SessionService`)은 `SessionSystem` 한 곳에서만 부른다 |
 
@@ -44,7 +46,6 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | Network | 엔티티당 하나. 그 엔티티의 RPC·NetworkVariable과 수신함만 가진다 (규칙 9) | `PlayerNetwork` |
 | Proxy | 엔진 기능(Animator, Cinemachine, IK, VFX)에 값을 전달만 하는 MonoBehaviour | `PlayerView`, `PlayerBodyView`, `PlayerAnimatorView`, `PlayerCameraView`, `PlayerWeaponView`, `WeaponView`, `BulletView` |
 | Data | 설정 ScriptableObject. 런타임에 바꾸지 않는다 | `SOPlayer`, `SOMovement`, `SOLevelTable`, `SOEnemy`, `SOWeapon`, `SOCatalog` |
-| Iceberg | ECS 밖의 큰 하위 시스템. 경계만 정하고 내부는 건드리지 않음 | NGO, `PathGrid`, UI, `SessionService`, `ProgressService`, `InputService` |
 
 - 겸용 클래스는 데이터 필드 + NGO 생명주기 초기화 + NetworkVariable까지만 허용한다. 로직 메서드가 생기면 System으로 뺀다.
   현재 겸용: `Health` (Component + NetworkVariable + 스폰 초기화)
@@ -89,8 +90,11 @@ _Scripts/<도메인>/<역할>/파일.cs
      (예: `ServerLoop`이 `SessionService.Instance`를 꺼내 `SessionSystem.Process(world, session)`에 넘긴다)
    - Authoring이 NGO 생명주기에서 `XxxLoop.Instance.Register/Unregister`를 부른다
 4. **큰 부수효과는 목록에 적어 두고 한 곳에서 처리한다** (0장 "미뤄서 한 곳에서").
-   대상: 스폰, 디스폰, 데미지, 보상, RPC 전송.
+   대상: 디스폰, 데미지, 보상, RPC 전송.
    적는 쪽은 `world.Xxx.Add(...)`만 하고, 목록을 비우며 처리하는 System은 하나뿐이다.
+   스폰은 즉시 한다 (강연: 생성 지연은 한 틱 어긋남을 만든다). 단 `ServerLoop` 틱 도중에는 스폰하지 않는다.
+   `Register`가 순회 중인 목록을 바꾸기 때문이다 (`ServerLoop._ticking` + `Debug.Assert`로 검사).
+   틱 안에서 스폰이 필요해지면 `world.Spawns` 큐를 만들어 `DespawnSystem` 앞에서 처리한다.
    클라 입력 전송은 `InputSendSystem` 한 곳, 틱 루프 뒤 프레임당 1회. 보낼 입력의 정본이 `InputHistory` + `AckTick`이므로 별도 큐는 두지 않는다.
 5. **쓰기 Utility는 호출처를 제한한다.** 같은 결과를 내야 하는 곳만 부른다.
    - `PlayerStepUtil.Step`: `ServerPlayerSystem`, `PredictSystem`, `ReconcileSystem` (같은 틱 → 같은 결과)
@@ -123,6 +127,13 @@ _Scripts/<도메인>/<역할>/파일.cs
     종류 목록(`Players`, `Enemies`)은 정본을 가진 시스템(이동, 되감기 기록, 스냅샷)만 쓴다.
     묶음은 struct로 두고 담긴 컴포넌트를 첫 줄 주석에 적는다 (예: `HitTarget` = `Team` + `RewindTarget` + `Health`, `Mortal` = `Health` + `NetworkObject` + 보상).
     묶음 등록·해제는 `ServerLoop.Register`/`Unregister`에서 종류 목록과 함께 한다. 같은 편(`Team`)끼리는 맞지 않는다.
+12. **전송 방식은 "늦게라도 꼭 도착해야 하나"로 정한다.**
+    - 틱마다 가는 스트림(입력, 상태, 스냅샷)은 Unreliable. 하나가 빠져도 다음 패킷이 메운다.
+    - 상태를 바꾸는 사건(도착하지 않으면 서버와 클라가 어긋나는 것)은 Reliable 또는 NetworkVariable.
+    - 그리는 시점이 중요한 연출용 사건(다른 플레이어의 발사 연출)은 Reliable로 보내지 않는다.
+      Reliable은 순서를 보장하므로 유실 하나의 재전송을 기다리는 동안 뒤의 사건까지 묶이고,
+      보간 지연(5틱)보다 늦게 도착한 사건들이 한꺼번에 재생되어 뭉친다. Unreliable로 보내 유실을 감수하거나,
+      매 틱 가는 스트림(스냅샷)에 실어 다음 패킷이 메우게 한다.
 
 ---
 
@@ -165,7 +176,7 @@ _Scripts/<도메인>/<역할>/파일.cs
   호스트에서도 둘은 섞지 않는다 (서버 사본으로 예측하지 않는다).
 - transform은 한 World만 쓴다: 클라 World가 있으면 클라가 쓴다. `ServerWorld.WriteTransforms`는 `!IsClient`일 때만 true.
 - 원격 표시 Authoring은 `enabled = IsClient && !IsOwner`, 적 표시는 `enabled = IsClient`. 서버 전용 Authoring은 `if (!IsServer) return;`.
-- 호스트에서도 스냅샷과 StateRPC는 자기 자신에게 간다. 지연 0이므로 리컨사일 0회가 정상.
+- 호스트에서도 스냅샷과 StateRPC는 자기 자신에게 간다. 호스트 전용 분기를 만들지 않는다.
 
 ---
 
@@ -197,7 +208,7 @@ _Scripts/<도메인>/<역할>/파일.cs
 - 필드: private `_camelCase`, Component 데이터와 Authoring의 형제 참조 `public PascalCase`, 상수 `UPPER_SNAKE`
 - 직렬화 필드(`[SerializeField]`)의 이름은 바꾸지 않는다. 바꾸면 프리팹 연결이 끊긴다 (필요하면 `[FormerlySerializedAs]`)
 - 시뮬레이션 dt 인자는 `deltaTime`, 렌더 프레임 시간 인자는 `frameTime`
-- RPC 메서드는 `*RPC`. 틱마다 가는 스트림은 Unreliable, 사건(발사)은 Reliable
+- RPC 메서드는 `*RPC`. 전송 방식(Reliable/Unreliable)은 규칙 12를 따르고, 고른 이유를 RPC 위 주석에 적는다
 - 큐 기록은 `world.Xxx.Add(...)`로 직접 (별도 Enqueue 메서드 없음)
 - FSM: 상태 하나 = 파일 하나 `EnemyFsmUtil.<상태>.cs` (`static partial`, 함수는 `private Enter<상태>`/`Tick<상태>`/`Exit<상태>`).
   상태 추가 = 파일 하나 + `EnemyFsmUtil.cs`의 switch에 case. 빈 상태 파일은 미리 만들지 않는다
@@ -231,46 +242,5 @@ _Scripts/<도메인>/<역할>/파일.cs
 - `*Service`는 World보다 오래 살거나 ECS 밖(UI 등)도 쓰는 기능의 입구다. `Services.prefab`에 두고 씬이 바뀌어도 유지된다.
   둘 다 아니면 Service로 만들지 않는다 (전투 씬 안의 Proxy나 오브젝트로 둔다).
   ECS 쪽에서는 Loop만 `Instance`로 꺼내 System 인자로 넘긴다 (규칙 3). 예외: `WeaponView` → `ProjectileVisualService` (이동 예정)
----
-
-## 9. 저장
-
-- 진행도는 세계 단위 `.sav` 하나에 저장한다 (내용은 JSON). 스키마 `SaveFile { Version, SavedAt, World, Players[] }`.
-- 싱글: 슬롯 6개 고정, 슬롯마다 파일 하나. 전용 서버: `server.sav` 하나. 스키마는 같다.
-- 저장 파일은 여는 쪽(`ServerLauncher` / 싱글 시작)이 `ProgressService.Open`으로 명시적으로 열고 `Close`로 닫는다.
-- 보상은 메모리에 반영하고 10초마다, 그리고 접속 종료·서버 정지(`OnServerStopped`)·`Close`·종료 시 저장한다. 크래시 시 최대 10초분을 잃는다.
-  저장에 실패하면 변경 표시를 남겨 다음 주기에 다시 시도한다. `Register`와 새 파일 생성은 그 자리에서 즉시 저장한다.
-- 읽기 실패한 파일은 `.corrupt-<시각>`으로 옮기고(격리) 시작하지 않는다. 이 빌드보다 새 버전 파일은 손대지 않고 시작하지 않는다.
-  진행도를 잃느니 시작하지 않는다. 복구는 관리자가 파일을 보고 정한다.
-- 전용 서버 초기화는 관리자가 파일을 지우는 것으로 한다 (게임 안에 초기화 기능 없음).
-
----
-
-## 10. 과도기 운영
-
-- 한 번에 한 경로만 바꾼다. 한 단계가 끝나기 전에 다음 단계를 시작하지 않는다.
-- 옛 코드는 같은 단계 안에서 지운다. 여러 단계에 걸쳐 남겨야 하면 `[System.Obsolete]`를 붙인다 (컴파일러 경고가 남은 작업 목록).
-- 컴포넌트를 지우거나 SO 필드를 옮긴 단계는 프리팹·SO 연결을 다시 확인하고 **File → Save Project**까지 한 뒤 커밋한다.
-  (저장 안 된 SO 변경은 다른 프로세스(가상 플레이어, 빌드)에 보이지 않는다)
-
-### 회귀 확인 (단계마다 같은 조건)
-
-- 컴파일 에러 0, Missing Script 0 (Player 프리팹, 몬스터 프리팹, `Services.prefab`, MAIN MENU / WAITING ROOM / TEST WORLD 씬)
-- 에디터: Player 선택 시 충돌 캡슐과 턱 높이 기즈모가 보인다 (`PlayerBodyView`)
-- 호스트(싱글), 지연 0: 리컨사일 0회, 무기 모델과 손 IK가 붙어 있다, 적과 자기 캐릭터가 정상 표시
-- 지연 200ms + 손실 10%: 1분간 리컨사일 횟수를 단계 전후로 비교
-- 적을 쏘면 피해가 들어가고, 죽으면 경험치가 오른다. 벽 뒤 적은 안 맞는다
-- 지연 200ms에서 옆으로 움직이는 적의 몸 중앙을 겨눠 쏘면 맞는다 (지연 보상)
-- 적: 배회(General) → 감지 시 추적(Battle) → 범위 이탈 시 배회
-- 클라 2개: 상대 캐릭터와 발사 연출이 부드럽고, 몸보다 총알이 먼저 나가지 않는다
-- 클라에서 적 처치 반복 후 `ServerLoop`의 `Enemies` 수가 0 (클라는 서버 World에 등록하지 않음)
-- 클라 일시정지(또는 큰 히치) 후 재개: `clock resync` 1회 + 재조정 최대 1회, 이후 입력 정상 반영, buffer가 목표(3) 근처로 복귀
-- 저장: 경험치를 얻고 나갔다 들어오면 경험치가 유지된다. 깨진 `.sav`는 `.corrupt-*`로 옮겨지고 서버가 시작하지 않는다
-
-### 보류 (확인 수단이 생기면 위로 올린다)
-
-| 항목 | 필요한 것 |
-|---|---|
-| 레벨업: `Level` 증가 → 체력·기력 최대치 갱신 (`StatSystem`), 리컨사일 1회 | `PlayerLevelTable`에 2레벨 이상 |
-| 적 35마리 이상: 적과 원격 플레이어 보간이 끊기지 않는다 (스냅샷 분할) | 여러 마리를 한 번에 소환하는 수단 |
-| 무기 교체(`EquippedWeapon` 변경): 소유자 리컨사일 정확히 1회, 이후 새 연사 간격·줌 적용, 추가 리컨사일 없음 | 무기 2개 이상 + 교체 입력 |
+- Iceberg의 무거운 작업(파일 I/O 등)은 시뮬레이션 틱 안에서 하지 않는다. 입구는 메모리만 바꾸고, 실제 작업은 Iceberg 안에서 틱 밖의 시점(주기, 콜백, 종료)에 한다
+  (예: `ProgressService.AddReward`는 변경 표시만, 파일 쓰기는 `Flush`).
