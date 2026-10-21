@@ -1,4 +1,5 @@
 using UnityEngine;
+using Project02.Character;
 using Project02.Core;
 using Project02.World;
 
@@ -6,9 +7,11 @@ namespace Project02.Player
 {
     public static class ReconcileSystem
     {
-        private const float POSITION_THRESHOLD = 1.0f;
-        private const float ENERGY_THRESHOLD = 0.5f;
-        private const float BLOOM_THRESHOLD = 0.1f;
+        // 서버 상태는 float 그대로 전송되고 클라가 그대로 복원한다. 결정적이라면 이 허용치에서도 호스트·지연 0의 리컨사일은 0이다.
+        // 어긋나면 허용치를 키우지 않고 원인을 고친다 (같은 함수, 같은 입력, 같은 설정 에셋)
+        private const float POSITION_THRESHOLD = 0.001f;
+        private const float ENERGY_THRESHOLD = 0.001f;
+        private const float BLOOM_THRESHOLD = 0.001f;
         private const float BUFFER_SMOOTHING = 0.1f;
         private const float RTT_SMOOTHING = 0.1f;
 
@@ -52,7 +55,7 @@ namespace Project02.Player
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             owner.DEBUG_ReconcileCount++;
-            Debug.LogWarning($"reconcile at tick {server.Tick} " + $"pos {Vector3.Distance(predicted.Movement.Position, server.Movement.Position):F3} " + $"energy {predicted.Stamina.Energy:F2}/{server.Stamina.Energy:F2} max {predicted.Stamina.MaxEnergy:F0}/{server.Stamina.MaxEnergy:F0} " + $"nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " + $"bloom {predicted.Weapon.Bloom:F2}/{server.Weapon.Bloom:F2}");
+            LogMisprediction(predicted, server);
 #endif
             PlayerSimulation sim = owner.Simulation;
             PlayerStepUtil.Restore(sim, server);
@@ -77,6 +80,24 @@ namespace Project02.Player
                           || Mathf.Abs(predicted.Weapon.Bloom - server.Weapon.Bloom) >= BLOOM_THRESHOLD;
             return position || energy || weapon;
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // 위치는 축마다 (예측 − 서버). 발밑 판정 차이를 가르려고 수직 속도와 접지도 함께 찍는다
+        private static void LogMisprediction(in PlayerSimulationState predicted, in PlayerSimulationState server)
+        {
+            MovementState p = predicted.Movement;
+            MovementState s = server.Movement;
+            Vector3 delta = p.Position - s.Position;
+
+            Debug.LogWarning(
+                $"reconcile at tick {server.Tick} " +
+                $"pos d({delta.x:F4}, {delta.y:F4}, {delta.z:F4}) |{delta.magnitude:F4}| " +
+                $"vy {p.VerticalSpeed:F4}/{s.VerticalSpeed:F4} grounded {p.IsGrounded}/{s.IsGrounded} " +
+                $"energy {predicted.Stamina.Energy:F4}/{server.Stamina.Energy:F4} max {predicted.Stamina.MaxEnergy:F0}/{server.Stamina.MaxEnergy:F0} exhausted {predicted.Stamina.IsExhausted}/{server.Stamina.IsExhausted} " +
+                $"weapon {predicted.Weapon.EquippedId}/{server.Weapon.EquippedId} nextFire {predicted.Weapon.NextFireTick}/{server.Weapon.NextFireTick} " +
+                $"bloom {predicted.Weapon.Bloom:F4}/{server.Weapon.Bloom:F4}");
+        }
+#endif
 
         // 서버 상태에서 다시 시작하고, 입력이 서버에 '미래'로 도착하도록 RTT + 목표 버퍼만큼 앞으로
         private static void Resync(PlayerOwnerAuthoring owner, ref ClientClock clock, in PlayerSimulationState server, float rttTicks)
