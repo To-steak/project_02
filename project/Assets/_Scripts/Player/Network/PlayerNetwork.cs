@@ -67,9 +67,7 @@ namespace Project02.Player
         }
 
         // 서버 → 다른 클라 (발사 연출)
-        // 발사는 사건이므로 Reliable (틱마다 가는 스트림만 Unreliable, ECS_RULES 6장)
-        // 재전송으로 늦게 도착한 발사는 Tick이 이미 RenderTick 이하이므로 RemotePlayerViewSystem.PresentFires에서 즉시 재생된다
-        [Rpc(SendTo.ClientsAndHost, Delivery = RpcDelivery.Reliable)]
+        [Rpc(SendTo.ClientsAndHost, Delivery = RpcDelivery.Unreliable)]
         public void FireRPC(int tick, Vector3 aimPoint, Vector2 spread)
         {
             if (IsOwner) return;   // 소유자는 예측으로 이미 재생함
