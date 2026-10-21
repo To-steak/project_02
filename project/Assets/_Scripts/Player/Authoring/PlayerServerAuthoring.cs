@@ -10,6 +10,7 @@ namespace Project02.Player
     {
         public readonly PlayerSimulation Simulation = new();   // 서버 권한 상태
         public readonly InputQueue Inputs = new();
+        public readonly RewindTarget Rewind = new();   // 지연 보상 이력. RewindSystem이 기록, ProjectileSystem이 Hittables로 판정
         public int AppliedLevel;   // 마지막으로 스탯에 반영한 레벨. StatSystem이 Network.Level과 비교한다
 
         public PlayerNetwork Network => _network;
@@ -23,7 +24,7 @@ namespace Project02.Player
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-            ServerLoop.Instance.Register(this);   // SessionSystem.Join → Nickname, Level
+            ServerLoop.Instance.Register(this);   // SessionSystem.Join → Nickname, Level / Hittables 등록
         }
 
         protected override void OnNetworkPostSpawn()
@@ -35,6 +36,10 @@ namespace Project02.Player
             PlayerSpawnUtil.Initialize(Simulation, transform.position, _settings, _network.EquippedWeapon.Value, level);
             PlayerStatUtil.ApplyHealth(_health, _settings.LevelTable.Get(level));
             AppliedLevel = level;
+
+            Rewind.History.Clear();
+            Rewind.Radius = _settings.Movement.Profile.Radius;
+            Rewind.Height = _settings.Movement.Profile.Height;
         }
 
         public override void OnNetworkDespawn()

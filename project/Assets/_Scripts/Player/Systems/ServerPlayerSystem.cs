@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Project02.Character;
+using Project02.Combat;
 using Project02.Weapon;
 using Project02.World;
 
@@ -139,7 +140,7 @@ namespace Project02.Player
 
             float lag = input.ViewTick < 0.0f ? 1.0f : Mathf.Clamp(serverTick - input.ViewTick, 1.0f, MAX_LAG_TICKS);
 
-            return new Projectile(origin, direction * bullet.Velocity, damage, ownerId, isCritical, data.Range, data.Falloff, lag);
+            return new Projectile(origin, direction * bullet.Velocity, damage, ownerId, Team.Player, isCritical, data.Range, data.Falloff, lag);
         }
     }
 }

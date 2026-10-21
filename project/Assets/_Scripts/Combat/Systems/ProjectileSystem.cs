@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Project02.Character;
-using Project02.Enemy;
 using Project02.Weapon;
 using Project02.World;
 
 namespace Project02.Combat
 {
-    // 투사체 이동 + 판정. 지형은 레이캐스트, 적은 쏜 사람 시점으로 되감은 캡슐
+    // 투사체 이동 + 판정. 지형은 레이캐스트, 대상은 쏜 사람 시점으로 되감은 캡슐
+    // 피격 묶음(world.Hittables)만 본다. 적인지 플레이어인지 모르고, 같은 편이면 건너뛴다 (규칙 11)
     public static class ProjectileSystem
     {
         private const float EPSILON = 1e-6f;
@@ -36,12 +36,12 @@ namespace Project02.Combat
                 bool hitWall = Physics.Raycast(projectile.Position, direction, out RaycastHit wall, length, hitLayer, QueryTriggerInteraction.Ignore);
                 float maxDistance = hitWall ? wall.distance : length;
 
-                // 2. 적: 쏜 사람이 보던 시점으로 되감아 판정 (벽보다 가까운 것만)
+                // 2. 대상: 쏜 사람이 보던 시점으로 되감아 판정 (벽보다 가까운 것만, 같은 편 제외)
                 float sampleTick = tick - projectile.Lag;
-                if (TryHitEnemies(world.Enemies, sampleTick, projectile.Position, direction, maxDistance, out EnemyServerAuthoring target, out float distance))
+                if (TryHitTargets(world.Hittables, projectile.Team, tick, sampleTick, projectile.Position, direction, maxDistance, out Health target, out float distance))
                 {
                     int damage = projectile.GetDamage(traveled + distance);
-                    world.Hits.Add(new HitInfo(target.Health, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
+                    world.Hits.Add(new HitInfo(target, DamageInfo.FromPlayer(damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
                     projectiles.RemoveAt(i);
                     continue;
                 }
@@ -58,32 +58,37 @@ namespace Project02.Combat
             }
         }
 
-        // 선분 [start, start + direction * maxDistance] 위에서 가장 먼저 닿는 적
-        private static bool TryHitEnemies(List<EnemyServerAuthoring> enemies, float sampleTick, Vector3 start, Vector3 direction, float maxDistance, out EnemyServerAuthoring target, out float distance)
+        // 선분 [start, start + direction * maxDistance] 위에서 가장 먼저 닿는 대상
+        private static bool TryHitTargets(List<HitTarget> targets, Team team, int tick, float sampleTick, Vector3 start, Vector3 direction, float maxDistance, out Health target, out float distance)
         {
             target = null;
             distance = maxDistance;
 
-            foreach (EnemyServerAuthoring enemy in enemies)
+            foreach (HitTarget candidate in targets)
             {
-                if (enemy.Health.IsDead) continue;
+                if (candidate.Team == team) continue;   // 같은 편
+                if (candidate.Health.IsDead) continue;
 
-                RewindTarget rewind = enemy.Rewind;
+                RewindTarget rewind = candidate.Rewind;
                 if (!RewindUtil.TrySample(rewind, sampleTick, out Vector3 position)) continue;
 
                 CharacterPhysics.GetCapsule(position, rewind.Radius, rewind.Height, out Vector3 bottom, out Vector3 top);
                 if (TryIntersectCapsule(start, direction, distance, bottom, top, rewind.Radius, out float hit))
                 {
 #if UNITY_EDITOR
-                    // 지연 보상 시각화: 빨강 = 서버의 현재 위치, 초록 = 쏜 사람이 보던 위치(판정), 노랑 = 탄 경로
-                    CharacterPhysics.GetCapsule(enemy.Simulation.Movement.Position, rewind.Radius, rewind.Height, out Vector3 nowBottom, out Vector3 nowTop);
-                    DrawCapsule(nowBottom, nowTop, rewind.Radius, Color.red);
+                    // 지연 보상 시각화: 빨강 = 직전 틱에 기록된 위치(적은 이 단계 뒤에 움직이므로 서버의 현재 위치와 같다),
+                    // 초록 = 쏜 사람이 보던 위치(판정), 노랑 = 탄 경로, 흰색 = 되감은 거리
+                    if (RewindUtil.TrySample(rewind, tick - 1, out Vector3 now))
+                    {
+                        CharacterPhysics.GetCapsule(now, rewind.Radius, rewind.Height, out Vector3 nowBottom, out Vector3 nowTop);
+                        DrawCapsule(nowBottom, nowTop, rewind.Radius, Color.red);
+                        Debug.DrawLine(position, now, Color.white, DRAW_SECONDS);
+                    }
                     DrawCapsule(bottom, top, rewind.Radius, Color.green);
                     Debug.DrawLine(start, start + direction * hit, Color.yellow, DRAW_SECONDS);
-                    Debug.DrawLine(position, enemy.Simulation.Movement.Position, Color.white, DRAW_SECONDS);   // 되감은 거리
 #endif
                     distance = hit;   // 줄여 가며 찾으므로 다음 후보는 더 가까워야 통과
-                    target = enemy;
+                    target = candidate.Health;
                 }
             }
 

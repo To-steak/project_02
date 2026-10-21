@@ -35,8 +35,8 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | World | 한 쪽(서버/클라)의 모든 상태를 가진 데이터 class | `ServerWorld`, `ClientWorld` |
 | Loop | World를 소유하고 System을 정해진 순서로 돌리는 진입점 MonoBehaviour | `ServerLoop`, `ClientLoop` |
 | Entity | NetworkObject 하나. 식별자는 `NetworkObjectId` (플레이어는 `OwnerClientId`도 사용) | 플레이어, 적 |
-| Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `InputQueue`, `RewindTarget` |
-| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Despawns`(`List<EnemyServerAuthoring>`), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`) |
+| Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `InputQueue`, `RewindTarget`, `HitTarget`·`Mortal`(묶음, 규칙 11) |
+| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Despawns`(`List<NetworkObject>`), `Hittables`(`List<HitTarget>`), `Mortals`(`List<Mortal>`), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`) |
 | System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `DamageSystem`, `PredictSystem`, `EnemyViewSystem` |
 | Utility (읽기) | 숨은 상태 없이 인자로 받은 것만 다루는 함수. `ref`로 받은 값만 바꾸는 것도 포함. 어디서 불러도 됨 | `CharacterMotor`, `PlayerMoveUtil`, `WeaponFireUtil`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil` |
 | Utility (쓰기) | Component 객체를 직접 받아 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `PlayerEquipUtil`, `PlayerSpawnUtil`, `EnemyFsmUtil`, `EnemyNavigationUtil` |
@@ -118,6 +118,10 @@ _Scripts/<도메인>/<역할>/파일.cs
       같은 SO를 컴포넌트마다 따로 연결하지 않는다.
     - 무기 설정의 정본은 `PlayerSimulation.Weapon` (`Catalog.Get(State.Weapon.EquippedId)`). Proxy는 판정용 값을 노출하지 않는다.
     - 위치의 정본은 `MovementState.Position` (규칙 7).
+11. **소비 시스템은 컴포넌트 묶음 목록만 본다.** 판정·사망·표적 같은 소비 시스템은 "적인지 플레이어인지"를 모른다.
+    종류 목록(`Players`, `Enemies`)은 정본을 가진 시스템(이동, 되감기 기록, 스냅샷)만 쓴다.
+    묶음은 struct로 두고 담긴 컴포넌트를 첫 줄 주석에 적는다 (예: `HitTarget` = `Team` + `RewindTarget` + `Health`, `Mortal` = `Health` + `NetworkObject` + 보상).
+    묶음 등록·해제는 `ServerLoop.Register`/`Unregister`에서 종류 목록과 함께 한다. 같은 편(`Team`)끼리는 맞지 않는다.
 
 ---
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using Project02.Combat;
@@ -23,18 +24,57 @@ namespace Project02.World
         private void Awake() => Instance = this;
         private void OnDestroy() { if (Instance == this) Instance = null; }
 
+        // 종류 목록(Players, Enemies)과 묶음 목록(Hittables, Mortals)은 여기서만 함께 바꾼다
         public void Register(PlayerServerAuthoring player)
         {
             _world.Players.Add(player);
+
+            // 플레이어는 맞을 수 있는 대상이다 (PvE: 나중에 적의 공격을 받는다).
+            // Mortals에는 넣지 않는다: 플레이어 사망 처리(리스폰 등)는 이번 브랜치 범위 밖이고,
+            // DeathSystem은 죽은 대상을 보상 + Despawn으로 처리하므로 플레이어에게 그대로 쓰면 안 된다
+            _world.Hittables.Add(new HitTarget(Team.Player, player.Rewind, player.Health));
+
             SessionSystem.Join(player, SessionService.Instance);
         }
         public void Register(EnemyServerAuthoring enemy)
         {
             _world.Enemies.Add(enemy);
+            _world.Hittables.Add(new HitTarget(Team.Enemy, enemy.Rewind, enemy.Health));
+
+            SOEnemy settings = enemy.Simulation.Settings;
+            _world.Mortals.Add(new Mortal(enemy.Health, enemy.NetworkObject, settings.RewardExp, settings.RewardGold));
+
             EnemyFsmUtil.Reset(enemy.Simulation, _world.Clock.Tick);
         }
-        public void Unregister(PlayerServerAuthoring player) => _world.Players.Remove(player);
-        public void Unregister(EnemyServerAuthoring enemy) => _world.Enemies.Remove(enemy);
+        public void Unregister(PlayerServerAuthoring player)
+        {
+            _world.Players.Remove(player);
+            RemoveHittable(_world, player.Health);
+        }
+        public void Unregister(EnemyServerAuthoring enemy)
+        {
+            _world.Enemies.Remove(enemy);
+            RemoveHittable(_world, enemy.Health);
+            RemoveMortal(_world, enemy.Health);
+        }
+
+        // 해제는 같은 Health 참조로 찾는다. 파괴된 객체끼리 Unity ==가 같다고 보지 않도록 ReferenceEquals
+        private static void RemoveHittable(ServerWorld world, Health health)
+        {
+            List<HitTarget> list = world.Hittables;
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(list[i].Health, health)) list.RemoveAt(i);
+            }
+        }
+        private static void RemoveMortal(ServerWorld world, Health health)
+        {
+            List<Mortal> list = world.Mortals;
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(list[i].Health, health)) list.RemoveAt(i);
+            }
+        }
 
         private void Update()
         {
@@ -70,7 +110,7 @@ namespace Project02.World
             // 1. 플레이어: 수신 → 소비 → Step → 발사(world.Projectiles) → Outbox
             ServerPlayerSystem.Tick(world, deltaTime);
 
-            // 2. 투사체: 지형 레이캐스트 + 되감은 적 → world.Hits
+            // 2. 투사체: 지형 레이캐스트 + 되감은 피격 묶음(Hittables, 같은 편 제외) → world.Hits
             Physics.SyncTransforms();
             ProjectileSystem.Tick(world, projectileHitLayer, deltaTime);
 
@@ -80,7 +120,7 @@ namespace Project02.World
             // 4. 적: 상태 머신 → 이동
             EnemySystem.Tick(world, deltaTime);
 
-            // 5. 사망: IsDead인 적 → world.Rewards, world.Despawns
+            // 5. 사망: IsDead인 사망 묶음(Mortals) → world.Rewards, world.Despawns
             DeathSystem.Process(world);
 
             // 6. 세션: Rewards → SessionService → Level
