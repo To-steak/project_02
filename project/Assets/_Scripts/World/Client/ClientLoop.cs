@@ -49,6 +49,7 @@ namespace Project02.World
         {
             _world.Local = owner;
             _world.Clock = ClockSystem.Create();
+            _world.AckTick = -1;
             _world.Input = default;
             _world.Camera = default;
 

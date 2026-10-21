@@ -24,6 +24,9 @@ namespace Project02.Player
             StatePayload payload = network.PendingState;
             network.HasPendingState = false;
 
+            // ack는 다른 분기보다 먼저 (재동기화·예측 끔이어도 서버가 받은 범위는 갱신). 늦게 온 옛 값으로 내려가지 않게 Max
+            world.AckTick = Mathf.Max(world.AckTick, payload.AckTick);
+
             ref ClientClock clock = ref world.Clock;
             PlayerSimulationState server = payload.State;
 
@@ -39,7 +42,7 @@ namespace Project02.Player
             // 0. 뒤처짐 복구 (기존 그대로, rttTicks 사용)
             if (server.Tick >= clock.Tick)
             {
-                Resync(owner, ref clock, server, rttTicks);
+                Resync(world, server, rttTicks);
                 return;
             }
             clock.SmoothedBuffer = Mathf.Lerp(clock.SmoothedBuffer, payload.InputBuffer, BUFFER_SMOOTHING);
@@ -100,8 +103,10 @@ namespace Project02.Player
 #endif
 
         // 서버 상태에서 다시 시작하고, 입력이 서버에 '미래'로 도착하도록 RTT + 목표 버퍼만큼 앞으로
-        private static void Resync(PlayerOwnerAuthoring owner, ref ClientClock clock, in PlayerSimulationState server, float rttTicks)
+        private static void Resync(ClientWorld world, in PlayerSimulationState server, float rttTicks)
         {
+            PlayerOwnerAuthoring owner = world.Local;
+            ref ClientClock clock = ref world.Clock;
             int lead = Mathf.CeilToInt(rttTicks + ClockSystem.TARGET_BUFFER) + 1;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -115,6 +120,7 @@ namespace Project02.Player
             owner.InputHistory.Clear();   // 건너뛴 구간의 기록은 의미 없음
             owner.StateHistory.Clear();
             owner.SendTimes.Clear();
+            world.AckTick = -1;           // 건너뛴 구간의 ack도 의미 없음
         }
     }
 }

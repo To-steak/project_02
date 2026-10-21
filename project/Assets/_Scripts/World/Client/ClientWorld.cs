@@ -11,6 +11,7 @@ namespace Project02.World
         public InterpolationClock Interp;
         public InputState Input;
         public CameraState Camera;
+        public int AckTick = -1;   // 서버가 빠짐없이 받은 마지막 입력 틱 (클라 축). ReconcileSystem이 갱신, 입력 윈도우의 시작
 
         // Entities
         public PlayerOwnerAuthoring Local;

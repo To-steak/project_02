@@ -50,6 +50,7 @@ namespace Project02.Player
                 {
                     State = sim.State,
                     InputBuffer = (sbyte)Mathf.Clamp(queue.LatestTick - queue.ConsumedTick, sbyte.MinValue, sbyte.MaxValue),
+                    AckTick = queue.AckTick,
                 };
                 world.Outbox.States.Add(new StateMessage(player, payload));
             }
@@ -91,6 +92,22 @@ namespace Project02.Player
             }
 
             received.Clear();
+            AdvanceAck(queue);
+        }
+
+        // ack: 버퍼에 이어서 있는 틱까지 올린다. 영영 오지 않는 틱(복제로 때우고 지나감) 때문에 멈추지 않게,
+        // 소비 틱보다 CAPACITY/2 넘게 뒤처지면 소비 틱으로 건너뛴 뒤 다시 이어 올린다
+        private static void AdvanceAck(InputQueue queue)
+        {
+            if (queue.AckTick < queue.ConsumedTick - InputQueue.CAPACITY / 2)
+            {
+                queue.AckTick = queue.ConsumedTick;
+            }
+
+            while (queue.Buffer.TryGetValue(queue.AckTick + 1, out _))
+            {
+                queue.AckTick++;
+            }
         }
 
         private static InputPayload Consume(InputQueue queue)
@@ -125,6 +142,7 @@ namespace Project02.Player
             queue.CarryJump = queue.CarryAttack = false;
             queue.ConsumedTick = tick - 1;
             queue.LatestTick = tick - 1;
+            queue.AckTick = tick - 1;
         }
 
         private static Projectile CreateProjectile(SOPlayer settings, PlayerSimulation sim, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)

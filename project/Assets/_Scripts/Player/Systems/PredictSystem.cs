@@ -5,6 +5,11 @@ namespace Project02.Player
 {
     public static class PredictSystem
     {
+        // 입력 윈도우: ack 다음 틱 ~ 이번 틱, 최대 16틱(320ms)
+        // InputPayload 직렬화 41바이트(Tick 4 + ViewTick 4 + Move 8 + Run/Jump 2 + Yaw/Pitch 8 + Attack/Pressed/Aim 3 + AimPoint 12)
+        // × 16 + Count 1 ≈ 660바이트 → SnapshotSystem.MAX_MESSAGE(1100) 아래, 비분할 전송 한도 안
+        public const int MAX_WINDOW = 16;
+
         public static void Tick(ClientWorld world, float deltaTime, float now)
         {
             PlayerOwnerAuthoring owner = world.Local;
@@ -57,20 +62,22 @@ namespace Project02.Player
             owner.StateHistory.SetValue(tick, sim.State);
             owner.View.OnTick(sim.State.Movement);
 
-            SendInputs(owner, tick);
+            SendInputs(owner, tick, world.AckTick);
         }
 
-        private static void SendInputs(PlayerOwnerAuthoring owner, int tick)
+        // 서버가 확인한 다음 틱부터 전부 보낸다. 손실 뒤 도착한 첫 번들이 빈 구간을 한 번에 메운다
+        private static void SendInputs(PlayerOwnerAuthoring owner, int tick, int ackTick)
         {
+            int first = System.Math.Max(ackTick + 1, tick - MAX_WINDOW + 1);
+
             InputBundle bundle = default;
-            int count = 0;
-            for (int i = 0; i < InputBundle.CAPACITY; i++)
+            for (int t = first; t <= tick; t++)
             {
-                if (!owner.InputHistory.TryGetValue(tick - i, out InputPayload input)) break;
-                bundle.SetPayload(count++, input);
+                if (!owner.InputHistory.TryGetValue(t, out InputPayload input)) continue;   // 재동기화로 지운 구간
+                bundle.Add(input);
             }
 
-            bundle.Count = (byte)count;
+            if (bundle.Count == 0) return;
             owner.Network.InputRPC(bundle);
         }
     }
