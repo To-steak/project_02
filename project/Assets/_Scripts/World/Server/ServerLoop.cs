@@ -110,15 +110,15 @@ namespace Project02.World
             // 1. 플레이어: 수신 → 소비 → Step → 발사(world.Projectiles) → Outbox
             ServerPlayerSystem.Tick(world, deltaTime);
 
-            // 1-1. 표적: 이번 틱에 이동한 플레이어 → world.Targets (적 유틸이 읽는다)
-            TargetSystem.Collect(world);
-
             // 2. 투사체: 지형 레이캐스트 + 되감은 피격 묶음(Hittables, 같은 편 제외) → world.Hits
             Physics.SyncTransforms();
             ProjectileSystem.Tick(world, projectileHitLayer, deltaTime);
 
             // 3. 피해: Hits → Health
             DamageSystem.Process(world.Hits);
+
+            // 3-1. 표적: 이번 틱 이동·피해가 반영된 플레이어 → world.Targets (적 유틸이 읽는다)
+            TargetSystem.Collect(world);
 
             // 4. 적: 상태 머신(world.Targets) → 이동
             EnemySystem.Tick(world, deltaTime);
