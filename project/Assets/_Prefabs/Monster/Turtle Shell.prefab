@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project02.Enemy.EnemyRemote
   ShowTopMostFoldoutHeaderGroup: 1
+  _settings: {fileID: 11400000, guid: 8f969cf1aee717a438261e4380e6ee5d, type: 2}
   ViewStateId: 0
 --- !u!1001 &5366544421771698468
 PrefabInstance:

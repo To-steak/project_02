@@ -35,10 +35,10 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | World | 한 쪽(서버/클라)의 모든 상태를 가진 데이터 class | `ServerWorld`, `ClientWorld` |
 | Loop | World를 소유하고 System을 정해진 순서로 돌리는 진입점 MonoBehaviour | `ServerLoop`, `ClientLoop` |
 | Entity | NetworkObject 하나. 식별자는 `NetworkObjectId` (플레이어는 `OwnerClientId`도 사용) | 플레이어, 적 |
-| Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `InputQueue`, `RewindTarget`, `HitTarget`·`Mortal`(묶음, 규칙 11) |
-| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Targets`(`List<TargetInfo>`, 적이 보는 플레이어 목록, 매 틱 다시 채움), `Despawns`(`List<NetworkObject>`), `Hittables`(`List<HitTarget>`), `Mortals`(`List<Mortal>`), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`), `AckTick`(`int`, 서버가 빠짐없이 받은 마지막 입력 틱) |
-| System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `TargetSystem`, `DamageSystem`, `PredictSystem`, `InputSendSystem`, `EnemyViewSystem` |
-| Utility (읽기) | 숨은 상태 없이 인자로 받은 것만 다루는 함수. `ref`로 받은 값만 바꾸는 것도 포함. 어디서 불러도 됨 | `CharacterMotor`, `PlayerMoveUtil`, `WeaponFireUtil`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil` |
+| Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `InputQueue`, `RewindTarget`, `HitTarget`·`Mortal`·`ClientHitTarget`(묶음, 규칙 11), `CapsuleSample` |
+| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Targets`(`List<TargetInfo>`, 적이 보는 플레이어 목록, 매 틱 다시 채움), `Despawns`(`List<NetworkObject>`), `Hittables`(`List<HitTarget>`), `Mortals`(`List<Mortal>`), `HitSamples`(`List<CapsuleSample>`, `ProjectileSystem`의 재사용 버퍼), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`), `AckTick`(`int`, 서버가 빠짐없이 받은 마지막 입력 틱), `HitTargets`(`List<ClientHitTarget>`, 원격 적 피격 묶음), `PredictedShots`(`List<Projectile>`, 피격 예측용 탄), `PredictedImpacts`(`List<ImpactInfo>`, 예측 피격 연출 큐), `HitSamples`(`List<CapsuleSample>`, `ShotPredictSystem`의 재사용 버퍼) |
+| System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `TargetSystem`, `DamageSystem`, `PredictSystem`, `ShotPredictSystem`, `InputSendSystem`, `EnemyViewSystem`, `ImpactViewSystem` |
+| Utility (읽기) | 숨은 상태 없이 인자로 받은 것만 다루는 함수. `ref`로 받은 값만 바꾸는 것도 포함. 어디서 불러도 됨 | `CharacterMotor`, `PlayerMoveUtil`, `WeaponFireUtil`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil`, `ProjectileStepUtil` |
 | Utility (쓰기) | Component 객체를 직접 받아 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `PlayerEquipUtil`, `PlayerSpawnUtil`, `EnemyFsmUtil`, `EnemyNavigationUtil` |
 | Authoring | NGO 생명주기에서 엔티티를 World에 등록/해제하고 Component를 초기화하는 MonoBehaviour | `PlayerServerAuthoring`, `PlayerOwnerAuthoring`, `PlayerRemoteAuthoring`, `EnemyServerAuthoring`, `EnemyRemoteAuthoring` |
 | Network | 엔티티당 하나. 그 엔티티의 RPC·NetworkVariable과 수신함만 가진다 (규칙 9) | `PlayerNetwork` |
@@ -94,6 +94,7 @@ _Scripts/<도메인>/<역할>/파일.cs
    `Register`가 순회 중인 목록을 바꾸기 때문이다 (`ServerLoop._ticking` + `Debug.Assert`로 검사).
    틱 안에서 스폰이 필요해지면 `world.Spawns` 큐를 만들어 `DespawnSystem` 앞에서 처리한다.
    클라 입력 전송은 `InputSendSystem` 한 곳, 틱 루프 뒤 프레임당 1회. 보낼 입력의 정본이 `InputHistory` + `AckTick`이므로 별도 큐는 두지 않는다.
+   클라 피격 예측은 연출만 한다: `ShotPredictSystem`이 `world.PredictedImpacts`에 적고 `ImpactViewSystem`(LateUpdate)이 비운다. 피해·체력·경험치는 서버 결과를 기다리고, 오예측은 되돌리지 않는다.
 5. **쓰기 Utility는 호출처를 제한한다.** 같은 결과를 내야 하는 곳만 부른다.
    - `PlayerStepUtil.Step`: `ServerPlayerSystem`, `PredictSystem`, `ReconcileSystem` (같은 틱 → 같은 결과)
    - `PlayerStepUtil.WriteTransform`: `ServerPlayerSystem`(`world.WriteTransforms`일 때만), `ClientLoop` (틱 루프가 끝난 뒤 1회)
@@ -126,6 +127,8 @@ _Scripts/<도메인>/<역할>/파일.cs
     종류 목록(`Players`, `Enemies`)은 정본을 가진 시스템(이동, 되감기 기록, 스냅샷)만 쓴다.
     묶음은 struct로 두고 담긴 컴포넌트를 첫 줄 주석에 적는다 (예: `HitTarget` = `Team` + `RewindTarget` + `Health`, `Mortal` = `Health` + `NetworkObject` + 보상).
     묶음 등록·해제는 `ServerLoop.Register`/`Unregister`에서 종류 목록과 함께 한다. 같은 편(`Team`)끼리는 맞지 않는다.
+    클라 피격 묶음(`ClientHitTarget` = 스냅샷 버퍼 + 반경 + 높이)은 `ClientLoop.Register`/`Unregister`에서 `Enemies`와 함께 한다.
+    플레이어 총알은 플레이어를 맞히지 않으므로 원격 플레이어는 넣지 않는다.
 12. **전송 방식은 "늦게라도 꼭 도착해야 하나"로 정한다.**
     - 틱마다 가는 스트림(입력, 상태, 스냅샷)은 Unreliable. 하나가 빠져도 다음 패킷이 메운다.
     - 상태를 바꾸는 사건(도착하지 않으면 서버와 클라가 어긋나는 것)은 Reliable 또는 NetworkVariable.
@@ -193,7 +196,7 @@ _Scripts/<도메인>/<역할>/파일.cs
 | `*View` | 연출 Proxy |
 | `*State` (struct) | 롤백/스냅샷 대상 시뮬레이션 상태 (로직 클래스에 쓰지 않는다) |
 | `*Payload`, `*Bundle`, `*Snapshot`, `*Message` (struct) | 네트워크 메시지 |
-| `*Info` (struct) | 큐 항목 (`HitInfo`, `RewardInfo`, `ShotInfo`) |
+| `*Info` (struct) | 큐 항목 (`HitInfo`, `RewardInfo`, `ShotInfo`, `ImpactInfo`) |
 | `SO*` | ScriptableObject 전부 |
 | `*Service` | Iceberg 진입점 |
 | `*Presenter` / `*Panel` / `*Widget` | UI (MVP): 로직 / 화면 하나 / 화면 안의 부품 |
@@ -237,7 +240,7 @@ _Scripts/<도메인>/<역할>/파일.cs
 - 길찾기: `PathGrid`, `PathFinder`
 - 물리 유틸: `CharacterPhysics`, `CharacterMotor`
 - 접속/부팅/저장: `ConnectionService`, `SessionService`, `ProgressService`, `ServerLauncher`, `Bootstrapper` → `SessionService`는 `SessionSystem` 한 곳에서만 부른다 (Loop가 인자로 넘김)
-- 연출: `ProjectileVisualService` → `WeaponView`(Proxy)에서만 부른다
+- 연출: `ProjectileVisualService` → `WeaponView`(Proxy)에서만 부른다 (발사 탄도, 예측 피격 이펙트. 이펙트 프리팹의 정본은 `SOBullet.ImpactPrefab`)
 - `*Service`는 World보다 오래 살거나 ECS 밖(UI 등)도 쓰는 기능의 입구다. `Services.prefab`에 두고 씬이 바뀌어도 유지된다.
   둘 다 아니면 Service로 만들지 않는다 (전투 씬 안의 Proxy나 오브젝트로 둔다).
   ECS 쪽에서는 Loop만 `Instance`로 꺼내 System 인자로 넘긴다 (규칙 3). 예외: `WeaponView` → `ProjectileVisualService` (이동 예정)

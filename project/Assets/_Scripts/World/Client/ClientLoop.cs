@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using Project02.Core;
@@ -52,6 +53,8 @@ namespace Project02.World
             _world.AckTick = -1;
             _world.Input = default;
             _world.Camera = default;
+            _world.PredictedShots.Clear();
+            _world.PredictedImpacts.Clear();
 
             InputService.Instance.Actions.Enable();
         }
@@ -61,6 +64,8 @@ namespace Project02.World
             if (_world.Local != owner) return;
 
             _world.Local = null;
+            _world.PredictedShots.Clear();
+            _world.PredictedImpacts.Clear();
 
             InputService input = InputService.Instance;
             if (input != null)
@@ -71,8 +76,24 @@ namespace Project02.World
 
         public void Register(PlayerRemoteAuthoring player) => _world.Players[player.NetworkObjectId] = player;
         public void Unregister(PlayerRemoteAuthoring player) => _world.Players.Remove(player.NetworkObjectId);
-        public void Register(EnemyRemoteAuthoring enemy) => _world.Enemies[enemy.NetworkObjectId] = enemy;
-        public void Unregister(EnemyRemoteAuthoring enemy) => _world.Enemies.Remove(enemy.NetworkObjectId);
+
+        // 종류 목록(Enemies)과 피격 묶음(HitTargets)은 여기서만 함께 바꾼다 (규칙 11)
+        public void Register(EnemyRemoteAuthoring enemy, float radius, float height)
+        {
+            _world.Enemies[enemy.NetworkObjectId] = enemy;
+            _world.HitTargets.Add(new ClientHitTarget(enemy.Snapshots, radius, height));
+        }
+        public void Unregister(EnemyRemoteAuthoring enemy)
+        {
+            _world.Enemies.Remove(enemy.NetworkObjectId);
+
+            // 같은 Snapshots 참조로 찾는다
+            List<ClientHitTarget> list = _world.HitTargets;
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(list[i].Snapshots, enemy.Snapshots)) list.RemoveAt(i);
+            }
+        }
 
         private void Update()
         {
@@ -102,7 +123,10 @@ namespace Project02.World
                 world.Clock.Tick++;
             }
 
-            // 6. 입력 전송 (예측 루프 뒤 프레임당 1회. 호스트에서는 이 프레임의 ServerLoop가 바로 받는다)
+            // 6. 피격 예측: 예측 탄을 이 프레임의 예측 틱 수만큼 진행 → world.PredictedImpacts (연출은 LateUpdate)
+            if (ticks > 0) ShotPredictSystem.Tick(world, ticks, SimulationClock.DeltaTime);
+
+            // 6-1. 입력 전송 (예측 루프 뒤 프레임당 1회. 호스트에서는 이 프레임의 ServerLoop가 바로 받는다)
             if (ticks > 0) InputSendSystem.Flush(world);
 
             // 7. 루트 transform 출력 (리컨사일·예측 루프 밖에서 1회)
@@ -155,6 +179,9 @@ namespace Project02.World
             // 11. 로컬 플레이어 표시
             if (world.Local == null) return;
             ViewSystem.Present(world, frameTime);
+
+            // 12. 예측 피격 연출: PredictedImpacts → WeaponView → ProjectileVisualService
+            ImpactViewSystem.Present(world);
         }
 
         private void OnClientStarted()
@@ -167,7 +194,10 @@ namespace Project02.World
         {
             NetworkManager.Singleton.CustomMessagingManager?.UnregisterNamedMessageHandler(SnapshotSystem.MESSAGE);
             _world.Enemies.Clear();
+            _world.HitTargets.Clear();
             _world.Players.Clear();
+            _world.PredictedShots.Clear();
+            _world.PredictedImpacts.Clear();
         }
 
         private void OnSnapshot(ulong senderId, FastBufferReader reader)

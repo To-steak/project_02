@@ -6,158 +6,81 @@ using Project02.World;
 
 namespace Project02.Combat
 {
-    // 투사체 이동 + 판정. 지형은 레이캐스트, 대상은 쏜 사람 시점으로 되감은 캡슐
-    // 피격 묶음(world.Hittables)만 본다. 적인지 플레이어인지 모르고, 같은 편이면 건너뛴다 (규칙 11)
+    // 투사체 이동 + 판정. 1틱 처리는 ProjectileStepUtil (클라 피격 예측과 같은 함수)
+    // 대상은 쏜 사람 시점으로 되감아 샘플한다. 피격 묶음(world.Hittables)만 본다.
+    // 적인지 플레이어인지 모르고, 같은 편이면 건너뛴다 (규칙 11)
     public static class ProjectileSystem
     {
-        private const float EPSILON = 1e-6f;
-
-        public static void Tick(ServerWorld world, LayerMask hitLayer, float deltaTime)
+        public static void Tick(ServerWorld world, float deltaTime)
         {
             List<Projectile> projectiles = world.Projectiles;
+            List<HitTarget> targets = world.Hittables;
+            List<CapsuleSample> samples = world.HitSamples;
             int tick = world.Clock.Tick;
 
             for (int i = projectiles.Count - 1; i >= 0; i--)
             {
                 Projectile projectile = projectiles[i];
-                float traveled = Vector3.Distance(projectile.Origin, projectile.Position);
-                float remaining = projectile.Range - traveled;
-                Vector3 step = projectile.Velocity * deltaTime;
-                float length = Mathf.Min(step.magnitude, remaining);
-                Vector3 direction = step.normalized;
 
-                if (length <= 0.0f)
+                // 쏜 사람이 보던 시점으로 되감은 대상 (같은 편·사망 제외). 투사체마다 시점과 편이 다르므로 매번 다시 채운다
+                Sample(targets, projectile.Team, tick - projectile.Lag, samples);
+
+                ProjectileStepResult result = ProjectileStepUtil.Step(ref projectile, samples, deltaTime, out ProjectileHit hit);
+                if (result == ProjectileStepResult.Flying)
                 {
-                    projectiles.RemoveAt(i);
+                    projectiles[i] = projectile;
                     continue;
                 }
 
-                // 1. 지형: 맞으면 그 거리가 이번 틱 선분의 끝
-                bool hitWall = Physics.Raycast(projectile.Position, direction, out RaycastHit wall, length, hitLayer, QueryTriggerInteraction.Ignore);
-                float maxDistance = hitWall ? wall.distance : length;
-
-                // 2. 대상: 쏜 사람이 보던 시점으로 되감아 판정 (벽보다 가까운 것만, 같은 편 제외)
-                float sampleTick = tick - projectile.Lag;
-                if (TryHitTargets(world.Hittables, projectile.Team, tick, sampleTick, projectile.Position, direction, maxDistance, out Health target, out float distance))
+                if (result == ProjectileStepResult.Target)
                 {
-                    int damage = projectile.GetDamage(traveled + distance);
-                    world.Hits.Add(new HitInfo(target, DamageInfo.From(projectile.Source, damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
-                    projectiles.RemoveAt(i);
-                    continue;
+                    CapsuleSample sample = samples[hit.Sample];
+                    HitTarget target = targets[sample.Index];
+                    int damage = projectile.GetDamage(hit.Distance);
+                    world.Hits.Add(new HitInfo(target.Health, DamageInfo.From(projectile.Source, damage, projectile.Owner, projectile.Origin, projectile.IsCritical)));
+#if UNITY_EDITOR
+                    DrawRewind(target.Rewind, sample, tick, projectile.Position, hit.Point);
+#endif
                 }
 
-                // 3. 벽에 막힘 / 4. 사거리 끝
-                if (hitWall || length >= remaining)
-                {
-                    projectiles.RemoveAt(i);
-                    continue;
-                }
-
-                projectile.Position += direction * length;
-                projectiles[i] = projectile;
+                // 대상·벽에 맞음 / 사거리 끝
+                projectiles.RemoveAt(i);
             }
         }
 
-        // 선분 [start, start + direction * maxDistance] 위에서 가장 먼저 닿는 대상
-        private static bool TryHitTargets(List<HitTarget> targets, Team team, int tick, float sampleTick, Vector3 start, Vector3 direction, float maxDistance, out Health target, out float distance)
+        private static void Sample(List<HitTarget> targets, Team team, float sampleTick, List<CapsuleSample> samples)
         {
-            target = null;
-            distance = maxDistance;
-
-            foreach (HitTarget candidate in targets)
+            samples.Clear();
+            for (int i = 0; i < targets.Count; i++)
             {
+                HitTarget candidate = targets[i];
                 if (candidate.Team == team) continue;   // 같은 편
                 if (candidate.Health.IsDead) continue;
 
                 RewindTarget rewind = candidate.Rewind;
-                if (!RewindUtil.TrySample(rewind, sampleTick, out Vector3 position)) continue;
+                if (!RewindUtil.TrySample(rewind, sampleTick, out Vector3 position)) continue;   // 그 시점에 없었음
 
-                CharacterPhysics.GetCapsule(position, rewind.Radius, rewind.Height, out Vector3 bottom, out Vector3 top);
-                if (TryIntersectCapsule(start, direction, distance, bottom, top, rewind.Radius, out float hit))
-                {
-#if UNITY_EDITOR
-                    // 지연 보상 시각화: 빨강 = 직전 틱에 기록된 위치(적은 이 단계 뒤에 움직이므로 서버의 현재 위치와 같다),
-                    // 초록 = 쏜 사람이 보던 위치(판정), 노랑 = 탄 경로, 흰색 = 되감은 거리
-                    if (RewindUtil.TrySample(rewind, tick - 1, out Vector3 now))
-                    {
-                        CharacterPhysics.GetCapsule(now, rewind.Radius, rewind.Height, out Vector3 nowBottom, out Vector3 nowTop);
-                        DrawCapsule(nowBottom, nowTop, rewind.Radius, Color.red);
-                        Debug.DrawLine(position, now, Color.white, DRAW_SECONDS);
-                    }
-                    DrawCapsule(bottom, top, rewind.Radius, Color.green);
-                    Debug.DrawLine(start, start + direction * hit, Color.yellow, DRAW_SECONDS);
-#endif
-                    distance = hit;   // 줄여 가며 찾으므로 다음 후보는 더 가까워야 통과
-                    target = candidate.Health;
-                }
+                samples.Add(new CapsuleSample(position, rewind.Radius, rewind.Height, i));
             }
-
-            return target != null;
         }
 
-        // 선분–캡슐 교차: 두 선분(탄 경로, 캡슐 축) 사이 최근접점 거리 ≤ radius
-        // (Ericson, Real-Time Collision Detection 5.1.9)
-        // hitDistance는 탄 선분 위 최근접점까지의 거리. 표면 진입점보다 약간 깊지만 거리 감쇠용이라 충분하다
-        private static bool TryIntersectCapsule(Vector3 start, Vector3 direction, float maxDistance, Vector3 bottom, Vector3 top, float radius, out float hitDistance)
-        {
-            Vector3 d1 = direction * maxDistance;   // 탄 선분
-            Vector3 d2 = top - bottom;              // 캡슐 축
-            Vector3 r = start - bottom;
-
-            float a = d1.sqrMagnitude;
-            float e = d2.sqrMagnitude;
-            float f = Vector3.Dot(d2, r);
-            float s, t;
-
-            if (a <= EPSILON)
-            {
-                s = 0.0f;
-                t = e <= EPSILON ? 0.0f : Mathf.Clamp01(f / e);
-            }
-            else
-            {
-                float c = Vector3.Dot(d1, r);
-                if (e <= EPSILON)   // 캡슐이 구 (높이 = 지름)
-                {
-                    t = 0.0f;
-                    s = Mathf.Clamp01(-c / a);
-                }
-                else
-                {
-                    float b = Vector3.Dot(d1, d2);
-                    float denominator = a * e - b * b;   // 평행이면 0
-
-                    s = denominator > EPSILON ? Mathf.Clamp01((b * f - c * e) / denominator) : 0.0f;
-                    t = (b * s + f) / e;
-
-                    if (t < 0.0f)
-                    {
-                        t = 0.0f;
-                        s = Mathf.Clamp01(-c / a);
-                    }
-                    else if (t > 1.0f)
-                    {
-                        t = 1.0f;
-                        s = Mathf.Clamp01((b - c) / a);
-                    }
-                }
-            }
-
-            Vector3 closestOnShot = start + d1 * s;
-            Vector3 closestOnAxis = bottom + d2 * t;
-
-            if ((closestOnShot - closestOnAxis).sqrMagnitude > radius * radius)
-            {
-                hitDistance = 0.0f;
-                return false;
-            }
-
-            hitDistance = s * maxDistance;
-            return true;
-        }
-        
 #if UNITY_EDITOR
         private const float DRAW_SECONDS = 3.0f;
+
+        // 지연 보상 시각화 (맞힌 대상만): 빨강 = 직전 틱에 기록된 위치(적은 이 단계 뒤에 움직이므로 서버의 현재 위치와 같다),
+        // 초록 = 쏜 사람이 보던 위치(판정), 노랑 = 탄 경로, 흰색 = 되감은 거리
+        private static void DrawRewind(RewindTarget rewind, in CapsuleSample sample, int tick, Vector3 start, Vector3 point)
+        {
+            if (RewindUtil.TrySample(rewind, tick - 1, out Vector3 now))
+            {
+                CharacterPhysics.GetCapsule(now, rewind.Radius, rewind.Height, out Vector3 nowBottom, out Vector3 nowTop);
+                DrawCapsule(nowBottom, nowTop, rewind.Radius, Color.red);
+                Debug.DrawLine(sample.Position, now, Color.white, DRAW_SECONDS);
+            }
+            CharacterPhysics.GetCapsule(sample.Position, sample.Radius, sample.Height, out Vector3 bottom, out Vector3 top);
+            DrawCapsule(bottom, top, sample.Radius, Color.green);
+            Debug.DrawLine(start, point, Color.yellow, DRAW_SECONDS);
+        }
 
         // 축 + 위아래 십자로 캡슐 윤곽을 대략 그린다
         private static void DrawCapsule(Vector3 bottom, Vector3 top, float radius, Color color)

@@ -14,3 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameWeapon::BulletData
   Damage: 1
   Velocity: 8
+  HitLayer:
+    serializedVersion: 2
+    m_Bits: 320
+  ImpactPrefab: {fileID: 0}

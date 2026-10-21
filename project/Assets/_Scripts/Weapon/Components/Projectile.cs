@@ -15,9 +15,10 @@ namespace Project02.Weapon
         public bool IsCritical;
         public float Range;             // 최대 사거리
         public AnimationCurve Falloff;  // 가로: 날아간 거리 ÷ Range, 세로: 피해 배율
+        public LayerMask HitLayer;      // 벽 레이캐스트 대상. 생성 시 SOBullet.HitLayer(정본)를 복사한다
         public float Lag;
 
-        public Projectile(Vector3 origin, Vector3 velocity, float damage, ulong owner, DamageSource source, Team team, bool isCritical, float range, AnimationCurve falloff, float lag)
+        public Projectile(Vector3 origin, Vector3 velocity, float damage, ulong owner, DamageSource source, Team team, bool isCritical, float range, AnimationCurve falloff, LayerMask hitLayer, float lag)
         {
             Origin = origin;
             Position = origin;
@@ -29,6 +30,7 @@ namespace Project02.Weapon
             IsCritical = isCritical;
             Range = range;
             Falloff = falloff;
+            HitLayer = hitLayer;
             Lag = lag;
         }
 

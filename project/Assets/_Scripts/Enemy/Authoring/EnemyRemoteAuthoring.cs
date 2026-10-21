@@ -1,14 +1,18 @@
 using Unity.Netcode;
+using UnityEngine;
+using Project02.Character;
 using Project02.Core;
 using Project02.World;
 
 namespace Project02.Enemy
 {
-    // Authoring: 클라 World 등록 + 스냅샷 버퍼. 표시는 EnemyViewSystem
+    // Authoring: 클라 World 등록(종류 목록 + 피격 묶음) + 스냅샷 버퍼. 표시는 EnemyViewSystem, 피격 예측은 ShotPredictSystem
     public class EnemyRemoteAuthoring : NetworkBehaviour
     {
         public const int BUFFER_SIZE = 32;
         public readonly TickBuffer<EnemySnapshot> Snapshots = new(BUFFER_SIZE);
+
+        [SerializeField] private SOEnemy _settings;   // 피격 캡슐 크기(Profile). 서버(EnemyServerAuthoring)와 같은 에셋
 
         public override void OnNetworkSpawn()
         {
@@ -17,7 +21,10 @@ namespace Project02.Enemy
             if (!enabled) return;
 
             Snapshots.Clear();
-            ClientLoop.Instance.Register(this);
+
+            Debug.Assert(_settings != null, $"{name}: EnemyRemoteAuthoring._settings가 연결되지 않음", this);
+            CharacterProfile profile = _settings.Profile;
+            ClientLoop.Instance.Register(this, profile.Radius, profile.Height);
         }
 
         public override void OnNetworkDespawn()

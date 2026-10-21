@@ -16,6 +16,7 @@ namespace Project02.World
         public readonly List<HitInfo> Hits = new();
         public readonly List<RewardInfo> Rewards = new();
         public readonly List<TargetInfo> Targets = new();     // TargetSystem이 매 틱 다시 채우고 적 유틸이 읽는다
+        public readonly List<CapsuleSample> HitSamples = new();   // ProjectileSystem의 재사용 버퍼: 투사체마다 되감은 대상 캡슐 (매 틱 할당하지 않는다)
         public readonly Outbox Outbox = new();
         public bool WriteTransforms;   // 이 프로세스에 클라 World가 없을 때만 true (전용 서버 디버그용)
 

@@ -216,9 +216,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa531cffdbfa9844f9c6fff43c615878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project02.Server.ServerSimulation
-  _projectileHitLayer:
-    serializedVersion: 2
-    m_Bits: 320
 --- !u!114 &8382451423736570606
 MonoBehaviour:
   m_ObjectHideFlags: 0

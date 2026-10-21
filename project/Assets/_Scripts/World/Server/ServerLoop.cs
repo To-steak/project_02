@@ -15,8 +15,6 @@ namespace Project02.World
     {
         public static ServerLoop Instance { get; private set; }
 
-        [Tooltip("투사체 레이캐스트 대상: 지형·장애물만. Enemy(이력 판정)와 Player 레이어는 빼야 함")]
-        [SerializeField] private LayerMask _projectileHitLayer;
         private readonly ServerWorld _world = new();
 
         private const int MAX_TICKS_PER_FRAME = 5;
@@ -102,7 +100,7 @@ namespace Project02.World
                 _ticking = true;
                 try
                 {
-                    Tick(_world, network, _projectileHitLayer, SimulationClock.DeltaTime);
+                    Tick(_world, network, SimulationClock.DeltaTime);
                 }
                 finally
                 {
@@ -119,7 +117,7 @@ namespace Project02.World
             }
         }
 
-        private static void Tick(ServerWorld world, NetworkManager network, LayerMask projectileHitLayer, float deltaTime)
+        private static void Tick(ServerWorld world, NetworkManager network, float deltaTime)
         {
             // 0. 장착: EquippedWeapon 변경 → WeaponState (이번 틱 발사에 반영)
             EquipSystem.Process(world);
@@ -127,9 +125,9 @@ namespace Project02.World
             // 1. 플레이어: 수신 → 소비 → Step → 발사(world.Projectiles) → Outbox
             ServerPlayerSystem.Tick(world, deltaTime);
 
-            // 2. 투사체: 지형 레이캐스트 + 되감은 피격 묶음(Hittables, 같은 편 제외) → world.Hits
+            // 2. 투사체: 지형 레이캐스트(Projectile.HitLayer) + 되감은 피격 묶음(Hittables, 같은 편 제외) → world.Hits
             Physics.SyncTransforms();
-            ProjectileSystem.Tick(world, projectileHitLayer, deltaTime);
+            ProjectileSystem.Tick(world, deltaTime);
 
             // 3. 피해: Hits → Health
             DamageSystem.Process(world.Hits);

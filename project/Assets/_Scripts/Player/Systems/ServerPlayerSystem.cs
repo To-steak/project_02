@@ -35,7 +35,8 @@ namespace Project02.Player
                 PlayerSimulation sim = player.Simulation;
                 if (PlayerStepUtil.Step(sim, input, player.OwnerClientId, deltaTime, out ShotInfo shot))
                 {
-                    world.Projectiles.Add(CreateProjectile(player.Settings, sim, player.OwnerClientId, input, shot, world.Clock.Tick));
+                    float lag = GetLag(input, world.Clock.Tick);
+                    world.Projectiles.Add(WeaponFireUtil.CreateProjectile(sim.Weapon, sim.State.Movement, input, shot, player.Settings.FireOriginOffset, player.OwnerClientId, lag));
                     world.Outbox.Fires.Add(new FireMessage(player, world.Clock.Tick, input.AimPoint, shot.Spread));
                 }
 
@@ -142,20 +143,10 @@ namespace Project02.Player
             queue.AckTick = tick - 1;
         }
 
-        private static Projectile CreateProjectile(SOPlayer settings, PlayerSimulation sim, ulong ownerId, in InputPayload input, in ShotInfo shot, int serverTick)
+        // 되감을 틱 수 (서버 축): 지금 − 클라가 보던 시점. 클라 값을 그대로 믿지 않고 클램프한다
+        private static float GetLag(in InputPayload input, int serverTick)
         {
-            SOWeapon data = sim.Weapon;
-            SOBullet bullet = data.Bullet;
-
-            MovementState movement = sim.State.Movement;
-            Vector3 origin = WeaponFireUtil.GetOrigin(movement, input.YawInput, settings.FireOriginOffset);
-            Vector3 direction = WeaponFireUtil.GetDirection(origin, input.AimPoint, shot.Spread);
-            float damage = bullet.Damage * data.WeaponCoefficient;
-            bool isCritical = WeaponFireUtil.RollCritical(ownerId, input.Tick, data.CriticalChance);
-
-            float lag = input.ViewTick < 0.0f ? 1.0f : Mathf.Clamp(serverTick - input.ViewTick, 1.0f, MAX_LAG_TICKS);
-
-            return new Projectile(origin, direction * bullet.Velocity, damage, ownerId, DamageSource.Player, Team.Player, isCritical, data.Range, data.Falloff, lag);
+            return input.ViewTick < 0.0f ? 1.0f : Mathf.Clamp(serverTick - input.ViewTick, 1.0f, MAX_LAG_TICKS);
         }
     }
 }
