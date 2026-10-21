@@ -1,0 +1,340 @@
+From 23f91ece83a23567714e86d924f5e46bc53a9f29 Mon Sep 17 00:00:00 2001
+From: x <x>
+Date: Thu, 22 Oct 2026 00:14:00 +0900
+Subject: [PATCH] =?UTF-8?q?refactor:=20=EC=A0=81=20=EC=9C=A0=ED=8B=B8?=
+ =?UTF-8?q?=EC=9D=B4=20World=20=EB=8C=80=EC=8B=A0=20=ED=91=9C=EC=A0=81=20?=
+ =?UTF-8?q?=EB=AA=A9=EB=A1=9D=EC=9D=84=20=EB=B0=9B=EC=9D=8C?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ ECS_RULES.md                                  |  4 ++--
+ .../_Scripts/Enemy/Systems/EnemySystem.cs     |  6 ++++-
+ .../Enemy/Utilities/EnemyFsmUtil.Battle.cs    | 11 +++++----
+ .../Enemy/Utilities/EnemyFsmUtil.General.cs   |  7 +++---
+ .../_Scripts/Enemy/Utilities/EnemyFsmUtil.cs  |  7 +++---
+ .../Enemy/Utilities/EnemyTargetUtil.cs        | 23 +++++++++---------
+ .../World/Server/Components/TargetInfo.cs     | 19 +++++++++++++++
+ .../Server/Components/TargetInfo.cs.meta      |  2 ++
+ .../_Scripts/World/Server/ServerLoop.cs       |  5 +++-
+ .../_Scripts/World/Server/ServerWorld.cs      |  1 +
+ .../World/Server/Systems/TargetSystem.cs      | 24 +++++++++++++++++++
+ .../World/Server/Systems/TargetSystem.cs.meta |  2 ++
+ 12 files changed, 83 insertions(+), 28 deletions(-)
+ create mode 100644 project/Assets/_Scripts/World/Server/Components/TargetInfo.cs
+ create mode 100644 project/Assets/_Scripts/World/Server/Components/TargetInfo.cs.meta
+ create mode 100644 project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs
+ create mode 100644 project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs.meta
+
+diff --git a/ECS_RULES.md b/ECS_RULES.md
+index 4bf3998..8030fb5 100644
+--- a/ECS_RULES.md
++++ b/ECS_RULES.md
+@@ -36,8 +36,8 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규
+ | Loop | World를 소유하고 System을 정해진 순서로 돌리는 진입점 MonoBehaviour | `ServerLoop`, `ClientLoop` |
+ | Entity | NetworkObject 하나. 식별자는 `NetworkObjectId` (플레이어는 `OwnerClientId`도 사용) | 플레이어, 적 |
+ | Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `InputQueue`, `RewindTarget`, `HitTarget`·`Mortal`(묶음, 규칙 11) |
+-| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Despawns`(`List<NetworkObject>`), `Hittables`(`List<HitTarget>`), `Mortals`(`List<Mortal>`), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`), `AckTick`(`int`, 서버가 빠짐없이 받은 마지막 입력 틱) |
+-| System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `DamageSystem`, `PredictSystem`, `InputSendSystem`, `EnemyViewSystem` |
++| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Targets`(`List<TargetInfo>`, 적이 보는 플레이어 목록, 매 틱 다시 채움), `Despawns`(`List<NetworkObject>`), `Hittables`(`List<HitTarget>`), `Mortals`(`List<Mortal>`), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`), `AckTick`(`int`, 서버가 빠짐없이 받은 마지막 입력 틱) |
++| System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `TargetSystem`, `DamageSystem`, `PredictSystem`, `InputSendSystem`, `EnemyViewSystem` |
+ | Utility (읽기) | 숨은 상태 없이 인자로 받은 것만 다루는 함수. `ref`로 받은 값만 바꾸는 것도 포함. 어디서 불러도 됨 | `CharacterMotor`, `PlayerMoveUtil`, `WeaponFireUtil`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil` |
+ | Utility (쓰기) | Component 객체를 직접 받아 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `PlayerEquipUtil`, `PlayerSpawnUtil`, `EnemyFsmUtil`, `EnemyNavigationUtil` |
+ | Authoring | NGO 생명주기에서 엔티티를 World에 등록/해제하고 Component를 초기화하는 MonoBehaviour | `PlayerServerAuthoring`, `PlayerOwnerAuthoring`, `PlayerRemoteAuthoring`, `EnemyServerAuthoring`, `EnemyRemoteAuthoring` |
+diff --git a/project/Assets/_Scripts/Enemy/Systems/EnemySystem.cs b/project/Assets/_Scripts/Enemy/Systems/EnemySystem.cs
+index ec16e30..e07651a 100644
+--- a/project/Assets/_Scripts/Enemy/Systems/EnemySystem.cs
++++ b/project/Assets/_Scripts/Enemy/Systems/EnemySystem.cs
+@@ -1,3 +1,4 @@
++using System.Collections.Generic;
+ using UnityEngine;
+ using Project02.Combat;
+ using Project02.World;
+@@ -9,6 +10,9 @@ namespace Project02.Enemy
+     {
+         public static void Tick(ServerWorld world, float deltaTime)
+         {
++            int tick = world.Clock.Tick;
++            List<TargetInfo> targets = world.Targets;
++
+             foreach (EnemyServerAuthoring enemy in world.Enemies)
+             {
+                 if (enemy.Health.IsDead) continue;   // DeathSystem이 같은 틱에 치운다
+@@ -18,7 +22,7 @@ namespace Project02.Enemy
+                 // 1. 상태 머신이 이번 틱 이동 입력을 정한다
+                 sim.MoveInput = Vector2.zero;
+                 sim.MoveSpeed = 0.0f;
+-                EnemyFsmUtil.Tick(world, sim, deltaTime);
++                EnemyFsmUtil.Tick(sim, tick, targets);
+ 
+                 // 2. 이동
+                 EnemyMoveUtil.Step(sim.Settings, ref sim.Movement, ref sim.Rotation, sim.MoveInput, sim.MoveSpeed, deltaTime);
+diff --git a/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.Battle.cs b/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.Battle.cs
+index 474f7e3..b5e75ad 100644
+--- a/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.Battle.cs
++++ b/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.Battle.cs
+@@ -1,3 +1,4 @@
++using System.Collections.Generic;
+ using UnityEngine;
+ using Project02.World;
+ 
+@@ -6,19 +7,19 @@ namespace Project02.Enemy
+     // 타깃 추적. 공격 범위 밖이면 달려가고, 전투 범위를 벗어나면 General로
+     public static partial class EnemyFsmUtil
+     {
+-        private static void TickBattle(ServerWorld world, EnemySimulation sim)
++        private static void TickBattle(EnemySimulation sim, int tick, List<TargetInfo> targets)
+         {
+             SOEnemy settings = sim.Settings;
+ 
+-            if (!EnemyTargetUtil.TryGetTarget(world, sim, out Vector3 target))
++            if (!EnemyTargetUtil.TryGetTarget(targets, sim, out Vector3 target))
+             {
+-                if (EnemyTargetUtil.TryFindClosest(world, sim.Movement.Position, settings.PerceptionRange, out ulong next))
++                if (EnemyTargetUtil.TryFindClosest(targets, sim.Movement.Position, settings.PerceptionRange, out ulong next))
+                 {
+                     sim.TargetClientId = next;
+                     return;
+                 }
+ 
+-                Change(sim, EnemyStateId.General, world.Clock.Tick);
++                Change(sim, EnemyStateId.General, tick);
+                 return;
+             }
+ 
+@@ -27,7 +28,7 @@ namespace Project02.Enemy
+             float distance = direction.magnitude;
+             if (distance > settings.BattleRange)
+             {
+-                Change(sim, EnemyStateId.General, world.Clock.Tick);
++                Change(sim, EnemyStateId.General, tick);
+                 return;
+             }
+ 
+diff --git a/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.General.cs b/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.General.cs
+index 15ac7dd..5719bb4 100644
+--- a/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.General.cs
++++ b/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.General.cs
+@@ -1,3 +1,4 @@
++using System.Collections.Generic;
+ using Project02.World;
+ 
+ namespace Project02.Enemy
+@@ -10,11 +11,9 @@ namespace Project02.Enemy
+             sim.TargetClientId = null;
+         }
+ 
+-        private static void TickGeneral(ServerWorld world, EnemySimulation sim)
++        private static void TickGeneral(EnemySimulation sim, int tick, List<TargetInfo> targets)
+         {
+-            int tick = world.Clock.Tick;
+-
+-            if (EnemyTargetUtil.TryFindClosest(world, sim.Movement.Position, sim.Settings.PerceptionRange, out ulong clientId))
++            if (EnemyTargetUtil.TryFindClosest(targets, sim.Movement.Position, sim.Settings.PerceptionRange, out ulong clientId))
+             {
+                 sim.TargetClientId = clientId;
+                 Change(sim, EnemyStateId.Battle, tick);
+diff --git a/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.cs b/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.cs
+index 3c34416..cfad68b 100644
+--- a/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.cs
++++ b/project/Assets/_Scripts/Enemy/Utilities/EnemyFsmUtil.cs
+@@ -1,3 +1,4 @@
++using System.Collections.Generic;
+ using Project02.World;
+ 
+ namespace Project02.Enemy
+@@ -24,13 +25,13 @@ namespace Project02.Enemy
+         // 읽기: 현재 상태에 머문 틱 수 (쿨다운·지속 시간 판정용)
+         public static int Elapsed(EnemySimulation sim, int tick) => tick - sim.StateEnterTick;
+ 
+-        public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
++        public static void Tick(EnemySimulation sim, int tick, List<TargetInfo> targets)
+         {
+             switch (sim.StateId)
+             {
+ 
+-                case EnemyStateId.General: TickGeneral(world, sim); break;
+-                case EnemyStateId.Battle: TickBattle(world, sim); break;
++                case EnemyStateId.General: TickGeneral(sim, tick, targets); break;
++                case EnemyStateId.Battle: TickBattle(sim, tick, targets); break;
+             }
+         }
+ 
+diff --git a/project/Assets/_Scripts/Enemy/Utilities/EnemyTargetUtil.cs b/project/Assets/_Scripts/Enemy/Utilities/EnemyTargetUtil.cs
+index 2dac113..e72f3f0 100644
+--- a/project/Assets/_Scripts/Enemy/Utilities/EnemyTargetUtil.cs
++++ b/project/Assets/_Scripts/Enemy/Utilities/EnemyTargetUtil.cs
+@@ -1,48 +1,47 @@
++using System.Collections.Generic;
+ using UnityEngine;
+-using Project02.Combat;
+-using Project02.Player;
+ using Project02.World;
+ 
+ namespace Project02.Enemy
+ {
+     public static class EnemyTargetUtil
+     {
+-        public static bool TryGetTarget(ServerWorld world, EnemySimulation sim, out Vector3 position)
++        public static bool TryGetTarget(List<TargetInfo> targets, EnemySimulation sim, out Vector3 position)
+         {
+             position = default;
+             if (!sim.TargetClientId.HasValue) return false;
+ 
+             ulong clientId = sim.TargetClientId.Value;
+-            foreach (PlayerServerAuthoring player in world.Players)
++            foreach (TargetInfo target in targets)
+             {
+-                if (player.OwnerClientId != clientId) continue;
++                if (target.ClientId != clientId) continue;
+ 
+-                if (player.Health.IsDead) return false;
++                if (target.IsDead) return false;
+ 
+-                position = player.Simulation.State.Movement.Position;
++                position = target.Position;
+                 return true;
+             }
+ 
+             return false;
+         }
+ 
+-        public static bool TryFindClosest(ServerWorld world, Vector3 origin, float range, out ulong clientId)
++        public static bool TryFindClosest(List<TargetInfo> targets, Vector3 origin, float range, out ulong clientId)
+         {
+             clientId = default;
+             float best = range * range;
+             bool found = false;
+ 
+-            foreach (PlayerServerAuthoring player in world.Players)
++            foreach (TargetInfo target in targets)
+             {
+-                if (player.Health.IsDead) continue;
++                if (target.IsDead) continue;
+ 
+-                Vector3 offset = player.Simulation.State.Movement.Position - origin;
++                Vector3 offset = target.Position - origin;
+                 offset.y = 0.0f;
+                 float sqr = offset.sqrMagnitude;
+                 if (sqr <= best)
+                 {
+                     best = sqr;
+-                    clientId = player.OwnerClientId;
++                    clientId = target.ClientId;
+                     found = true;
+                 }
+             }
+diff --git a/project/Assets/_Scripts/World/Server/Components/TargetInfo.cs b/project/Assets/_Scripts/World/Server/Components/TargetInfo.cs
+new file mode 100644
+index 0000000..4101186
+--- /dev/null
++++ b/project/Assets/_Scripts/World/Server/Components/TargetInfo.cs
+@@ -0,0 +1,19 @@
++using UnityEngine;
++
++namespace Project02.World
++{
++    // 적이 볼 수 있는 대상 한 명. TargetSystem.Collect가 매 틱 world.Targets에 채운다
++    public readonly struct TargetInfo
++    {
++        public readonly ulong ClientId;
++        public readonly Vector3 Position;
++        public readonly bool IsDead;
++
++        public TargetInfo(ulong clientId, Vector3 position, bool isDead)
++        {
++            ClientId = clientId;
++            Position = position;
++            IsDead = isDead;
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/project/Assets/_Scripts/World/Server/Components/TargetInfo.cs.meta b/project/Assets/_Scripts/World/Server/Components/TargetInfo.cs.meta
+new file mode 100644
+index 0000000..83b7ca3
+--- /dev/null
++++ b/project/Assets/_Scripts/World/Server/Components/TargetInfo.cs.meta
+@@ -0,0 +1,2 @@
++fileFormatVersion: 2
++guid: 0e4e2ced94c244b7878d37d5053571df
+\ No newline at end of file
+diff --git a/project/Assets/_Scripts/World/Server/ServerLoop.cs b/project/Assets/_Scripts/World/Server/ServerLoop.cs
+index c48304a..1f23fce 100644
+--- a/project/Assets/_Scripts/World/Server/ServerLoop.cs
++++ b/project/Assets/_Scripts/World/Server/ServerLoop.cs
+@@ -110,6 +110,9 @@ namespace Project02.World
+             // 1. 플레이어: 수신 → 소비 → Step → 발사(world.Projectiles) → Outbox
+             ServerPlayerSystem.Tick(world, deltaTime);
+ 
++            // 1-1. 표적: 이번 틱에 이동한 플레이어 → world.Targets (적 유틸이 읽는다)
++            TargetSystem.Collect(world);
++
+             // 2. 투사체: 지형 레이캐스트 + 되감은 피격 묶음(Hittables, 같은 편 제외) → world.Hits
+             Physics.SyncTransforms();
+             ProjectileSystem.Tick(world, projectileHitLayer, deltaTime);
+@@ -117,7 +120,7 @@ namespace Project02.World
+             // 3. 피해: Hits → Health
+             DamageSystem.Process(world.Hits);
+ 
+-            // 4. 적: 상태 머신 → 이동
++            // 4. 적: 상태 머신(world.Targets) → 이동
+             EnemySystem.Tick(world, deltaTime);
+ 
+             // 5. 사망: IsDead인 사망 묶음(Mortals) → world.Rewards, world.Despawns
+diff --git a/project/Assets/_Scripts/World/Server/ServerWorld.cs b/project/Assets/_Scripts/World/Server/ServerWorld.cs
+index 19e9bce..5c82799 100644
+--- a/project/Assets/_Scripts/World/Server/ServerWorld.cs
++++ b/project/Assets/_Scripts/World/Server/ServerWorld.cs
+@@ -15,6 +15,7 @@ namespace Project02.World
+         public readonly List<Projectile> Projectiles = new();
+         public readonly List<HitInfo> Hits = new();
+         public readonly List<RewardInfo> Rewards = new();
++        public readonly List<TargetInfo> Targets = new();     // TargetSystem이 매 틱 다시 채우고 적 유틸이 읽는다
+         public readonly Outbox Outbox = new();
+         public bool WriteTransforms;   // 이 프로세스에 클라 World가 없을 때만 true (전용 서버 디버그용)
+ 
+diff --git a/project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs b/project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs
+new file mode 100644
+index 0000000..57dc8fa
+--- /dev/null
++++ b/project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs
+@@ -0,0 +1,24 @@
++using System.Collections.Generic;
++using Project02.Player;
++
++namespace Project02.World
++{
++    // 플레이어 이동 뒤, 투사체 앞: 이번 틱에 이동한 플레이어 위치로 world.Targets를 다시 채운다.
++    // 적 유틸(EnemyTargetUtil, EnemyFsmUtil)은 World 대신 이 목록만 읽는다
++    public static class TargetSystem
++    {
++        public static void Collect(ServerWorld world)
++        {
++            List<TargetInfo> targets = world.Targets;
++            targets.Clear();
++
++            foreach (PlayerServerAuthoring player in world.Players)
++            {
++                targets.Add(new TargetInfo(
++                    player.OwnerClientId,
++                    player.Simulation.State.Movement.Position,
++                    player.Health.IsDead));
++            }
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs.meta b/project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs.meta
+new file mode 100644
+index 0000000..ffe78f3
+--- /dev/null
++++ b/project/Assets/_Scripts/World/Server/Systems/TargetSystem.cs.meta
+@@ -0,0 +1,2 @@
++fileFormatVersion: 2
++guid: 16087172d4384def826fee29ddfb21ca
+\ No newline at end of file
+-- 
+2.43.0
+

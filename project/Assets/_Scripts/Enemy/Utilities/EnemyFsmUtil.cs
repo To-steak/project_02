@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Project02.World;
 
 namespace Project02.Enemy
@@ -24,13 +25,13 @@ namespace Project02.Enemy
         // 읽기: 현재 상태에 머문 틱 수 (쿨다운·지속 시간 판정용)
         public static int Elapsed(EnemySimulation sim, int tick) => tick - sim.StateEnterTick;
 
-        public static void Tick(ServerWorld world, EnemySimulation sim, float deltaTime)
+        public static void Tick(EnemySimulation sim, int tick, List<TargetInfo> targets)
         {
             switch (sim.StateId)
             {
 
-                case EnemyStateId.General: TickGeneral(world, sim); break;
-                case EnemyStateId.Battle: TickBattle(world, sim); break;
+                case EnemyStateId.General: TickGeneral(sim, tick, targets); break;
+                case EnemyStateId.Battle: TickBattle(sim, tick, targets); break;
             }
         }
 
