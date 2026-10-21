@@ -33,7 +33,9 @@ namespace Project02.Enemy
         {
             if (!IsServer) return;
 
-            // 체력 초기값 (정본: SOEnemy.MaxHp). OnNetworkSpawn에서 쓴 값은 스폰 메시지에 실린다 → 클라가 0을 보는 프레임이 없다
+            // 체력 초기값 (정본: SOEnemy.MaxHp). OnNetworkSpawn에서 쓴 값은 스폰 메시지에 실린다 → 클라가 0을 보는 프레임이 없다            
+            Debug.Assert(_health != null, $"{name}: Health가 연결되지 않음", this);
+            Debug.Assert(_settings.MaxHp > 0, $"{name}: {_settings.name}.MaxHp가 0", this);
             _health.Max.Value = _settings.MaxHp;
             _health.Current.Value = _settings.MaxHp;
         }
