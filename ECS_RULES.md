@@ -165,8 +165,11 @@ _Scripts/<도메인>/<역할>/파일.cs
 
 ### 되감기 상한과 외삽
 
-- 상한: `RewindTarget.MAX_LAG_TICKS = 12` (240ms). 정본은 이 상수 하나. 서버는 `serverTick − ViewTick`을 `[1, MAX_LAG_TICKS]`로 클램프한다 (클라 값을 그대로 믿지 않는다).
+- 상한: `RewindTarget.MAX_LAG_TICKS = 19` (380ms). 정본은 이 상수 하나. 서버는 `serverTick − ViewTick`을 `[1, MAX_LAG_TICKS]`로 클램프한다 (클라 값을 그대로 믿지 않는다).
   `RewindTarget.CAPACITY`(64)는 상한의 2배 이상으로 둔다.
+  값의 근거: 강연처럼 RTT 약 220ms(11틱)부터 외삽하려면 `보간 지연 5 + RTT 11 + 서버 입력 버퍼 3 = 19틱`.
+  상한은 RTT가 아니라 아래의 예상 lag 전체와 비교하므로 보간 지연과 버퍼를 빼먹으면 안 된다 (12틱이면 RTT 약 80ms부터 외삽).
+  서버는 최대 380ms까지 되감지만, 피격 대상이 AI라 "엄폐했는데 맞았다"는 피해자 쪽 불만은 생기지 않는다.
 - 예상 lag (클라, `LagUtil.GetExtrapolation` 하나에서만 계산):
   `예상 lag = (Interp.LatestTick − Interp.RenderTick) + Clock.RttTicks + Clock.SmoothedBuffer`.
   서버가 이 입력을 소비하는 틱 ≈ 지금 받은 최신 스냅샷 틱 + 왕복 시간 + 서버 입력 버퍼이므로, 이 값이 서버가 되감아야 할 양이다.
@@ -175,7 +178,7 @@ _Scripts/<도메인>/<역할>/파일.cs
 - `ClientWorld.ViewTick = RenderTick + 초과` (서버 축): 화면에 그린 시점. `ViewTickSystem`이 `LateUpdate`에서 보간 시계 바로 뒤에 프레임당 1회 정하고,
   `EnemyViewSystem`, `PredictSystem`(→ `InputPayload.ViewTick`), `ShotPredictSystem`이 같은 값을 쓴다.
   초과가 0이면 `RenderTick`과 같다 (상한 이하 지연의 동작은 그대로).
-  초과 > 0이면 적은 마지막 두 스냅샷의 위치 차이로 `ViewTick`까지 외삽해서 그리고(`ExtrapolationUtil`), 서버는 상한(12틱)만큼 되감아 같은 시점을 판정한다.
+  초과 > 0이면 적은 마지막 두 스냅샷의 위치 차이로 `ViewTick`까지 외삽해서 그리고(`ExtrapolationUtil`), 서버는 상한(19틱)만큼 되감아 같은 시점을 판정한다.
   외삽 중에는 적 피격 예측을 끈다 (벽 피격은 예측). 원격 플레이어는 판정 대상이 아니므로 외삽하지 않고 `RenderTick`에 그린다.
 
 ---
