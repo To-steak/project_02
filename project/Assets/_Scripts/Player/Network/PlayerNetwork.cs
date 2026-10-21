@@ -9,16 +9,16 @@ namespace Project02.Player
     // RPC 처리기는 수신함에 기록만 한다 (규칙 8). 처리는 각 World의 시스템
     public class PlayerNetwork : NetworkBehaviour
     {
-        public const int MAX_RECEIVED_INPUTS = 16;   // 한 프레임에 쌓일 수 있는 번들 상한 (스팸 방어)
+        public const int MAX_RECEIVED_INPUTS = 16 * InputBundle.CAPACITY;   // 한 프레임에 쌓일 수 있는 payload 상한 (번들 16개분, 스팸 방어)
         public const int MAX_FIRES = 16;             // 스냅샷이 끊겨 RenderTick이 멈춰도 무한히 쌓이지 않게
 
         // ── 동기화 값 (서버만 쓴다) ──
         public readonly NetworkVariable<int> EquippedWeapon = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public readonly NetworkVariable<FixedString64Bytes> Nickname = new(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public readonly NetworkVariable<int> Level = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);   // SessionSystem이 경험치로 정한다. 스탯 반영은 StatSystem
-        
+
         // ── 수신함: 서버 (ServerPlayerSystem이 비운다) ──
-        public readonly List<InputBundle> ReceivedInputs = new();
+        public readonly List<InputPayload> ReceivedInputs = new(MAX_RECEIVED_INPUTS);   // 번들을 풀어 받은 순서대로
 
         // ── 수신함: 소유자 (ReconcileSystem이 비운다) ──
         public StatePayload PendingState;
@@ -45,8 +45,14 @@ namespace Project02.Player
         [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
         public void InputRPC(InputBundle bundle)
         {
-            if (ReceivedInputs.Count >= MAX_RECEIVED_INPUTS) return;
-            ReceivedInputs.Add(bundle);
+            // 번들(약 4KB 구조체)은 쌓지 않고 payload로 풀어 기록만 한다. 상한을 넘는 번들은 통째로 버린다
+            int count = bundle.Count;
+            if (ReceivedInputs.Count + count > MAX_RECEIVED_INPUTS) return;
+
+            for (int i = 0; i < count; i++)
+            {
+                ReceivedInputs.Add(bundle[i]);
+            }
         }
 
         // 서버 → 소유자

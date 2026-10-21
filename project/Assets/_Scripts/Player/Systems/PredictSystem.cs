@@ -68,8 +68,7 @@ namespace Project02.Player
         // 서버가 확인한 다음 틱부터 전부 보낸다. 손실 뒤 도착한 첫 번들이 빈 구간을 한 번에 메운다
         private static void SendInputs(PlayerOwnerAuthoring owner, int tick, int ackTick)
         {
-            int first = System.Math.Max(ackTick + 1, tick - MAX_WINDOW + 1);
-
+            int first = System.Math.Max(ackTick + 1, tick - InputBundle.CAPACITY + 1);
             InputBundle bundle = default;
             for (int t = first; t <= tick; t++)
             {

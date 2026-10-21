@@ -56,38 +56,35 @@ namespace Project02.Player
             }
         }
 
-        private static void Receive(InputQueue queue, List<InputBundle> received)
+        private static void Receive(InputQueue queue, List<InputPayload> received)
         {
-            foreach (InputBundle bundle in received)
+            for (int i = 0; i < received.Count; i++)
             {
-                for (int i = 0; i < bundle.Count; i++)
+                InputPayload payload = received[i];
+
+                // 이미 지나간 틱: 복제로 때운 틱에 진짜 입력이 늦게 왔으면 눌림만 살린다
+                if (payload.Tick <= queue.ConsumedTick)
                 {
-                    InputPayload payload = bundle[i];
-
-                    // 이미 지나간 틱: 복제로 때운 틱에 진짜 입력이 늦게 왔으면 눌림만 살린다
-                    if (payload.Tick <= queue.ConsumedTick)
+                    bool lateForDuplicatedTick = !queue.Buffer.TryGetValue(payload.Tick, out _) && payload.Tick > queue.ConsumedTick - InputQueue.CAPACITY;
+                    if (lateForDuplicatedTick)
                     {
-                        bool lateForDuplicatedTick = !queue.Buffer.TryGetValue(payload.Tick, out _) && payload.Tick > queue.ConsumedTick - InputQueue.CAPACITY;
-                        if (lateForDuplicatedTick)
-                        {
-                            queue.CarryJump |= payload.JumpInput;
-                            queue.CarryAttack |= payload.AttackPressed;
-                            queue.Buffer.SetValue(payload.Tick, payload);
-                        }
-                        continue;
+                        queue.CarryJump |= payload.JumpInput;
+                        queue.CarryAttack |= payload.AttackPressed;
+                        queue.Buffer.SetValue(payload.Tick, payload);
                     }
+                    continue;
+                }
 
-                    // 너무 먼 미래: 클라 시계가 튐 → 재동기화
-                    if (payload.Tick > queue.ConsumedTick + InputQueue.CAPACITY)
-                    {
-                        Resync(queue, payload.Tick);
-                    }
+                // 너무 먼 미래: 클라 시계가 튐 → 재동기화
+                if (payload.Tick > queue.ConsumedTick + InputQueue.CAPACITY)
+                {
+                    Resync(queue, payload.Tick);
+                }
 
-                    queue.Buffer.SetValue(payload.Tick, payload);
-                    if (payload.Tick > queue.LatestTick)
-                    {
-                        queue.LatestTick = payload.Tick;
-                    }
+                queue.Buffer.SetValue(payload.Tick, payload);
+                if (payload.Tick > queue.LatestTick)
+                {
+                    queue.LatestTick = payload.Tick;
                 }
             }
 
