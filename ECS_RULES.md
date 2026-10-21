@@ -8,8 +8,6 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 
 용어 일부는 아래 강연에서 빌려 왔고, 뜻은 0장에 풀어 두었다.
 
-이 문서는 코드를 쓰는 규칙만 다룬다. 저장 정책, 작업 절차, 회귀 확인은 [README](./README.md)에 있다.
-
 참고: [Overwatch Gameplay Architecture and Netcode (GDC 2017, Tim Ford)](https://gdcvault.com/play/1024001/-Overwatch-Gameplay-Architecture-and)
 
 ---
@@ -48,7 +46,7 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | Data | 설정 ScriptableObject. 런타임에 바꾸지 않는다 | `SOPlayer`, `SOMovement`, `SOLevelTable`, `SOEnemy`, `SOWeapon`, `SOCatalog` |
 
 - 겸용 클래스는 데이터 필드 + NGO 생명주기 초기화 + NetworkVariable까지만 허용한다. 로직 메서드가 생기면 System으로 뺀다.
-  현재 겸용: `Health` (Component + NetworkVariable + 스폰 초기화)
+  현재 겸용: `Health` (Component + NetworkVariable. 값 초기화는 Authoring)
 
 ---
 
@@ -101,7 +99,8 @@ _Scripts/<도메인>/<역할>/파일.cs
    - `PlayerStepUtil.WriteTransform`: `ServerPlayerSystem`(`world.WriteTransforms`일 때만), `ClientLoop` (틱 루프가 끝난 뒤 1회)
    - `PlayerSpawnUtil.Initialize`: `PlayerServerAuthoring`, `PlayerOwnerAuthoring`의 `OnNetworkPostSpawn` (스폰 1회)
    - `EnemyFsmUtil`: 상태 전환은 `Change`/`Reset`으로만 한다. 상태 함수는 `private` (규칙 위반을 컴파일러가 막는다)
-   - 그 밖의 쓰기 Utility: 해당 System + 스폰 초기화 1회 (Authoring의 `OnNetworkPostSpawn`, 또는 World 틱이 필요하면 Loop의 `Register`)
+   - 그 밖의 쓰기 Utility: 해당 System + 스폰 초기화 1회 (Authoring의 `OnNetworkSpawn` 또는 `OnNetworkPostSpawn`, 또는 World 틱이 필요하면 Loop의 `Register`)
+   - NetworkVariable 초기값은 Authoring의 `OnNetworkSpawn`(서버)에서 쓴다. 여기서 쓴 값은 스폰 메시지에 실려 클라가 첫 프레임부터 본다. 시뮬레이션 초기화는 `OnNetworkPostSpawn`
 6. **MonoBehaviour는 Loop, Authoring, Network, Proxy 네 종류만.** 시뮬레이션 로직을 갖지 않는다.
    (Iceberg 안의 MonoBehaviour는 예외: UI, Service)
 7. **`transform`은 시뮬레이션의 출력 전용.** 시뮬레이션은 `transform`을 읽지 않는다.

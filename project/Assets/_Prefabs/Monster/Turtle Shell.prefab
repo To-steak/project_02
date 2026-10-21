@@ -140,7 +140,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Combat::Health
   ShowTopMostFoldoutHeaderGroup: 1
-  _defaultMax: 10
 --- !u!114 &6166928474803691733
 MonoBehaviour:
   m_ObjectHideFlags: 0

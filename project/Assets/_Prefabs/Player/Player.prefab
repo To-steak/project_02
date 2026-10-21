@@ -2775,7 +2775,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Combat::Health
   ShowTopMostFoldoutHeaderGroup: 1
-  _defaultMax: 100
   DamageReduction: 0
 --- !u!114 &7330228363150315847
 MonoBehaviour:

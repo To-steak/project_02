@@ -29,10 +29,20 @@ namespace Project02.Enemy
             Simulation.Grid = grid;
         }
 
+        public override void OnNetworkSpawn()
+        {
+            if (!IsServer) return;
+
+            // 체력 초기값 (정본: SOEnemy.MaxHp). OnNetworkSpawn에서 쓴 값은 스폰 메시지에 실린다 → 클라가 0을 보는 프레임이 없다
+            _health.Max.Value = _settings.MaxHp;
+            _health.Current.Value = _settings.MaxHp;
+        }
+
+        // 시뮬레이션 초기화 + 등록
         protected override void OnNetworkPostSpawn()
         {
             if (!IsServer) return;
-            
+
             EnemySimulation sim = Simulation;
             sim.Movement = new MovementState { Position = transform.position };
             sim.Rotation = transform.rotation;

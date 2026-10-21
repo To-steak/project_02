@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Turtle Shell Settings
   m_EditorClassIdentifier: Enemy::EnemySettings
   Profile: {fileID: 11400000, guid: 1ad3790a0d0f4e2449e8c2842dbb0158, type: 2}
+  MaxHp: 10
   WalkSpeed: 1
   RunSpeed: 3
   RotationSpeed: 360

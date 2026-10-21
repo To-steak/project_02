@@ -25,17 +25,18 @@ namespace Project02.Player
         {
             if (!IsServer) return;
             ServerLoop.Instance.Register(this);   // SessionSystem.Join → Nickname, Level / Hittables 등록
+
+            // 체력 초기값. Join이 Level을 정하므로 Register 뒤. OnNetworkSpawn에서 쓴 값은 스폰 메시지에 실린다
+            PlayerStatUtil.ApplyHealth(_health, _settings.LevelTable.Get(_network.Level.Value));
+            AppliedLevel = _network.Level.Value;
         }
 
         protected override void OnNetworkPostSpawn()
         {
             if (!IsServer) return;
 
-            // 스폰 시 1회 (Authoring). Join이 넣은 Level, PlayerNetwork의 EquippedWeapon이 이미 있다
-            int level = _network.Level.Value;
-            PlayerSpawnUtil.Initialize(Simulation, transform.position, _settings, _network.EquippedWeapon.Value, level);
-            PlayerStatUtil.ApplyHealth(_health, _settings.LevelTable.Get(level));
-            AppliedLevel = level;
+            // 시뮬레이션 초기화, 스폰 시 1회 (Authoring). Join이 넣은 Level, PlayerNetwork의 EquippedWeapon이 이미 있다
+            PlayerSpawnUtil.Initialize(Simulation, transform.position, _settings, _network.EquippedWeapon.Value, _network.Level.Value);
 
             Rewind.History.Clear();
             Rewind.Radius = _settings.Movement.Profile.Radius;
