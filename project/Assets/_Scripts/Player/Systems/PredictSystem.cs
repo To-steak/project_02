@@ -18,7 +18,7 @@ namespace Project02.Player
             InputPayload input = new InputPayload
             {
                 Tick = tick,
-                ViewTick = world.Interp.HasTick ? world.Interp.RenderTick : -1.0f,
+                ViewTick = world.ViewTick,   // 그린 시점 (외삽 중이면 RenderTick + 초과). 스냅샷 전 -1
                 MoveInput = state.Move,
                 RunInput = state.Run,
                 JumpInput = state.JumpPressed,
