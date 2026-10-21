@@ -102,11 +102,14 @@ namespace Project02.World
                 world.Clock.Tick++;
             }
 
-            // 6. 루트 transform 출력 (리컨사일·예측 루프 밖에서 1회)
+            // 6. 입력 전송 (예측 루프 뒤 프레임당 1회. 호스트에서는 이 프레임의 ServerLoop가 바로 받는다)
+            if (ticks > 0) InputSendSystem.Flush(world);
+
+            // 7. 루트 transform 출력 (리컨사일·예측 루프 밖에서 1회)
             PlayerOwnerAuthoring owner = world.Local;
             PlayerStepUtil.WriteTransform(owner.transform, owner.Simulation);
 
-            // 7. (디버그) 지연 측정. F9: 예측 켜기/끄기
+            // 8. (디버그) 지연 측정. F9: 예측 켜기/끄기
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (Keyboard.current != null && Keyboard.current.f9Key.wasPressedThisFrame)
             {
@@ -142,14 +145,14 @@ namespace Project02.World
             ClientWorld world = _world;
             float frameTime = Time.deltaTime;
 
-            // 7. 보간 시계
+            // 9. 보간 시계
             InterpolationSystem.Advance(ref world.Interp, frameTime);
 
-            // 8. 원격 엔티티 표시 (로컬 플레이어 유무와 무관)
+            // 10. 원격 엔티티 표시 (로컬 플레이어 유무와 무관)
             EnemyViewSystem.Present(world);
             RemotePlayerViewSystem.Present(world, frameTime);
 
-            // 9. 로컬 플레이어 표시
+            // 11. 로컬 플레이어 표시
             if (world.Local == null) return;
             ViewSystem.Present(world, frameTime);
         }

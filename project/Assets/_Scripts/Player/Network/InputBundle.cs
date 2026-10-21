@@ -9,15 +9,15 @@ namespace Project02.Player
 {
     public struct InputBundle : INetworkSerializable
     {
-        // 입력 윈도우 상한 16틱(320ms). 메시지 크기는 메시지가 정하고 전송 쪽(PredictSystem)이 따른다
+        // 입력 윈도우 상한 16틱(320ms). 메시지 크기는 메시지가 정하고 전송 쪽(InputSendSystem)이 따른다
         // InputPayload 직렬화 41바이트(Tick 4 + ViewTick 4 + Move 8 + Run/Jump 2 + Yaw/Pitch 8 + Attack/Pressed/Aim 3 + AimPoint 12)
         // × 16 + Count 1 ≈ 660바이트 → SnapshotSystem.MAX_MESSAGE(1100) 아래, 비분할 전송 한도 안
         public const int CAPACITY = 16;
 
         private FixedList4096Bytes<InputPayload> _inputs;
 
-        public readonly int Count => _inputs.Length;
-        public readonly InputPayload this[int index] => _inputs[index];
+        public int Count => _inputs.Length;
+        public InputPayload this[int index] => _inputs[index];
 
         public void Add(in InputPayload payload)
         {
