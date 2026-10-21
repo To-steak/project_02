@@ -25,6 +25,11 @@ namespace Project02.Service
         private SaveFile _file;
         private readonly Dictionary<string, PlayerProgress> _players = new();
 
+        // 보상은 메모리에만 반영하고(_dirty), 주기·접속 종료·Close·앱 종료 때 파일에 쓴다 (틱 안에서 파일 I/O 하지 않음)
+        private bool _dirty;
+        private float _nextSaveTime;
+        private const float SAVE_INTERVAL = 10.0f;   // 크래시 시 최대 이만큼의 진행도를 잃는다
+
         private void Awake()
         {
             Instance = this;
@@ -36,6 +41,22 @@ namespace Project02.Service
             {
                 Instance = null;
             }
+        }
+
+        private void Update()
+        {
+            if (Time.unscaledTime < _nextSaveTime)
+            {
+                return;
+            }
+
+            Flush();
+            _nextSaveTime = Time.unscaledTime + SAVE_INTERVAL;
+        }
+
+        private void OnApplicationQuit()
+        {
+            Flush();
         }
 
         public OpenResult Open(string path)
@@ -67,6 +88,13 @@ namespace Project02.Service
 
         public void Close()
         {
+            Flush();   // 닫기 전에 메모리의 보상을 남긴다 (Open이 다른 파일을 열 때도 여기를 지난다)
+            if (_dirty)
+            {
+                Debug.LogError($"{nameof(ProgressService)}: {_path} closed with unsaved progress");
+            }
+
+            _dirty = false;
             _path = null;
             _file = null;
             _players.Clear();
@@ -122,7 +150,20 @@ namespace Project02.Service
         }
 
         /// <summary>
-        /// 여러 사용자에게 같은 보상을 더하고 한 번만 저장한다.
+        /// 저장할 변경이 있으면 파일에 쓴다. 실패하면 _dirty를 유지해 다음 주기에 다시 시도한다.
+        /// </summary>
+        public void Flush()
+        {
+            if (!IsOpen || !_dirty)
+            {
+                return;
+            }
+
+            Save();
+        }
+
+        /// <summary>
+        /// 여러 사용자에게 같은 보상을 메모리에 더한다. 파일 쓰기는 Flush가 한다.
         /// 전제: 모든 userId가 등록되어 있다(Exists로 확인).
         /// </summary>
         public void AddReward(IReadOnlyList<string> userIds, int exp, int gold)
@@ -135,7 +176,7 @@ namespace Project02.Service
                 progress.Gold += gold;
             }
 
-            Save();
+            _dirty = true;
         }
 
         private void Bind(string path, SaveFile file)
@@ -154,13 +195,17 @@ namespace Project02.Service
             }
         }
 
+        // 메모리 전체(_players)를 쓰므로, 성공하면 쌓여 있던 변경도 함께 남는다 → _dirty 해제
         private void Save()
         {
             _file.Version = SaveFile.CURRENT_VERSION;
             _file.SavedAt = DateTime.UtcNow.ToString("o");
             _file.Players.Clear();
             _file.Players.AddRange(_players.Values);
-            JsonFile.TrySave(_path, _file);
+            if (JsonFile.TrySave(_path, _file))
+            {
+                _dirty = false;
+            }
         }
 
         // 손상된 원본은 지우지도 덮어쓰지도 않고 옆으로 옮겨 둔다 (관리자가 확인·복구할 수 있게)
