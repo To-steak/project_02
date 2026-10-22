@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Project02.World;
 
 namespace Project02.Enemy
@@ -10,11 +11,9 @@ namespace Project02.Enemy
             sim.TargetClientId = null;
         }
 
-        private static void TickGeneral(ServerWorld world, EnemySimulation sim)
+        private static void TickGeneral(EnemySimulation sim, int tick, List<TargetInfo> targets)
         {
-            int tick = world.Clock.Tick;
-
-            if (EnemyTargetUtil.TryFindClosest(world, sim.Movement.Position, sim.Settings.PerceptionRange, out ulong clientId))
+            if (EnemyTargetUtil.TryFindClosest(targets, sim.Movement.Position, sim.Settings.PerceptionRange, out ulong clientId))
             {
                 sim.TargetClientId = clientId;
                 Change(sim, EnemyStateId.Battle, tick);

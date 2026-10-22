@@ -1,5 +1,6 @@
 using UnityEngine;
 using Project02.Character;
+using Project02.Combat;
 using Project02.Weapon;
 
 namespace Project02.Player
@@ -40,12 +41,26 @@ namespace Project02.Player
             return true;
         }
 
+        // 발사 1회 → 투사체. 서버 판정(ServerPlayerSystem)과 클라 피격 예측(PredictSystem)이 같은 함수로 만든다
+        // (같은 원점·방향·사거리·벽 레이어). lag는 서버만 의미가 있다 (클라는 피해·크리티컬·lag를 쓰지 않는다)
+        public static Projectile CreateProjectile(SOWeapon data, in MovementState movement, in InputPayload input, in ShotInfo shot, Vector3 originOffset, ulong ownerId, float lag)
+        {
+            SOBullet bullet = data.Bullet;
+
+            Vector3 origin = GetOrigin(movement, input.YawInput, originOffset);
+            Vector3 direction = GetDirection(origin, input.AimPoint, shot.Spread);
+            float damage = bullet.Damage * data.WeaponCoefficient;
+            bool isCritical = RollCritical(ownerId, input.Tick, data.CriticalChance);
+
+            return new Projectile(origin, direction * bullet.Velocity, damage, ownerId, DamageSource.Player, Team.Player, isCritical, data.Range, data.Falloff, bullet.HitLayer, lag);
+        }
+
         public static Vector3 GetOrigin(in MovementState movement, float yaw, Vector3 offset)
         {
             return movement.Position + Quaternion.Euler(0.0f, yaw, 0.0f) * offset;
         }
 
-        // 조준점을 향한 방향에 탄 퍼짐을 더한다. 서버 판정(ServerPlayerSystem)과 연출(WeaponView)이 같은 식을 쓴다
+        // 조준점을 향한 방향에 탄 퍼짐을 더한다. 서버 판정·클라 피격 예측(CreateProjectile)과 연출(WeaponView)이 같은 식을 쓴다
         public static Vector3 GetDirection(Vector3 from, Vector3 aimPoint, Vector2 spread)
         {
             Quaternion look = Quaternion.LookRotation(aimPoint - from);

@@ -1,0 +1,43 @@
+@startuml ecs_after_summary
+' 요약판 — ECS 적용 후 (refactor/simulate-view). 상세판: ecs_after.puml
+skinparam defaultFontName "Noto Sans CJK KR"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam ActivityBorderColor #546E7A
+skinparam ArrowColor #2E7D32
+skinparam PartitionBorderColor #90A4AE
+skinparam note {
+  BackgroundColor #FFF8E1
+  BorderColor #FFB300
+}
+
+title <size:20><b>적용 후</b></size>  ServerLoop.Tick 한 곳에 순서가 그대로
+
+start
+note right
+  <color:#1565C0><b>역할 판단은 등록할 때 한 번</b></color>
+  Authoring: <color:#1565C0>if (!IsServer) return</color> → Register(this)
+  통과한 엔티티만 World 목록에 들어간다
+end note
+:0  EquipSystem;
+:1  ServerPlayerSystem   → Projectiles;
+:2  ProjectileSystem   → Hits;
+:<b>3  DamageSystem</b>   <color:#C62828>①</color>; <<#FFEBEE>>
+:4  EnemySystem;
+:<b>5  DeathSystem</b>   <color:#C62828>②</color>   → Rewards · Despawns; <<#FFEBEE>>
+:<b>6  SessionSystem</b>   <color:#C62828>③④</color>   → Level; <<#FFEBEE>>
+:<b>7  StatSystem</b>   <color:#C62828>⑤</color>   → 최대 체력; <<#FFEBEE>>
+:8  RewindSystem;
+:9  SnapshotSystem;
+:10  NetSendSystem;
+:<b>11  DespawnSystem</b>   <color:#C62828>Despawn</color>; <<#FFEBEE>>
+note right
+  <color:#2E7D32><b>System 22개 (위 서버 12 + 클라 10)</b></color>
+  <color:#2E7D32><b>모두 IsOwner · IsServer 0건</b></color>
+  등록된 목록만 순회한다
+  <color:#C62828>①~⑤</color> = 적용 전 이벤트 연쇄가 옮겨 간 단계
+end note
+stop
+@enduml

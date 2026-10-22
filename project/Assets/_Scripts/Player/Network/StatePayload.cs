@@ -7,6 +7,7 @@ namespace Project02.Player
     {
         public PlayerSimulationState State;
         public sbyte InputBuffer;
+        public int AckTick;   // 서버가 빠짐없이 받은 마지막 입력 틱 (클라 축). State.Tick은 복제한 틱도 가지므로 ack로 쓰지 않는다
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -24,6 +25,7 @@ namespace Project02.Player
             serializer.SerializeValue(ref State.Weapon.NextFireTick);
 
             serializer.SerializeValue(ref InputBuffer);
+            serializer.SerializeValue(ref AckTick);
         }
     }
 }

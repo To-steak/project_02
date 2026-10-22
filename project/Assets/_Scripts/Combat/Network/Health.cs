@@ -6,8 +6,6 @@ namespace Project02.Combat
 {
     public class Health : NetworkBehaviour
     {
-        [SerializeField] private int _defaultMax = 100;
-
         public readonly NetworkVariable<int> Current = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public readonly NetworkVariable<int> Max = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -20,11 +18,9 @@ namespace Project02.Combat
         {
             if (!IsServer) return;
 
-            // 초기화 (Authoring)
+            // 로컬 초기화만. Max/Current는 각 Authoring의 OnNetworkSpawn이 채운다 (쓰기 지점: Authoring, DamageSystem, PlayerStatUtil.ApplyHealth)
             DamageReduction = 0.0f;
             Contributors.Clear();
-            Max.Value = _defaultMax;
-            Current.Value = _defaultMax;
         }
     }
 }

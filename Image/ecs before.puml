@@ -1,0 +1,56 @@
+@startuml ecs_before_summary
+' 요약판 — ECS 적용 전 (feat/enemy). 상세판: ecs_before.puml
+skinparam defaultFontName "Noto Sans CJK KR"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam sequenceMessageAlign left
+skinparam sequence {
+  ParticipantBorderColor #546E7A
+  ParticipantBackgroundColor #FFFFFF
+  LifeLineBorderColor #B0BEC5
+  ArrowColor #C62828
+  GroupBorderColor #90A4AE
+}
+skinparam note {
+  BackgroundColor #FFF8E1
+  BorderColor #FFB300
+}
+hide footbox
+
+title <size:20><b>적용 전</b></size>  총알 한 발 = 이벤트 연쇄
+
+participant "Unity" as U #ECEFF1
+participant "Projectile\nService" as PS
+participant "Health" as H
+participant "Enemy\nController" as E
+participant "Session\nService" as S
+participant "Player\nController" as P
+
+note over U, P
+  서버 FixedUpdate 3곳(Player · Enemy · Projectile)의 <b>순서를 정하는 코드가 없다</b>
+end note
+
+U -[#78909C]> PS : FixedUpdate\n<color:#C62828>if (!IsServer) return</color>
+activate PS
+PS -> H : <b>① ApplyDamage</b>\n<color:#C62828>if (!IsServer) return</color>
+activate H
+H -> E : <b>② event Died</b>
+activate E
+E -> S : <b>③ AddReward</b>
+activate S
+S -> P : <b>④ event ExpChanged</b>
+activate P
+P -> H : <b>⑤ SetMax</b> (레벨업 시)
+deactivate P
+deactivate S
+E -> E : <b>Despawn()</b>\n순회 도중 즉시
+deactivate E
+deactivate H
+deactivate PS
+
+note over PS, P
+  ①~⑤가 <b>한 호출 스택 안</b>에서 일어나고,
+  <color:#C62828><b>역할 분기</b></color>가 매 틱 로직 안에 섞여 있다
+end note
+@enduml

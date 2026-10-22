@@ -7,6 +7,7 @@ namespace Project02.Enemy
     public class SOEnemy : ScriptableObject
     {
         public CharacterProfile Profile;
+        public int MaxHp;   // 정본. EnemyServerAuthoring.OnNetworkSpawn이 Health에 채운다
         public float WalkSpeed;
         public float RunSpeed;
         public float RotationSpeed;

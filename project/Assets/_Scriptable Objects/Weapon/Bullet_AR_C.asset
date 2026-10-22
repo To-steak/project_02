@@ -15,3 +15,7 @@ MonoBehaviour:
   BulletPrefab: {fileID: 0}
   Damage: 1
   Velocity: 1
+  HitLayer:
+    serializedVersion: 2
+    m_Bits: 320
+  ImpactPrefab: {fileID: 0}

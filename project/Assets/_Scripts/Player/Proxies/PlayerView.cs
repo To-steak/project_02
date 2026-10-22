@@ -25,6 +25,8 @@ namespace Project02.Player
 
         private readonly List<FireEvent> _fired = new();
 
+        public WeaponView WeaponView => _weapon.View;   // 프리팹 없는 무기면 null
+
         public void OnTick(in MovementState movement)
         {
             _visual.Record(movement.Position);

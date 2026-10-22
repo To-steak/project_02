@@ -28,6 +28,9 @@ namespace Project02.Combat
         }
 
         public static DamageInfo FromPlayer(int amount, ulong clientId, Vector3 origin, bool isCritical) => new(amount, DamageSource.Player, clientId, origin, isCritical);
+        // 공격자 종류를 모르는 쪽(ProjectileSystem 등)이 쓴다. 종류별 규칙(적은 크리티컬 없음)은 위 팩토리를 따른다
+        public static DamageInfo From(DamageSource source, int amount, ulong attackerId, Vector3 origin, bool isCritical) =>
+            source == DamageSource.Player ? FromPlayer(amount, attackerId, origin, isCritical) : FromEnemy(amount, attackerId, origin, isCritical);
         public static DamageInfo FromEnemy(int amount, ulong networkObjectId, Vector3 origin, bool isCritical) => new(amount, DamageSource.Enemy, networkObjectId, origin, false);
     }
 }

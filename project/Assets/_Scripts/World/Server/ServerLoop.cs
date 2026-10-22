@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using Project02.Combat;
@@ -14,27 +15,72 @@ namespace Project02.World
     {
         public static ServerLoop Instance { get; private set; }
 
-        [Tooltip("투사체 레이캐스트 대상: 지형·장애물만. Enemy(이력 판정)와 Player 레이어는 빼야 함")]
-        [SerializeField] private LayerMask _projectileHitLayer;
         private readonly ServerWorld _world = new();
 
         private const int MAX_TICKS_PER_FRAME = 5;
 
+        // Tick(...) 실행 중 표시. 틱 도중 Register는 순회 중인 목록을 바꾸므로 막는다 (ECS_RULES 규칙 4)
+        private bool _ticking;
+
         private void Awake() => Instance = this;
         private void OnDestroy() { if (Instance == this) Instance = null; }
 
+        // 종류 목록(Players, Enemies)과 묶음 목록(Hittables, Mortals)은 여기서만 함께 바꾼다
         public void Register(PlayerServerAuthoring player)
         {
+            Debug.Assert(!_ticking, "틱 도중 등록 금지: 순회 중인 목록이 바뀐다 (ECS_RULES 규칙 4)");
             _world.Players.Add(player);
+
+            // 플레이어는 맞을 수 있는 대상이다 (PvE: 나중에 적의 공격을 받는다).
+            // Mortals에는 넣지 않는다: 플레이어 사망 처리(리스폰 등)는 이번 브랜치 범위 밖이고,
+            // DeathSystem은 죽은 대상을 보상 + Despawn으로 처리하므로 플레이어에게 그대로 쓰면 안 된다
+            _world.Hittables.Add(new HitTarget(Team.Player, player.Rewind, player.Health));
+
             SessionSystem.Join(player, SessionService.Instance);
         }
         public void Register(EnemyServerAuthoring enemy)
         {
+            Debug.Assert(!_ticking, "틱 도중 등록 금지: 순회 중인 목록이 바뀐다 (ECS_RULES 규칙 4)");
             _world.Enemies.Add(enemy);
+            _world.Hittables.Add(new HitTarget(Team.Enemy, enemy.Rewind, enemy.Health));
+
+            SOEnemy settings = enemy.Simulation.Settings;
+            _world.Mortals.Add(new Mortal(enemy.Health, enemy.NetworkObject, settings.RewardExp, settings.RewardGold));
+
             EnemyFsmUtil.Reset(enemy.Simulation, _world.Clock.Tick);
         }
-        public void Unregister(PlayerServerAuthoring player) => _world.Players.Remove(player);
-        public void Unregister(EnemyServerAuthoring enemy) => _world.Enemies.Remove(enemy);
+
+        // Unregister에는 틱 가드를 두지 않는다: 틱 마지막 단계인 DespawnSystem의 Despawn()이
+        // OnNetworkDespawn → Unregister를 부르는 것이 정상 흐름이다 (모든 순회가 끝난 뒤라 안전)
+        public void Unregister(PlayerServerAuthoring player)
+        {
+            _world.Players.Remove(player);
+            RemoveHittable(_world, player.Health);
+        }
+        public void Unregister(EnemyServerAuthoring enemy)
+        {
+            _world.Enemies.Remove(enemy);
+            RemoveHittable(_world, enemy.Health);
+            RemoveMortal(_world, enemy.Health);
+        }
+
+        // 해제는 같은 Health 참조로 찾는다. 파괴된 객체끼리 Unity ==가 같다고 보지 않도록 ReferenceEquals
+        private static void RemoveHittable(ServerWorld world, Health health)
+        {
+            List<HitTarget> list = world.Hittables;
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(list[i].Health, health)) list.RemoveAt(i);
+            }
+        }
+        private static void RemoveMortal(ServerWorld world, Health health)
+        {
+            List<Mortal> list = world.Mortals;
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(list[i].Health, health)) list.RemoveAt(i);
+            }
+        }
 
         private void Update()
         {
@@ -51,7 +97,16 @@ namespace Project02.World
             while (clock.Accumulator >= SimulationClock.DeltaTime && ticks < MAX_TICKS_PER_FRAME)
             {
                 clock.Accumulator -= SimulationClock.DeltaTime;
-                Tick(_world, network, _projectileHitLayer, SimulationClock.DeltaTime);
+                _ticking = true;
+                try
+                {
+                    Tick(_world, network, SimulationClock.DeltaTime);
+                }
+                finally
+                {
+                    // 틱 안에서 예외가 나도 가드가 켜진 채 남지 않게 한다
+                    _ticking = false;
+                }
                 clock.Tick++;
                 ticks++;
             }
@@ -62,7 +117,7 @@ namespace Project02.World
             }
         }
 
-        private static void Tick(ServerWorld world, NetworkManager network, LayerMask projectileHitLayer, float deltaTime)
+        private static void Tick(ServerWorld world, NetworkManager network, float deltaTime)
         {
             // 0. 장착: EquippedWeapon 변경 → WeaponState (이번 틱 발사에 반영)
             EquipSystem.Process(world);
@@ -70,17 +125,20 @@ namespace Project02.World
             // 1. 플레이어: 수신 → 소비 → Step → 발사(world.Projectiles) → Outbox
             ServerPlayerSystem.Tick(world, deltaTime);
 
-            // 2. 투사체: 지형 레이캐스트 + 되감은 적 → world.Hits
+            // 2. 투사체: 지형 레이캐스트(Projectile.HitLayer) + 되감은 피격 묶음(Hittables, 같은 편 제외) → world.Hits
             Physics.SyncTransforms();
-            ProjectileSystem.Tick(world, projectileHitLayer, deltaTime);
+            ProjectileSystem.Tick(world, deltaTime);
 
             // 3. 피해: Hits → Health
             DamageSystem.Process(world.Hits);
 
-            // 4. 적: 상태 머신 → 이동
+            // 3-1. 표적: 이번 틱 이동·피해가 반영된 플레이어 → world.Targets (적 유틸이 읽는다)
+            TargetSystem.Collect(world);
+
+            // 4. 적: 상태 머신(world.Targets) → 이동
             EnemySystem.Tick(world, deltaTime);
 
-            // 5. 사망: IsDead인 적 → world.Rewards, world.Despawns
+            // 5. 사망: IsDead인 사망 묶음(Mortals) → world.Rewards, world.Despawns
             DeathSystem.Process(world);
 
             // 6. 세션: Rewards → SessionService → Level

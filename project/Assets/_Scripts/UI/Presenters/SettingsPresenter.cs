@@ -35,7 +35,7 @@ namespace Project02.UI
         private const int SENSITIVITY_MAX = 100;
         private const float SENSITIVITY_SCALE = 100f;
 
-        private static readonly int[] FRAME_RATES = { 60, 120, 144, -1 };   // -1 = 제한 없음
+        private static readonly int[] FRAME_RATES = { 30, 60, 120, 144, -1 };   // -1 = 제한 없음
         private static readonly string[] WINDOW_MODE_LABELS = { "Full", "Borderless", "Windowed" };
         private static readonly string[] LOCALE_CODES = { "en", "ko" };
         private static readonly string[] LOCALE_LABELS = { "English", "한국어" };

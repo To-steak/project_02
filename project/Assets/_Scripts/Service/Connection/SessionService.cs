@@ -155,6 +155,12 @@ namespace Project02.Service
         private void OnClientDisconnected(ulong clientId)
         {
             _userIds.Remove(clientId);
+
+            // 나간 사람의 진행도를 주기(10초)를 기다리지 않고 남긴다. 서버만 진행도를 연다 (클라에선 IsOpen이 false라 무시됨)
+            if (ProgressService.Instance != null)
+            {
+                ProgressService.Instance.Flush();
+            }
         }
 
         public void AddReward(IReadOnlyList<ulong> clientIds, int exp, int gold)
