@@ -1,7 +1,7 @@
 # 이 프로젝트는 현재 개발 중입니다. (2026-8-15 ~ )
 
 # Project 02
-![thumbnail](./Image/thumbnail.png)
+![thumbnail](./Image/thumbnail.jpg)
 
 4인용 액션 어드벤처 게임을 개발 중입니다.
 - Netcode for GameObjects를 활용한 headless Dedicated Server 구조
