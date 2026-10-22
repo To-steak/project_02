@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using Project02.Combat;
 using Project02.Core;
 using Project02.Enemy;
 using Project02.Player;
@@ -65,7 +64,6 @@ namespace Project02.World
             if (_world.Local != owner) return;
 
             _world.Local = null;
-            _world.Clock = ClockSystem.Create();   // RttTicks = -1: 로컬 플레이어가 없으면 예상 lag를 재지 않는다 (외삽 끔)
             _world.PredictedShots.Clear();
             _world.PredictedImpacts.Clear();
 
@@ -171,9 +169,8 @@ namespace Project02.World
             ClientWorld world = _world;
             float frameTime = Time.deltaTime;
 
-            // 9. 보간 시계 → 그린 시점 (ViewTick의 정본. 다음 프레임 Update의 입력·피격 예측도 이 값을 쓴다)
+            // 9. 보간 시계
             InterpolationSystem.Advance(ref world.Interp, frameTime);
-            ViewTickSystem.Update(world);
 
             // 10. 원격 엔티티 표시 (로컬 플레이어 유무와 무관)
             EnemyViewSystem.Present(world);
@@ -190,7 +187,6 @@ namespace Project02.World
         private void OnClientStarted()
         {
             _world.Interp = default;
-            _world.Clock = ClockSystem.Create();   // 로컬 플레이어 등록 전에도 RttTicks = -1 (외삽 끔)
             NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(SnapshotSystem.MESSAGE, OnSnapshot);
         }
 
@@ -250,8 +246,6 @@ namespace Project02.World
             GUI.Label(new Rect(x, 270, 300, 20), $"delay med {median:F1} / p95 {p95:F1} / max {max:F1} ms", style);
             GUI.Label(new Rect(x, 290, 300, 20), $"rtt (measured): {_world.Clock.RttTicks * SimulationClock.DeltaTime * 1000.0f:F0}ms", style);
             GUI.Label(new Rect(x, 310, 300, 20), $"still {Time.realtimeSinceStartup - probe.StillSince:F2}s  rejected {probe.Rejected}", style);
-            GUI.Label(new Rect(x, 330, 300, 20), $"lag (expected): {_world.ExpectedLag:F2} / max {RewindTarget.MAX_LAG_TICKS} ticks", style);
-            GUI.Label(new Rect(x, 350, 300, 20), $"extrapolation: {_world.ViewExtrapolation:F2} ticks  view: {_world.ViewTick:F2}", style);
         }
 #endif
     }

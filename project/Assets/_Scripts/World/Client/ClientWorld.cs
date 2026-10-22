@@ -15,11 +15,6 @@ namespace Project02.World
         public CameraState Camera;
         public int AckTick = -1;   // 서버가 빠짐없이 받은 마지막 입력 틱 (클라 축). ReconcileSystem이 갱신, 입력 윈도우의 시작
 
-        // 그린 시점 (서버 축). ViewTickSystem이 LateUpdate에 프레임당 1회 정한다 (정본은 여기 하나)
-        public float ViewTick = -1.0f;        // RenderTick + ViewExtrapolation. 스냅샷 전 -1. 적 표시·InputPayload.ViewTick·피격 예측이 쓴다
-        public float ViewExtrapolation;       // 되감기 상한을 넘는 만큼 앞으로 민 틱 수 (LagUtil). > 0이면 적을 외삽하고 적 피격 예측을 끈다
-        public float ExpectedLag = -1.0f;     // 예상 되감기 양 (틱). 측정 전 -1. 디버그 표시용
-
         // 피격 예측 (연출만. 피해·체력·경험치는 서버 결과를 기다린다)
         public readonly List<ClientHitTarget> HitTargets = new();   // 피격 묶음 (원격 적). ClientLoop.Register/Unregister에서 Enemies와 함께
         public readonly List<Projectile> PredictedShots = new();    // PredictSystem이 처음 예측할 때 추가, ShotPredictSystem이 진행·제거

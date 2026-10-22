@@ -36,9 +36,9 @@ Unity Entities(DOTS)를 쓰지 않고, NGO GameObject 구조 위에 ECS의 "규�
 | Loop | World를 소유하고 System을 정해진 순서로 돌리는 진입점 MonoBehaviour | `ServerLoop`, `ClientLoop` |
 | Entity | NetworkObject 하나. 식별자는 `NetworkObjectId` (플레이어는 `OwnerClientId`도 사용) | 플레이어, 적 |
 | Component | 데이터 덩어리. struct 또는 필드만 있는 class | `PlayerSimulation`, `EnemySimulation`, `InputQueue`, `RewindTarget`, `HitTarget`·`Mortal`·`ClientHitTarget`(묶음, 규칙 11), `CapsuleSample` |
-| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Targets`(`List<TargetInfo>`, 적이 보는 플레이어 목록, 매 틱 다시 채움), `Despawns`(`List<NetworkObject>`), `Hittables`(`List<HitTarget>`), `Mortals`(`List<Mortal>`), `HitSamples`(`List<CapsuleSample>`, `ProjectileSystem`의 재사용 버퍼), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`), `AckTick`(`int`, 서버가 빠짐없이 받은 마지막 입력 틱), `HitTargets`(`List<ClientHitTarget>`, 원격 적 피격 묶음), `PredictedShots`(`List<Projectile>`, 피격 예측용 탄), `PredictedImpacts`(`List<ImpactInfo>`, 예측 피격 연출 큐), `HitSamples`(`List<CapsuleSample>`, `ShotPredictSystem`의 재사용 버퍼), `ViewTick`(`float`, 그린 시점, 서버 축. `ViewTickSystem`이 프레임당 1회), `ViewExtrapolation`(`float`, 외삽 초과 틱), `ExpectedLag`(`float`, 예상 되감기 양, 디버그) |
-| System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `TargetSystem`, `DamageSystem`, `PredictSystem`, `ShotPredictSystem`, `InputSendSystem`, `ViewTickSystem`, `EnemyViewSystem`, `ImpactViewSystem` |
-| Utility (읽기) | 숨은 상태 없이 인자로 받은 것만 다루는 함수. `ref`로 받은 값만 바꾸는 것도 포함. 어디서 불러도 됨 | `CharacterMotor`, `PlayerMoveUtil`, `WeaponFireUtil`, `RewindUtil`, `SnapshotUtil`, `ExtrapolationUtil`, `LagUtil`, `EnemyTargetUtil`, `ProjectileStepUtil` |
+| Singleton Component | World에 하나뿐인 데이터 (`*World`의 필드) | 서버: `Clock`, `Projectiles`(`List<Projectile>`), `Hits`(`List<HitInfo>`), `Rewards`(`List<RewardInfo>`), `Targets`(`List<TargetInfo>`, 적이 보는 플레이어 목록, 매 틱 다시 채움), `Despawns`(`List<NetworkObject>`), `Hittables`(`List<HitTarget>`), `Mortals`(`List<Mortal>`), `HitSamples`(`List<CapsuleSample>`, `ProjectileSystem`의 재사용 버퍼), `Outbox` / 클라: `Clock`, `Interp`, `Input`(`InputState`), `Camera`(`CameraState`), `AckTick`(`int`, 서버가 빠짐없이 받은 마지막 입력 틱), `HitTargets`(`List<ClientHitTarget>`, 원격 적 피격 묶음), `PredictedShots`(`List<Projectile>`, 피격 예측용 탄), `PredictedImpacts`(`List<ImpactInfo>`, 예측 피격 연출 큐), `HitSamples`(`List<CapsuleSample>`, `ShotPredictSystem`의 재사용 버퍼) |
+| System | 필드 없는 static class. Loop가 정해진 순서로 호출 | `ServerPlayerSystem`, `TargetSystem`, `DamageSystem`, `PredictSystem`, `ShotPredictSystem`, `InputSendSystem`, `EnemyViewSystem`, `ImpactViewSystem` |
+| Utility (읽기) | 숨은 상태 없이 인자로 받은 것만 다루는 함수. `ref`로 받은 값만 바꾸는 것도 포함. 어디서 불러도 됨 | `CharacterMotor`, `PlayerMoveUtil`, `WeaponFireUtil`, `RewindUtil`, `SnapshotUtil`, `EnemyTargetUtil`, `ProjectileStepUtil` |
 | Utility (쓰기) | Component 객체를 직접 받아 바꾸는 함수. 호출처 제한 (규칙 5) | `PlayerStepUtil`, `PlayerStatUtil`, `PlayerEquipUtil`, `PlayerSpawnUtil`, `EnemyFsmUtil`, `EnemyNavigationUtil` |
 | Authoring | NGO 생명주기에서 엔티티를 World에 등록/해제하고 Component를 초기화하는 MonoBehaviour | `PlayerServerAuthoring`, `PlayerOwnerAuthoring`, `PlayerRemoteAuthoring`, `EnemyServerAuthoring`, `EnemyRemoteAuthoring` |
 | Network | 엔티티당 하나. 그 엔티티의 RPC·NetworkVariable과 수신함만 가진다 (규칙 9) | `PlayerNetwork` |
@@ -156,27 +156,12 @@ _Scripts/<도메인>/<역할>/파일.cs
 
 | 축 | 번호 | 가진 곳 |
 |---|---|---|
-| 서버 축 | 서버 틱 | `ServerWorld.Clock`, 스냅샷 틱, `RenderTick`, `ClientWorld.ViewTick`, `RemoteFire.Tick`, `RewindTarget.History` |
+| 서버 축 | 서버 틱 | `ServerWorld.Clock`, 스냅샷 틱, `RenderTick`, `RemoteFire.Tick`, `RewindTarget.History` |
 | 클라 축 | 클라 예측 틱 | `ClientWorld.Clock`, `InputPayload.Tick`, `InputHistory`, `StateHistory` |
 
 두 축을 잇는 다리는 둘이다. 그 밖에서는 섞지 않는다.
 - `InputPayload.ViewTick` (서버 축): 클라가 보던 원격 시점을 서버에 알린다 → 지연 보상
 - `InputPayload.Tick` (클라 축): 서버가 이 번호를 보존해 `StatePayload.State.Tick`으로 돌려준다 → 재조정
-
-### 되감기 상한과 외삽
-
-- 상한: `RewindTarget.MAX_LAG_TICKS = 12` (240ms). 정본은 이 상수 하나. 서버는 `serverTick − ViewTick`을 `[1, MAX_LAG_TICKS]`로 클램프한다 (클라 값을 그대로 믿지 않는다).
-  `RewindTarget.CAPACITY`(64)는 상한의 2배 이상으로 둔다.
-- 예상 lag (클라, `LagUtil.GetExtrapolation` 하나에서만 계산):
-  `예상 lag = (Interp.LatestTick − Interp.RenderTick) + Clock.RttTicks + Clock.SmoothedBuffer`.
-  서버가 이 입력을 소비하는 틱 ≈ 지금 받은 최신 스냅샷 틱 + 왕복 시간 + 서버 입력 버퍼이므로, 이 값이 서버가 되감아야 할 양이다.
-  세 값 모두 틱 수(차이)라 두 축을 직접 빼지 않는다. 스냅샷 전이거나 `RttTicks < 0`(측정 전)이면 외삽하지 않는다.
-- 초과: `clamp(예상 lag − MAX_LAG_TICKS, 0, MAX_EXTRAPOLATION_TICKS)`, `LagUtil.MAX_EXTRAPOLATION_TICKS = 10`.
-- `ClientWorld.ViewTick = RenderTick + 초과` (서버 축): 화면에 그린 시점. `ViewTickSystem`이 `LateUpdate`에서 보간 시계 바로 뒤에 프레임당 1회 정하고,
-  `EnemyViewSystem`, `PredictSystem`(→ `InputPayload.ViewTick`), `ShotPredictSystem`이 같은 값을 쓴다.
-  초과가 0이면 `RenderTick`과 같다 (상한 이하 지연의 동작은 그대로).
-  초과 > 0이면 적은 마지막 두 스냅샷의 위치 차이로 `ViewTick`까지 외삽해서 그리고(`ExtrapolationUtil`), 서버는 상한(12틱)만큼 되감아 같은 시점을 판정한다.
-  외삽 중에는 적 피격 예측을 끈다 (벽 피격은 예측). 원격 플레이어는 판정 대상이 아니므로 외삽하지 않고 `RenderTick`에 그린다.
 
 ---
 

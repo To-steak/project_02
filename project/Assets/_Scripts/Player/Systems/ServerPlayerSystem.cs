@@ -10,6 +10,7 @@ namespace Project02.Player
     public static class ServerPlayerSystem
     {
         private const int START_BUFFER = 2;
+        private const float MAX_LAG_TICKS = 25.0f;
 
         public static void Tick(ServerWorld world, float deltaTime)
         {
@@ -142,11 +143,10 @@ namespace Project02.Player
             queue.AckTick = tick - 1;
         }
 
-        // 되감을 틱 수 (서버 축): 지금 − 클라가 보던 시점. 클라 값을 그대로 믿지 않고 [1, MAX_LAG_TICKS]로 클램프한다.
-        // 상한을 넘는 지연의 클라는 ViewTick을 외삽 시점(RenderTick + 초과)으로 보내므로 클램프 뒤에도 그린 시점과 맞는다 (LagUtil)
+        // 되감을 틱 수 (서버 축): 지금 − 클라가 보던 시점. 클라 값을 그대로 믿지 않고 클램프한다
         private static float GetLag(in InputPayload input, int serverTick)
         {
-            return input.ViewTick < 0.0f ? 1.0f : Mathf.Clamp(serverTick - input.ViewTick, 1.0f, RewindTarget.MAX_LAG_TICKS);
+            return input.ViewTick < 0.0f ? 1.0f : Mathf.Clamp(serverTick - input.ViewTick, 1.0f, MAX_LAG_TICKS);
         }
     }
 }

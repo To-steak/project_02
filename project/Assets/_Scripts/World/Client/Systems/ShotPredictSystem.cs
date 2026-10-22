@@ -16,11 +16,11 @@ namespace Project02.World
             List<Projectile> shots = world.PredictedShots;
             if (shots.Count == 0) return;
 
-            // 적은 서버가 되감는 시점(쏜 사람이 보던 화면)에 샘플한다. InputPayload.ViewTick과 같은 값(world.ViewTick).
-            // 외삽 중(ViewExtrapolation > 0)이면 적 피격 예측을 끈다: 외삽 위치는 서버 기록과 다를 수 있다. 벽은 정지 물체라 계속 예측
+            // 적은 서버가 되감는 시점(쏜 사람이 보던 화면)에 샘플한다. InputPayload.ViewTick과 같은 값.
+            // 작업 11 이후: world.ViewTick을 쓰고, 외삽 중(초과 > 0)이면 적 피격 예측을 끈다 (벽은 정지 물체라 계속 예측)
             List<CapsuleSample> samples = world.HitSamples;
-            bool predictTargets = world.Interp.HasTick && world.ViewExtrapolation <= 0.0f;
-            Sample(world.HitTargets, world.ViewTick, predictTargets, samples);
+            bool predictTargets = world.Interp.HasTick;
+            Sample(world.HitTargets, world.Interp.RenderTick, predictTargets, samples);
 
             // 한 프레임의 틱은 같은 시점에 샘플한다 (같은 프레임의 입력은 모두 같은 ViewTick을 보낸다).
             // 프레임 안에서 늦게 쏜 탄도 ticks번 진행하므로 다틱 프레임에서는 최대 (ticks − 1)틱 먼저 나간다. 60fps 이상이면 ticks ≤ 1
